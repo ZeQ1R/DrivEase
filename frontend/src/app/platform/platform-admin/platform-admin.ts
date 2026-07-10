@@ -5,11 +5,12 @@ import { NavBar } from "../../shared/nav-bar/nav-bar";
 import { LaneDivider } from "../../shared/lane-divider/lane-divider";
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CustomPipe } from '../../shared/customPipe.directive';
+import { ConfirmBox } from '../../shared/confirm-box/confirm-box';
 
 
 @Component({
   selector: 'app-platform-admin',
-  imports: [NavBar, LaneDivider, FormsModule, ReactiveFormsModule,CustomPipe],
+  imports: [NavBar, LaneDivider, FormsModule, ReactiveFormsModule,ConfirmBox],
   templateUrl: './platform-admin.html',
   styleUrl: './platform-admin.css',
 })
@@ -22,8 +23,11 @@ export class PlatformAdmin implements OnInit{
   formError = signal('')
   saving = signal(false)
 
-  // formData : any = {}
   selectedImage: File | null = null
+
+  confirmMessage = signal('')
+  pendingAction: (() => void) | null = null
+  message = signal('')
 
   form = new FormGroup({
   name: new FormControl('', { validators: [Validators.required] }),
@@ -79,6 +83,22 @@ export class PlatformAdmin implements OnInit{
     this.selectedImage = input.files?.[0] ?? null
   }
 
+  askConfirm(msg: string, action: () => void){
+    this.confirmMessage.set(msg)
+    this.pendingAction = action
+  }
+
+  onConfirmYes(){
+    this.pendingAction?.()
+    this.confirmMessage.set('')
+    this.pendingAction = null
+  }
+  onConfirmNo(){
+    this.confirmMessage.set('')
+    this.pendingAction = null
+
+  }
+
   onSubmitForm(){
 
     if(this.form.invalid){
@@ -93,20 +113,20 @@ export class PlatformAdmin implements OnInit{
   console.log('invalid controls:', Object.keys(this.form.controls).filter(k => this.form.get(k)?.invalid));
 
     const data = new FormData();
-data.append('name', this.form.value.name!);
-data.append('city', this.form.value.city!);
-data.append('address', this.form.value.address!);
-data.append('description', this.form.value.description!);
-data.append('price', this.form.value.price!);
-data.append('rating', this.form.value.rating!);
-data.append('transmission', this.form.value.transmission!);
-data.append('instructors_count', this.form.value.instructors_count!);
-data.append('pass_rate', this.form.value.pass_rate!);
-data.append('phone', this.form.value.phone!);
-data.append('email', this.form.value.email!);
-if (this.selectedImage) {
-  data.append('image', this.selectedImage);
-}
+    data.append('name', this.form.value.name!);
+    data.append('city', this.form.value.city!);
+    data.append('address', this.form.value.address!);
+    data.append('description', this.form.value.description!);
+    data.append('price', this.form.value.price!);
+    data.append('rating', this.form.value.rating!);
+    data.append('transmission', this.form.value.transmission!);
+    data.append('instructors_count', this.form.value.instructors_count!);
+    data.append('pass_rate', this.form.value.pass_rate!);
+    data.append('phone', this.form.value.phone!);
+    data.append('email', this.form.value.email!);
+    if (this.selectedImage) {
+      data.append('image', this.selectedImage);
+    }
 
     const editing = this.editingSchool()
 
@@ -129,12 +149,13 @@ if (this.selectedImage) {
   }
 
   onDelete(school: School){
-    const confirmed = confirm(`Delete "${school.name}"? This can't be done`)
-    if(!confirmed) return
+    // const confirmed = confirm(`Delete "${school.name}"? This can't be done`)
+    // if(!confirmed) return
 
     this.schoolsService.deleteSchool(school.id).subscribe({
       next: () => {
         this.schools.set(this.schools().filter((s) => s.id !== school.id))
+        this.message.set('School Deleted')
       },
       error: (err) => console.error('Failed to delete the school',err)
     })
