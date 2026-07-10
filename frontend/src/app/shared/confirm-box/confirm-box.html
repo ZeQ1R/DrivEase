@@ -1,0 +1,9 @@
+<div class="cb-backdrop" (click)="no.emit()">
+      <div class="cb-box" (click)="$event.stopPropagation()">
+        <p class="cb-message">{{ message() }}</p>
+        <div class="cb-actions">
+          <button class="cb-no" (click)="no.emit()">{{ cancelText() }}</button>
+          <button class="cb-yes" (click)="yes.emit()">{{ confirmText() }}</button>
+        </div>
+      </div>
+    </div>

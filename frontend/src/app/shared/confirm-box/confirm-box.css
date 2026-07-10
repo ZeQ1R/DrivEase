@@ -1,0 +1,51 @@
+.cb-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(28,31,38,0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      padding: 24px;
+    }
+    .cb-box {
+      background: white;
+      max-width: 360px;
+      width: 100%;
+      padding: 28px 24px;
+      text-align: center;
+    }
+    .cb-message {
+      font-size: 15px;
+      color: #1C1F26;
+      line-height: 1.5;
+      margin: 0 0 24px;
+    }
+    .cb-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+    .cb-no, .cb-yes {
+      padding: 9px 22px;
+      font-size: 14px;
+      border: none;
+      cursor: pointer;
+      font-family: 'IBM Plex Sans', sans-serif;
+    }
+    .cb-no {
+      background: white;
+      border: 1px solid #E2E6E9;
+      color: #717182;
+    }
+    .cb-no:hover {
+      border-color: #1C1F26;
+      color: #1C1F26;
+    }
+    .cb-yes {
+      background: #D14B3D;
+      color: white;
+    }
+    .cb-yes:hover {
+      background: #b03c30;
+    }
