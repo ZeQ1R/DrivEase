@@ -23,7 +23,7 @@ export class StudentDashboard implements OnInit {
 
   slots = signal<Slot[]>([])
   bookings = signal<Booking[]>([])
-  submitting = signal(false)
+
 
 
   hours = signal<{completed: number; required:number}>({completed: 0, required: 40})
@@ -37,7 +37,6 @@ export class StudentDashboard implements OnInit {
 
   ngOnInit() {
     this.user = this.authService.getCurrentUser();
-    this.submitting.set(true)
 
     this.registrationService.getMyRegistration().subscribe({
       next: (res) => {
@@ -46,9 +45,7 @@ export class StudentDashboard implements OnInit {
           this.loadSchedule();
         }
       
-        setTimeout(() => {
-          this.submitting.set(false)
-        },3000)
+       
 
         
         
