@@ -415,7 +415,7 @@ app.get("/admin/bookings", authenticate, async (req, res) => {
        FROM lesson_bookings b
        JOIN lesson_slots s ON s.id = b.slot_id
        JOIN users u ON u.id = b.student_id
-       WHERE s.school_id = $1
+       WHERE s.school_id = $1 AND b.attended = false
        ORDER BY s.slot_date, s.slot_time`,
       [school.rows[0].id]
     );
