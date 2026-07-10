@@ -1,0 +1,51 @@
+@if(loading()){
+  <app-loading-screen message="Loging into your account..."/>
+} @else {
+  <section class="auth-screen">
+  <app-auth-panel
+    [headline]="['Welcome','Back.']"
+    sub="Sign in to access your dashboard, track your registration, and manage your driving school enrollment."
+    [bullets]="['Track your application','Manage your profile','Continue your lessons']"
+    switchText="Don't have an account?"
+    switchLabel="Sign up →"
+    switchRoute="/signup">
+  </app-auth-panel>
+
+  <main class="auth-form-side">
+    <div class="auth-form-wrapper">
+      <div class="auth-form-header">
+        <p class="auth-form-title">Sign In</p>
+        <p class="auth-form-subtitle">Enter your credentials to continue</p>
+      </div>
+
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="auth-form">
+        <div class="field">
+          <label>Email Address</label>
+          <input type="email" formControlName="email" placeholder="you@example.com" />
+        </div>
+
+        @if (emailIsInvalid) {
+          <p class="field-error"><span class="dot"></span>Please enter a valid email address.</p>
+        }
+
+        <div class="field">
+          <label>Password</label>
+          <input type="password" formControlName="password" placeholder="••••••••" />
+        </div>
+
+        @if (loginError) {
+          <p class="field-error"><span class="dot"></span>{{ loginError }}</p>
+        }
+
+        <button type="submit" class="auth-submit">Sign In</button>
+      </form>
+
+      <p class="auth-switch-mobile">
+        Don't have an account? <a routerLink="/signup">Sign up</a>
+      </p>
+    </div>
+  </main>
+</section>
+}
+
+

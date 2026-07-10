@@ -1,0 +1,21 @@
+<aside class="auth-panel">
+      <a class="auth-brand" routerLink="/">Driv<span>Ease</span></a>
+      <div class="auth-panel-body">
+        <app-lane-divider class="divider-bottom-gap"></app-lane-divider>
+        <h2 class="auth-headline">
+          @for (line of headline; track line; let last = $last) {
+            {{ line }}@if (!last) {<br/>}
+          }
+        </h2>
+        <p class="auth-sub">{{ sub }}</p>
+        @if (bullets && bullets.length) {
+          <ul class="auth-bullets">
+            @for (b of bullets; track b) {
+              <li><span class="bullet-dot"></span>{{ b }}</li>
+            }
+          </ul>
+        }
+        <app-lane-divider class="divider-top-gap"></app-lane-divider>
+      </div>
+      <p class="auth-switch">{{ switchText }} <a [routerLink]="switchRoute">{{ switchLabel }}</a></p>
+    </aside>

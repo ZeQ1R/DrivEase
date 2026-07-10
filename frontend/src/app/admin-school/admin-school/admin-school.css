@@ -1,0 +1,75 @@
+.sa-page { min-height: 100vh; background: #F3F5F6; }
+.sa-header { background: #1C1F26; width: 100%; }
+.sa-header-inner { max-width: 1152px; margin: 0 auto; padding: 40px 24px 32px; }
+.eyebrow { font-family: 'IBM Plex Mono', monospace; color: #FFC93C; font-size: 12px; text-transform: uppercase; letter-spacing: 0.2em; margin: 0 0 8px; }
+.sa-header h1 { font-family: 'Big Shoulders Display', sans-serif; font-weight: 900; font-size: 36px; text-transform: uppercase; color: white; margin: 0; }
+.sa-sub { font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: #9CA3AF; margin: 8px 0 0; }
+
+.sa-content { max-width: 1152px; margin: 0 auto; padding: 32px 24px; }
+
+.sa-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 32px; }
+.stat-box { background: white; border: 1px solid #E2E6E9; padding: 20px; display: flex; flex-direction: column; gap: 4px; }
+.stat-box.total { background: #1C1F26; }
+.stat-num { font-family: 'IBM Plex Mono', monospace; font-size: 32px; font-weight: 700; color: #1C1F26; }
+.stat-box.total .stat-num { color: #FFC93C; }
+.stat-label { font-family: 'IBM Plex Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: #9CA3AF; }
+
+.sa-toolbar { margin-bottom: 24px; }
+.filter-tabs { display: inline-flex; gap: 4px; background: white; border: 1px solid #E2E6E9; padding: 4px; }
+.filter-tabs button { background: none; border: none; padding: 8px 18px; font-size: 13px; font-weight: 500; cursor: pointer; color: #717182; font-family: 'IBM Plex Sans', sans-serif; }
+.filter-tabs button.active { background: #1C1F26; color: white; }
+
+.applicant-cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+.applicant-card { background: white; border: 1px solid #E2E6E9; padding: 20px; }
+.applicant-head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
+.applicant-head h3 { font-family: 'Big Shoulders Display', sans-serif; font-weight: 700; font-size: 20px; text-transform: uppercase; color: #1C1F26; margin: 0; }
+.applicant-meta { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #9CA3AF; margin: 2px 0 0; }
+
+.status-pill { font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 700; text-transform: uppercase; padding: 3px 10px; white-space: nowrap; height: fit-content; }
+.status-pill.pending { background: rgba(255,201,60,0.18); color: #B8860B; border: 1px solid rgba(255,201,60,0.4); }
+.status-pill.approved { background: rgba(47,158,110,0.1); color: #2F9E6E; border: 1px solid rgba(47,158,110,0.3); }
+.status-pill.rejected { background: rgba(209,75,61,0.1); color: #D14B3D; border: 1px solid rgba(209,75,61,0.3); }
+
+.applicant-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 16px 0; border-top: 1px solid #E2E6E9; }
+.af { display: flex; flex-direction: column; gap: 3px; }
+.af.full { grid-column: 1 / -1; }
+.af-label { font-family: 'IBM Plex Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: #9CA3AF; }
+.af-value { font-size: 14px; color: #1C1F26; }
+.af-value.mono { font-family: 'IBM Plex Mono', monospace; }
+
+.applicant-actions { display: flex; gap: 12px; margin-top: 16px; padding-top: 16px; border-top: 1px solid #E2E6E9; }
+.accept-btn, .reject-btn { flex: 1; padding: 10px; font-size: 14px; font-weight: 500; border: none; cursor: pointer; }
+.accept-btn { background: #2F9E6E; color: white; }
+.accept-btn:hover { background: #268159; }
+.reject-btn { background: white; border: 1px solid #E2E6E9; color: #D14B3D; }
+.reject-btn:hover { border-color: #D14B3D; }
+
+.empty-state { background: white; border: 1px dashed #CBD5E1; padding: 60px; text-align: center; }
+.empty-state p { margin: 0; font-family: 'Big Shoulders Display', sans-serif; font-weight: 700; font-size: 20px; text-transform: uppercase; color: #9CA3AF; }
+
+@media (max-width: 800px) { .applicant-cards { grid-template-columns: 1fr; } .sa-stats { grid-template-columns: repeat(2, 1fr); } }
+
+.add-slot-card { background: white; border: 1px solid #E2E6E9; padding: 20px; margin-bottom: 24px; }
+.add-slot-card h2 { font-family: 'Big Shoulders Display', sans-serif; font-weight: 700; font-size: 18px; text-transform: uppercase; color: #1C1F26; margin: 0 0 16px; }
+.slot-form { display: grid; grid-template-columns: auto auto 1fr auto; gap: 12px; align-items: end; }
+.slot-field { display: flex; flex-direction: column; gap: 6px; }
+.slot-field.wide { min-width: 200px; }
+.slot-field label { font-family: 'IBM Plex Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: #717182; }
+.slot-field input { padding: 9px 12px; border: 1px solid #E2E6E9; font-size: 14px; font-family: 'IBM Plex Sans', sans-serif; }
+.slot-field input:focus { outline: none; border-color: #1E4B8C; }
+.add-slot-btn { background: #1E4B8C; color: white; border: none; padding: 10px 20px; font-size: 14px; cursor: pointer; height: fit-content; }
+.add-slot-btn:hover { background: #163a6e; }
+.slot-msg { margin: 12px 0 0; font-size: 13px; color: #2F9E6E; }
+@media (max-width: 800px) { .slot-form { grid-template-columns: 1fr; } }
+
+.bookings-card { background: white; border: 1px solid #E2E6E9; padding: 20px; margin-top: 24px; }
+.bookings-card h2 { font-family: 'Big Shoulders Display', sans-serif; font-weight: 700; font-size: 18px; text-transform: uppercase; color: #1C1F26; margin: 0 0 16px; }
+.booking-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #E2E6E9; }
+.booking-row:last-child { border-bottom: none; }
+.booking-info { display: flex; flex-direction: column; gap: 2px; }
+.booking-name { font-weight: 600; color: #1C1F26; }
+.booking-when { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #717182; }
+.attend-btn { background: #1E4B8C; color: white; border: none; padding: 8px 16px; font-size: 13px; cursor: pointer; }
+.attend-btn:hover { background: #163a6e; }
+.attended-pill { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #2F9E6E; font-weight: 700; }
+.no-bookings { color: #9CA3AF; font-size: 14px; }

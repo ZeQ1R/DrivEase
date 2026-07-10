@@ -1,0 +1,17 @@
+<div class="track-wrapper">
+      <div class="track-line"></div>
+      <div class="track-line-filled" [style.width]="activeIndex === 1 ? '100%' : '0%'"></div>
+      <div class="stops">
+        @for (stop of stops; track stop.key; let i = $index) {
+          <div class="stop">
+            <div class="dot" [class.done]="i < activeIndex" [class.current]="i === activeIndex">
+              @if (i < activeIndex) { <span class="check">✓</span> }
+              @else { <span class="num">{{ i + 1 }}</span> }
+            </div>
+            <span class="label" [class.current]="i === activeIndex" [class.done]="i < activeIndex">
+              {{ stop.label }}
+            </span>
+          </div>
+        }
+      </div>
+    </div>

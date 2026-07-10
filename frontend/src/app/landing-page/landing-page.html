@@ -1,0 +1,61 @@
+
+<app-nav-bar></app-nav-bar>
+
+<div class="landing-page">
+  <section class="hero">
+    <div class="hero-content">
+      <p class="hero-eyebrow">The Smarter Way to Get Licensed</p>
+      <h1>Your<br/>License.<br/>Your Road.</h1>
+      <app-lane-divider class="hero-divider"></app-lane-divider>
+      <p class="hero-sub">Compare certified driving schools in your city, choose your package, and get on the road — all in one place.</p>
+      <div class="hero-actions">
+        <a routerLink="/browse" class="hero-cta-primary">Browse Driving Schools →</a>
+        <a routerLink="/signup" class="hero-cta-secondary">Create Account</a>
+      </div>
+    </div>
+    <app-lane-divider></app-lane-divider>
+  </section>
+
+  <section class="how-it-works">
+    <p class="section-eyebrow">How It Works</p>
+    <h2 class="section-title">Three Steps to the Road</h2>
+    <div class="steps-grid">
+      <div class="step"><span class="step-num">01</span><h3>Browse Schools</h3><p>Filter by city, price, and license category. Read reviews and compare packages before committing.</p></div>
+      <div class="step"><span class="step-num">02</span><h3>Register Online</h3><p>Pick your school and submit your registration in under 3 minutes. No paperwork, no phone calls.</p></div>
+      <div class="step"><span class="step-num">03</span><h3>Get Licensed</h3><p>Your school confirms enrollment. Attend lessons, pass your exam, and drive with confidence.</p></div>
+    </div>
+  </section>
+
+  <app-lane-divider></app-lane-divider>
+
+
+
+  @if (featuredSchools().length > 0) {
+    <section class="featured">
+      <div class="featured-header">
+        <div><p class="section-eyebrow">Top Rated</p><h2 class="section-title">Featured Schools</h2></div>
+        <a routerLink="/browse" class="view-all-link">View all →</a>
+      </div>
+      <div class="featured-grid">
+        @for (school of featuredSchools(); track school.id) { <app-school-card [school]="school"></app-school-card> }
+      </div>
+    </section>
+  }
+
+  <section class="cta-strip">
+    <app-lane-divider></app-lane-divider>
+    <div class="cta-content">
+      <div><h2>Ready to Start Driving?</h2><p>Join thousands of new drivers who found their school on DrivEase.</p></div>
+      <a routerLink="/signup" class="cta-button">Create Your Free Account</a>
+    </div>
+    <app-lane-divider></app-lane-divider>
+  </section>
+
+  <footer class="landing-footer">
+  <div class="footer-inner">
+    <span class="footer-brand">Driv<span>Ease</span></span>
+    <img src="DrivEase-removebg-preview.png" alt="Image" class="footer-image">
+    <p class="footer-copy">© 2026 DrivEase. All rights reserved.</p>
+  </div>
+</footer>
+</div>

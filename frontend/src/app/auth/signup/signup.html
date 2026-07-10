@@ -1,0 +1,56 @@
+@if(submitting()){
+  <app-loading-screen message="Creating your account..."/>
+} @else {
+  <section class="auth-screen">
+  <app-auth-panel
+    [headline]="['Start Your','Journey.']"
+    sub="Create your account to browse and register at certified driving schools near you."
+    [bullets]="['Free to sign up','One registration at a time','Track your application live']"
+    switchText="Already have an account?"
+    switchLabel="Sign in →"
+    switchRoute="/login">
+  </app-auth-panel>
+
+  <main class="auth-form-side">
+    <div class="auth-form-wrapper">
+      <div class="auth-form-header">
+        <p class="auth-form-title">Create Account</p>
+        <p class="auth-form-subtitle">Get started in under a minute</p>
+      </div>
+
+      <form [formGroup]="form" (ngSubmit)="onSignUp()" class="auth-form">
+        <div class="field-row">
+          <div class="field"><label>First Name</label><input type="text" formControlName="firstName" placeholder="First name" /></div>
+          <div class="field"><label>Last Name</label><input type="text" formControlName="lastName" placeholder="Last name" /></div>
+        </div>
+
+        <div class="field"><label>Email Address</label><input type="email" formControlName="email" placeholder="you@example.com" /></div>
+        @if (emailIsInvalid) { <p class="field-error"><span class="dot"></span>Please enter a valid email address.</p> }
+
+        <div class="field-row" formGroupName="passwords">
+          <div class="field"><label>Password</label><input type="password" formControlName="password" placeholder="Create password" /></div>
+          <div class="field"><label>Confirm Password</label><input type="password" formControlName="confirmPassword" placeholder="Repeat password" /></div>
+        </div>
+        @if (passwordIsInvalid) { <p class="field-error"><span class="dot"></span>Password must contain at least 6 characters.</p> }
+
+        @if (passwordsNotEqual) { <p class="field-error"><span class="dot"></span>Passwords do not match.</p> }
+
+        <div class="field"><label>Phone Number</label><input type="tel" formControlName="phone" placeholder="+389 70 000 000" /></div>
+
+        <div class="field-row" formGroupName="address">
+          <div class="field"><label>City</label><input type="text" formControlName="city" placeholder="Tetovo" /></div>
+          <div class="field"><label>Postal Code</label><input type="text" formControlName="postalCode" placeholder="1200" maxlength="4" /></div>
+        </div>
+
+        @if (signupError) { <p class="field-error"><span class="dot"></span>{{ signupError }}</p> }
+
+        <button type="submit" class="auth-submit">Create Account</button>
+        <p class="auth-terms">By creating an account you agree to our Terms of Service and Privacy Policy.</p>
+      </form>
+
+      <p class="auth-switch-mobile">Already have an account? <a routerLink="/login">Login</a></p>
+    </div>
+  </main>
+</section>
+}
+

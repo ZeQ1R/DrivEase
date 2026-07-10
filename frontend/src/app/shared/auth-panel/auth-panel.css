@@ -1,0 +1,32 @@
+:host {
+  display: none;
+  width: 42%;
+  flex-shrink: 0;
+}
+
+@media (min-width: 768px) {
+  :host {
+    display: flex;
+  }
+}
+
+.auth-panel {
+  width: 100%;
+  background: #1C1F26;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 48px;
+}
+.auth-brand { font-family: 'Big Shoulders Display', sans-serif; font-weight: 900; font-size: 24px; text-transform: uppercase; letter-spacing: 0.05em; color: white; text-decoration: none; }
+.auth-brand span { color: #1E4B8C; }
+.divider-bottom-gap { margin-bottom: 48px; }
+.divider-top-gap { margin-top: 48px; }
+.auth-headline { font-family: 'Big Shoulders Display', sans-serif; font-weight: 900; font-size: 40px; text-transform: uppercase; line-height: 1; color: white; margin-bottom: 20px; }
+.auth-sub { color: #9CA3AF; font-size: 14px; line-height: 1.6; margin: 0; }
+.auth-bullets { list-style: none; margin: 24px 0 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.auth-bullets li { display: flex; align-items: center; gap: 10px; font-size: 14px; color: #9CA3AF; }
+.bullet-dot { width: 6px; height: 6px; border-radius: 50%; background: #2F9E6E; flex-shrink: 0; }
+.auth-switch { font-family: 'IBM Plex Mono', monospace; color: #4B5563; font-size: 12px; }
+.auth-switch a { color: #FFC93C; text-decoration: none; }
+.auth-switch a:hover { text-decoration: underline; }

@@ -1,0 +1,15 @@
+.nav-bar { background: #1C1F26; position: sticky; top: 0; z-index: 50; }
+    .nav-inner { max-width: 1152px; margin: 0 auto; padding: 0 24px; height: 60px; display: flex; align-items: center; justify-content: space-between; }
+    .nav-brand {
+      font-family: 'Big Shoulders Display', sans-serif; font-weight: 900; font-size: 24px;
+      text-transform: uppercase; letter-spacing: 0.05em; color: white; text-decoration: none;
+    }
+    .nav-brand span { color: #1E4B8C; }
+    .nav-links { display: flex; align-items: center; gap: 20px; }
+    .nav-links a, .nav-link-btn {
+      color: #9CA3AF; font-size: 14px; font-weight: 500; text-decoration: none;
+      background: none; border: none; cursor: pointer; font-family: 'IBM Plex Sans', sans-serif;
+    }
+    .nav-links a:hover, .nav-link-btn:hover { color: white; }
+    .nav-signup-btn { padding: 6px 16px; background: #1E4B8C; color: white !important; }
+    .nav-signup-btn:hover { background: #163a6e !important; color: white !important; }

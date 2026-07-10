@@ -1,0 +1,17 @@
+:root {
+  --color-asphalt: #1C1F26;
+  --color-mist: #F3F5F6;
+  --color-route-blue: #1E4B8C;
+  --color-lane-gold: #FFC93C;
+  --color-signal-green: #2F9E6E;
+  --color-caution-red: #D14B3D;
+  --color-border: #E2E6E9;
+  --color-text-muted: #717182;
+  --color-text-faint: #9CA3AF;
+
+  --font-display: 'Big Shoulders Display', sans-serif;
+  --font-body: 'IBM Plex Sans', sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+
+  --radius: 10px;
+}

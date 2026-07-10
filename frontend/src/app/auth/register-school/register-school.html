@@ -1,0 +1,139 @@
+@if(submitting()){
+  <app-loading-screen message="Taking You To Register Form..."/>
+}@else {
+  <app-nav-bar/>
+<div class="register-page">
+  <div class="register-header">
+    <div class="register-header-inner">
+      <p class="eyebrow">School Registration</p>
+      <h1>Register at {{ schoolName }}</h1>
+    </div>
+  </div>
+  <app-lane-divider class="flush"></app-lane-divider>
+
+  <div class="register-content">
+
+    <form class="register-form" [formGroup]="form" (ngSubmit)="onRegister()">
+
+      <div class="form-section">
+        <p class="form-section-label">Personal Information</p>
+        <div class="field-row">
+          <div class="field">
+            <label>First Name</label>
+            <input type="text" formControlName="firstName" placeholder="Enter first name" />
+            @if (isInvalid('firstName')) { <p class="field-error"><span class="dot"></span>Required</p> }
+          </div>
+          <div class="field">
+            <label>Last Name</label>
+            <input type="text" formControlName="lastName" placeholder="Enter last name" />
+            @if (isInvalid('lastName')) { <p class="field-error"><span class="dot"></span>Required</p> }
+          </div>
+          <div class="field">
+          <label>Date of Birth</label>
+          <input type="date" formControlName="dateOfBirth" />
+          @if (form.get('dateOfBirth')?.touched && form.get('dateOfBirth')?.hasError('required')) {
+            <p class="field-error"><span class="dot"></span>Required</p>
+          }
+          @if (form.get('dateOfBirth')?.hasError('underage')) {
+            <p class="field-error"><span class="dot"></span>You must be at least 18 years old to register.</p>
+          }
+        </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Email Address</label>
+            <input type="email" formControlName="email" placeholder="you@example.com" />
+            @if (isInvalid('email')) { <p class="field-error"><span class="dot"></span>Valid email required</p> }
+          </div>
+          <div class="field">
+            <label>Phone Number</label>
+            <input type="tel" formControlName="phone" placeholder="+389 70 000 000" />
+            @if (isInvalid('phone')) { <p class="field-error"><span class="dot"></span>Required</p> }
+          </div>
+        </div>
+      </div>
+
+      <app-lane-divider class="form-divider"></app-lane-divider>
+
+      <div class="form-section">
+        <p class="form-section-label">Address Details</p>
+        <div class="field-row">
+          <div class="field">
+            <label>Address</label>
+            <input type="text" formControlName="address" placeholder="Street and number" />
+            @if (isInvalid('address')) { <p class="field-error"><span class="dot"></span>Required</p> }
+          </div>
+          <div class="field">
+            <label>Postal Code</label>
+            <input type="text" formControlName="postalCode" placeholder="1200" maxlength="4" />
+            @if (isInvalid('postalCode')) { <p class="field-error"><span class="dot"></span>Required</p> }
+          </div>
+        </div>
+      </div>
+
+      <app-lane-divider class="form-divider"></app-lane-divider>
+
+      <div class="form-section">
+        <p class="form-section-label">Identity Verification</p>
+        <div class="field">
+          <label>EMBG (Personal ID Number)</label>
+          <input type="text" formControlName="embg" placeholder="13-digit EMBG" maxlength="13" />
+          @if (isInvalid('embg')) { <p class="field-error"><span class="dot"></span>EMBG must be exactly 13 digits</p> }
+        </div>
+
+        <div class="field">
+          <label>Upload ID Document</label>
+          <div class="file-drop" [class.has-file]="selectedFile" (click)="fileInput.click()">
+            @if (selectedFile) {
+              <div class="file-selected">
+                <span class="file-icon">📄</span>
+                <span class="file-name">{{ selectedFile.name }}</span>
+                <span class="file-size">{{ (selectedFile.size / 1024).toFixed(1) }} KB</span>
+              </div>
+            } @else {
+              <div class="file-placeholder">
+                <span class="upload-icon">⬆</span>
+                <p>Click to upload your ID document</p>
+                <span>JPG, PNG or PDF — max 5MB</span>
+              </div>
+            }
+          </div>
+          <input #fileInput type="file" accept=".jpg,.jpeg,.png,.pdf" (change)="onFileSelected($event)" hidden />
+        </div>
+      </div>
+
+      @if (registerError) {
+        <p class="field-error top-gap"><span class="dot"></span>{{ registerError }}</p>
+      }
+
+      <div class="form-actions">
+        <a [routerLink]="['/browse', schoolId]" class="cancel-btn">← Back to School</a>
+        <button type="submit" class="submit-btn" [disabled]="registering">
+          {{ registering ? 'Submitting…' : 'Submit Registration' }}
+        </button>
+      </div>
+
+    </form>
+
+    <aside class="register-sidebar">
+      <div class="sidebar-card">
+        <p class="sidebar-label">Registering at</p>
+        <h3>{{ schoolName }}</h3>
+        <app-lane-divider class="mini-divider"></app-lane-divider>
+        <div class="sidebar-rule">
+          <span class="rule-icon">⚠</span>
+          <p>You can only hold <strong>one active registration</strong> at a time on DrivEase.</p>
+        </div>
+        <div class="sidebar-steps">
+          <p class="steps-label">What happens next</p>
+          <div class="step-item"><span class="step-dot">1</span><span>Your application is submitted</span></div>
+          <div class="step-item"><span class="step-dot">2</span><span>School reviews your details</span></div>
+          <div class="step-item"><span class="step-dot">3</span><span>You receive a decision</span></div>
+        </div>
+      </div>
+    </aside>
+
+  </div>
+</div>
+}
+

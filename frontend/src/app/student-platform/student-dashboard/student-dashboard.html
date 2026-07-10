@@ -1,0 +1,135 @@
+@if(submitting()){
+  <app-loading-screen message="Submitting Your Application..."/>
+}@else {
+  <app-nav-bar></app-nav-bar>
+
+<div class="dashboard-page">
+  <div class="dashboard-header">
+  <div class="dashboard-header-inner">
+    <p class="eyebrow">Student Dashboard</p>
+    <h1>Hello, {{ user?.firstName }}</h1>
+    @if (registration(); as registration) { <p class="reg-id">Registration #<span>{{ registration.id }}</span></p> }
+  </div>
+</div>
+  <app-lane-divider></app-lane-divider>
+
+  <div class="dashboard-content">
+    <div class="dashboard-main">
+      <div class="status-card">
+        <div class="status-card-header">
+          <h2>Application Status</h2>
+          @if (registration(); as registration) { <span class="status-pill" [class]="registration.status">{{ registration.status }}</span> }
+        </div>
+
+        @if (registration(); as registration) {
+          @if (registration.status !== 'rejected') {
+            <app-progress-track [status]="registration.status"></app-progress-track>
+            <div class="status-note">
+              @if (registration.status === 'pending') {
+                <p>Your application is being reviewed by <strong>{{ registration.school_name }}</strong>. You'll be notified once it's processed.</p>
+              } @else if (registration.status === 'approved') {
+                <p class="success">✓ Your application has been approved. Welcome aboard!</p>
+              }
+            </div>
+          } @else {
+            <div class="status-note"><p class="rejected">Your application to <strong>{{ registration.school_name }}</strong> was not approved. You can register to another school.</p></div>
+          }
+        } @else {
+          <div class="empty-status"><p>No Active Registration</p><span>Browse driving schools to get started</span></div>
+        }
+      </div>
+
+      @if (registration()?.status === 'approved') {
+        <div class="schedule-card">
+          <h2>Book a Lesson</h2>
+          @if (slots().length > 0) {
+            <div class="slot-list">
+              @for (slot of slots(); track slot.id) {
+                <div class="slot">
+                  <div class="slot-info">
+                    <span class="slot-date">{{ slot.slot_date | date:'mediumDate' }}</span>
+                    <span class="slot-time">{{ slot.slot_time }}</span>
+                    <span class="slot-badge">{{slot.slot_type}}</span>
+                    @if (slot.note) { <span class="slot-note">{{ slot.note }}</span> }
+                  </div>
+                  <button class="book-btn" (click)="bookSlot(slot)">Book</button>
+                </div>
+              }
+            </div>
+          } @else {
+            <p class="no-slots">No available time slots right now. Check back soon.</p>
+          }
+
+          @if (bookings().length > 0) {
+            <h3>Your Upcoming Lessons</h3>
+            <div class="booking-list">
+              @for (b of bookings(); track b.id) {
+                <div class="booking">
+                  <span>{{ b.slot_date | date:'mediumDate' }} · {{ b.slot_time }}</span>
+                  @if (b.note) { <span class="booking-note">{{ b.note }}</span> }
+                </div>
+              }
+            </div>
+          }
+
+          <div class="hours-card">
+            <h2>Practical Hours</h2>
+            <div class="hours-stat">
+              <span class="hours-done">{{ hours().completed }}</span>
+              <span class="hours-sep">/</span>
+              <span class="hours-total">{{ hours().required }} hrs</span>
+            </div>
+            <div class="hours-bar">
+              <div class="hours-fill" [style.width.%]="hoursPercent()"></div>
+            </div>
+            <p class="hours-note">
+              @if (hours().completed >= hours().required) {
+                ✓ You've completed all required practical hours!
+              } @else {
+                {{ hours().required - hours().completed }} hours remaining
+              }
+            </p>
+          </div>
+        </div>
+      }
+
+      <div class="info-card">
+        <h2>Account Information</h2>
+        <div class="info-grid">
+          <div><p class="info-label">Full Name</p><p class="info-value">{{ user?.firstName }} {{ user?.lastName }}</p></div>
+          <div><p class="info-label">Email Address</p><p class="info-value">{{ user?.email }}</p></div>
+          <div><p class="info-label">Phone</p><p class="info-value">{{ user?.phone || '—' }}</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dashboard-sidebar">
+      @if (registration(); as registration) {
+        <div class="school-card-mini">
+          <p class="info-label">Your School</p>
+          <h3>{{ registration.school_name }}</h3>
+          <div class="school-city">📍 {{ registration.city }}</div>
+          <app-lane-divider class="mini-divider"></app-lane-divider>
+          <p class="active-reg-note">You have 1 active registration.</p>
+        </div>
+      } @else {
+        <div class="cta-card">
+          <h3>Ready to Start?</h3>
+          <p>Browse certified schools in your area and register in minutes.</p>
+          <a routerLink="/browse" class="cta-btn">Browse Schools →</a>
+        </div>
+      }
+
+      <div class="status-legend">
+        <p class="legend-title">Status Guide</p>
+        <div class="legend-item"><span class="dot pending"></span><div><p>Pending</p><span>Awaiting school review</span></div></div>
+        <div class="legend-item"><span class="dot approved"></span><div><p>Approved</p><span>Accepted enrollment</span></div></div>
+        <div class="legend-item"><span class="dot rejected"></span><div><p>Rejected</p><span>Not accepted</span></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+}

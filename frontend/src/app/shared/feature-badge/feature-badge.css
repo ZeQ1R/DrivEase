@@ -1,0 +1,9 @@
+.feature-badge {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px; font-weight: 700;
+      padding: 2px 8px;
+      background: rgba(30,75,140,0.1);
+      color: #1E4B8C;
+      border: 1px solid rgba(30,75,140,0.25);
+      display: inline-block;
+    }

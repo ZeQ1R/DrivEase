@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "@angular/animations": "^20.1.8",
+    "animations": "^0.0.0",
+    "multer": "^2.2.0",
+    "nodemailer": "^9.0.3"
+  }
+}

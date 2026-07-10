@@ -1,0 +1,24 @@
+:host {
+  display: block;
+  margin: 1px 0;
+}
+
+:host(.divider-bottom-gap) {
+  margin: 0 0 56px;
+}
+
+:host(.divider-top-gap) {
+  margin: 56px 0 0;
+}
+
+:host(.mini-divider) {
+  margin: 28px 0;
+}
+
+.lane-divider {
+  height: 2px;
+  width: 100%;
+  background-image: repeating-linear-gradient(
+    90deg, #FFC93C 0, #FFC93C 20px, transparent 20px, transparent 34px
+  );
+}

@@ -1,0 +1,16 @@
+
+<header class="nav-bar">
+      <div class="nav-inner">
+        <a routerLink="/" class="nav-brand">Driv<span>Ease</span></a>
+        <nav class="nav-links">
+          <a routerLink="/browse">Browse Schools</a>
+          @if (user) {
+            <a [routerLink]="dashboardLink">Dashboard</a>
+            <button class="nav-link-btn" (click)="logout()">Sign Out</button>
+          } @else {
+            <a routerLink="/login">Login</a>
+            <a routerLink="/signup" class="nav-signup-btn">Sign Up</a>
+          }
+        </nav>
+      </div>
+    </header>

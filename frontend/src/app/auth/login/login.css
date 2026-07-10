@@ -1,0 +1,122 @@
+.auth-screen {
+  min-height: 100vh;
+  display: flex;
+}
+
+.auth-form-side {
+  flex: 1;
+  background: #F3F5F6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+}
+
+.auth-form-wrapper {
+  width: 100%;
+  max-width: 420px;
+}
+
+.auth-form-title {
+  font-family: 'Big Shoulders Display', sans-serif;
+  font-weight: 900;
+  font-size: 30px;
+  text-transform: uppercase;
+  color: #1C1F26;
+  margin: 0 0 4px;
+}
+
+.auth-form-subtitle {
+  color: #717182;
+  font-size: 14px;
+  margin: 0 0 28px;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.field label {
+  display: block;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #717182;
+  margin-bottom: 8px;
+}
+
+.field input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px 16px;
+  background: white;
+  border: 1px solid #E2E6E9;
+  font-size: 14px;
+  font-family: 'IBM Plex Sans', sans-serif;
+}
+
+.field input:focus {
+  outline: none;
+  border-color: #1E4B8C;
+}
+
+.field-error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #D14B3D;
+  margin: 0;
+}
+
+.field-error .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #D14B3D;
+  flex-shrink: 0;
+}
+
+.auth-submit {
+  width: 100%;
+  padding: 14px;
+  background: #1E4B8C;
+  color: white;
+  font-weight: 500;
+  font-size: 14px;
+  border: none;
+  cursor: pointer;
+}
+
+.auth-submit:hover {
+  background: #163a6e;
+}
+
+.auth-switch-mobile {
+  font-size: 14px;
+  color: #717182;
+  margin-top: 24px;
+  text-align: center;
+}
+
+.auth-switch-mobile a {
+  color: #1E4B8C;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+@media (min-width: 768px) {
+  .auth-switch-mobile {
+    display: none;
+  }
+}
+
+@media (max-width: 540px) {
+  .auth-form-side {
+    padding: 24px;
+  }
+}

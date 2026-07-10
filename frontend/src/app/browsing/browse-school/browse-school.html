@@ -1,0 +1,79 @@
+@if(submitting()){
+  <app-loading-screen message="Loading Driving School Details..."/>
+}@else {
+  <app-nav-bar></app-nav-bar>
+
+@if (school(); as school) {
+  <div class="detail-page">
+    <div class="detail-hero">
+      <img [src]="imageUrl" [alt]="school.image.alt" />
+      <div class="hero-overlay">
+        <div class="hero-content">
+          <span class="feature-pill">{{ school.features.feature1 }}</span>
+          <h1>{{ school.name }}</h1>
+          <div class="hero-meta">
+            <span>📍 {{ school.address }}</span>
+            <app-star-rating [rating]="school.rating"></app-star-rating>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <app-lane-divider></app-lane-divider>
+
+    <div class="detail-body">
+      <div class="detail-main">
+        <section>
+          <h2>About This School</h2>
+          <p>{{ school.description }}</p>
+        </section>
+
+        <app-lane-divider></app-lane-divider>
+
+        <section>
+          <h2>At a Glance</h2>
+          <div class="stats-grid">
+            <div class="stat-tile"><p class="stat-label">Type</p><p class="stat-value">{{ school.features.feature1 }}</p></div>
+            <div class="stat-tile"><p class="stat-label">Instructors</p><p class="stat-value">{{ school.features.feature2 }}</p></div>
+            <div class="stat-tile"><p class="stat-label">Pass Rate</p><p class="stat-value">{{ school.features.feature3 }}</p></div>
+          </div>
+        </section>
+
+        <app-lane-divider></app-lane-divider>
+
+        <section>
+          <h2>Contact & Location</h2>
+          <div class="contact-list">
+            <div>📍 {{ school.address }}</div>
+            <div>📞 {{ school.phone }}</div>
+            <div>✉️ {{ school.email }}</div>
+          </div>
+        </section>
+      </div>
+
+      <aside class="detail-sidebar">
+        <p class="sidebar-label">Full Package Price</p>
+        <p class="sidebar-price">${{ school.price }}</p>
+        <p class="sidebar-note">Includes theory + practical lessons + exam fees</p>
+        <app-star-rating [rating]="school.rating"></app-star-rating>
+
+        <app-lane-divider class="sidebar-divider"></app-lane-divider>
+
+        @if (isTheirSchool) {
+          <div class="status-box success">✓ You are registered here</div>
+        } @else if (hasOtherReg) {
+          <div class="status-box neutral">Active registration exists</div>
+          <p class="sidebar-note center">You can only hold one registration at a time. Visit your dashboard to manage it.</p>
+          <a routerLink="/student-platform-dashboard" class="secondary-btn">View Dashboard</a>
+        } @else if (!user) {
+          <a routerLink="/login" class="primary-btn">Sign In to Register</a>
+          <p class="sidebar-note center">No account? <a routerLink="/signup">Sign up free</a></p>
+        } @else {
+          <button class="primary-btn" [routerLink]="['/register-school', school.id]">Register at This School</button>
+        }
+      </aside>
+    </div>
+  </div>
+}
+}
+

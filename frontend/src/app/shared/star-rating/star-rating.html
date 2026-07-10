@@ -1,0 +1,8 @@
+<div class="star-rating">
+      <div class="stars">
+        @for (i of [1,2,3,4,5]; track i) {
+          <span class="star" [class.filled]="i <= roundedRating">★</span>
+        }
+      </div>
+      <span class="rating-value">{{ ratingNum.toFixed(1) }}</span>
+    </div>

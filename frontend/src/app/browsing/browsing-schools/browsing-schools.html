@@ -1,0 +1,53 @@
+
+  <app-nav-bar></app-nav-bar>
+
+<div class="browse-page">
+  <div class="browse-header">
+  <div class="browse-header-inner">
+    <p class="eyebrow">Find Your School</p>
+    <h1>Browse Driving Schools</h1>
+  </div>
+</div>
+  <app-lane-divider></app-lane-divider>
+
+  <div class="browse-content">
+    <div class="filter-bar">
+      <div class="filter-bar-label">Filter Results</div>
+      <div class="filter-grid">
+        <input [(ngModel)]="search" placeholder="School name…" />
+        <select [(ngModel)]="cityFilter">
+          @for (c of cities; track c) {
+            <option [value]="c">{{ c === 'All' ? 'All Cities' : c }}</option>
+          }
+        </select>
+        <div class="price-slider">
+          <span>Max $</span>
+          <input type="range" min="0" max="1000" step="50" [(ngModel)]="maxPrice" />
+          <span class="price-value">{{ maxPrice }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="results-bar">
+      <p><strong>{{ filtered.length }}</strong> {{ filtered.length === 1 ? 'school' : 'schools' }} found</p>
+      @if (filtersActive) {
+        <button class="clear-btn" (click)="clearFilters()">Clear filters</button>
+      }
+    </div>
+
+    @if (filtered.length > 0) {
+      <div class="school-grid">
+        @for (school of filtered; track school.id) {
+          <app-school-card [school]="school"></app-school-card>
+        }
+      </div>
+    } @else {
+      <div class="empty-state">
+        <p>No Schools Match Your Filters</p>
+        <button (click)="clearFilters()">Clear all filters</button>
+      </div>
+    }
+  </div>
+</div>
+
+

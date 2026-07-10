@@ -1,0 +1,5 @@
+ .star-rating { display: flex; align-items: center; gap: 6px; }
+    .stars { display: flex; gap: 2px; }
+    .star { color: #CBD5E1; font-size: 13px; }
+    .star.filled { color: #FFC93C; }
+    .rating-value { font-family: 'IBM Plex Mono', monospace; font-size: 14px; font-weight: 700; color: #1C1F26; }

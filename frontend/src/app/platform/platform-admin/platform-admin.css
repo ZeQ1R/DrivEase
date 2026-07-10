@@ -1,0 +1,59 @@
+.admin-page { min-height: 100vh; background: #F3F5F6; }
+.admin-header { background: #1C1F26; width: 100%; }
+.admin-header-inner { max-width: 1152px; margin: 0 auto; padding: 40px 24px 32px; }
+.eyebrow { font-family: 'IBM Plex Mono', monospace; color: #FFC93C; font-size: 12px; text-transform: uppercase; letter-spacing: 0.2em; margin: 0 0 8px; }
+.admin-header h1 { font-family: 'Big Shoulders Display', sans-serif; font-weight: 900; font-size: 36px; text-transform: uppercase; color: white; margin: 0; }
+
+.admin-content { max-width: 1152px; margin: 0 auto; padding: 32px 24px; }
+.admin-toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.results-count { font-size: 14px; color: #717182; margin: 0; }
+.add-btn { background: #1E4B8C; color: white; border: none; padding: 10px 20px; font-size: 14px; font-weight: 500; cursor: pointer; }
+.add-btn:hover { background: #163a6e; }
+
+.admin-table-wrapper { background: white; border: 1px solid #E2E6E9; overflow-x: auto; }
+.admin-table { width: 100%; border-collapse: collapse; }
+.admin-table th {
+  text-align: left; font-family: 'IBM Plex Mono', monospace; font-size: 11px; text-transform: uppercase;
+  letter-spacing: 0.08em; color: #717182; padding: 14px 16px; border-bottom: 1px solid #E2E6E9; white-space: nowrap;
+}
+.admin-table td { padding: 14px 16px; border-bottom: 1px solid #E2E6E9; font-size: 14px; color: #1C1F26; }
+.admin-table tr:last-child td { border-bottom: none; }
+.school-name-cell { font-weight: 600; }
+.mono { font-family: 'IBM Plex Mono', monospace; }
+.status-pill { font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 700; text-transform: uppercase; padding: 3px 10px; display: inline-block; }
+.status-pill.approved { background: rgba(47,158,110,0.1); color: #2F9E6E; border: 1px solid rgba(47,158,110,0.3); }
+.actions-cell { white-space: nowrap; }
+.icon-btn { background: none; border: 1px solid #E2E6E9; padding: 6px 12px; font-size: 12px; cursor: pointer; margin-right: 8px; color: #1E4B8C; }
+.icon-btn:hover { border-color: #1E4B8C; }
+.icon-btn.danger { color: #D14B3D; }
+.icon-btn.danger:hover { border-color: #D14B3D; }
+.empty-row { text-align: center; padding: 40px !important; color: #9CA3AF; }
+
+.modal-backdrop {
+  position: fixed; inset: 0; background: rgba(28,31,38,0.6); display: flex;
+  align-items: center; justify-content: center; z-index: 100; padding: 24px;
+}
+.modal-panel { background: white; max-width: 560px; width: 100%; max-height: 90vh; overflow-y: auto; }
+.modal-header { display: flex; justify-content: space-between; align-items: center; padding: 20px 24px; border-bottom: 1px solid #E2E6E9; }
+.modal-header h2 { font-family: 'Big Shoulders Display', sans-serif; font-weight: 700; font-size: 22px; text-transform: uppercase; color: #1C1F26; margin: 0; }
+.close-btn { background: none; border: none; font-size: 18px; cursor: pointer; color: #717182; }
+
+.admin-form { padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.field label { display: block; font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #717182; margin-bottom: 8px; }
+.field input, .field textarea {
+  width: 100%; padding: 10px 14px; border: 1px solid #E2E6E9; font-size: 14px;
+  font-family: 'IBM Plex Sans', sans-serif; box-sizing: border-box; resize: vertical;
+}
+.field input:focus, .field textarea:focus { outline: none; border-color: #1E4B8C; }
+.field-error { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #D14B3D; margin: 0; }
+.field-error .dot { width: 6px; height: 6px; border-radius: 50%; background: #D14B3D; flex-shrink: 0; }
+
+.modal-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 8px; }
+.primary-btn, .secondary-btn { padding: 11px 22px; font-size: 14px; font-weight: 500; border: none; cursor: pointer; }
+.primary-btn { background: #1E4B8C; color: white; }
+.primary-btn:hover { background: #163a6e; }
+.primary-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+.secondary-btn { background: white; border: 1px solid #E2E6E9; color: #717182; }
+
+@media (max-width: 700px) { .field-row { grid-template-columns: 1fr; } }

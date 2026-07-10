@@ -1,0 +1,16 @@
+<div class="school-card">
+      <div class="card-image"><img [src]="imageUrl" [alt]="school.image.alt" /></div>
+      <div class="card-body">
+        <div class="card-top">
+          <h3>{{ school.name }}</h3>
+          <span class="price">\${{ school.price }}</span>
+        </div>
+        <div class="card-city">📍 {{ school.city }}</div>
+        <app-star-rating [rating]="school.rating"></app-star-rating>
+        <div class="card-features">
+          <app-feature-badge [text]="school.features.feature1"></app-feature-badge>
+          <app-feature-badge [text]="school.features.feature2"></app-feature-badge>
+        </div>
+        <a [routerLink]="['/browse', school.id]" class="card-cta">View Details</a>
+      </div>
+    </div>

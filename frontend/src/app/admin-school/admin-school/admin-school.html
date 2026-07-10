@@ -1,0 +1,139 @@
+<app-nav-bar/>
+<div class="sa-page">
+  <div class="sa-header">
+    <div class="sa-header-inner">
+      <p class="eyebrow">School Admin</p>
+      <h1>Student Applications</h1>
+      <p class="sa-sub">{{ schoolName() }}</p>
+    </div>
+  </div>
+
+  <app-lane-divider class="flush"></app-lane-divider>
+
+  <div class="sa-content">
+    <div class="sa-stats">
+      <div class="stat-box"><span class="stat-num">{{ pendingCount() }}</span><span class="stat-label">Pending</span></div>
+      <div class="stat-box"><span class="stat-num">{{ approvedCount() }}</span><span class="stat-label">Approved</span></div>
+      <div class="stat-box"><span class="stat-num">{{ rejectedCount() }}</span><span class="stat-label">Rejected</span></div>
+      <div class="stat-box total"><span class="stat-num">{{ registrations().length }}</span><span class="stat-label">Total</span></div>
+    </div>
+
+    <div class="sa-toolbar">
+      <div class="filter-tabs">
+        <button [class.active]="filter() === 'all'" (click)="setFilter('all')">All</button>
+        <button [class.active]="filter() === 'pending'" (click)="setFilter('pending')">Pending</button>
+        <button [class.active]="filter() === 'approved'" (click)="setFilter('approved')">Approved</button>
+        <button [class.active]="filter() === 'rejected'" (click)="setFilter('rejected')">Rejected</button>
+      </div>
+    </div>
+
+    @if (filtered().length > 0) {
+      <div class="applicant-cards">
+        @for (reg of filtered(); track reg.id) {
+          <div class="applicant-card">
+            <div class="applicant-head">
+              <div>
+                <h3>{{ reg.first_name }} {{ reg.last_name }}</h3>
+                <p class="applicant-meta">Application #{{ reg.id }} · {{ reg.registered_at | date:'mediumDate' }}</p>
+              </div>
+              <span class="status-pill" [class]="reg.status">{{ reg.status }}</span>
+            </div>
+
+            <div class="applicant-grid">
+              <div class="af"><span class="af-label">Email</span><span class="af-value">{{ reg.email }}</span></div>
+              <div class="af"><span class="af-label">Phone</span><span class="af-value">{{ reg.phone || '—' }}</span></div>
+              <div class="af"><span class="af-label">Date of Birth</span><span class="af-value">{{ reg.date_of_birth | date:'mediumDate' }}</span></div>
+              <div class="af"><span class="af-label">EMBG</span><span class="af-value mono">{{ reg.embg }}</span></div>
+              <div class="af full"><span class="af-label">Address</span><span class="af-value">{{ reg.address }}, {{ reg.postal_code }}</span></div>
+              <div class="af full">
+                <span class="af-label">ID Document</span>
+                @if(reg.id_document_url){
+                  <a class="af-value doc-link" [href]="'http://localhost:3000/' + reg.id_document_url" target="_blank">View ID ↗</a>
+                }@else {
+                  <span class="af-value">Not Uploaded</span>
+                }
+              </div>
+            </div>
+
+            @if (reg.status === 'pending') {
+              <div class="applicant-actions">
+                <button class="reject-btn" (click)="updateStatus(reg, 'rejected')">Reject</button>
+                <button class="accept-btn" (click)="updateStatus(reg, 'approved')">Accept</button>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    } @else {
+      <div class="empty-state"><p>No {{ filter() === 'all' ? '' : filter() }} applications</p></div>
+    }
+
+    <div class="bookings-card">
+      <h2>Booked Lessons & Hours</h2>
+      @if (bookings().length > 0) {
+        @for (b of bookings(); track b.id) {
+          <div class="booking-row" @fadeOut>
+            <div class="booking-info">
+              <span class="booking-name">{{ b.first_name }} {{ b.last_name }}</span>
+              <span class="booking-when">{{ b.slot_date | date:'mediumDate' }} · {{ b.slot_time }} · {{ b.slot_type }} ({{ b.duration_hours }}h)</span>
+            </div>
+            @if (b.attended) {
+              <span class="attended-pill">✓ Attended</span>
+            } @else {
+              <button class="attend-btn" (click)="markAttended(b)">Mark Attended</button>
+            }
+          </div>
+        }
+      } @else {
+        <p class="no-bookings">No booked lessons yet.</p>
+      }
+    </div>
+
+    <div class="add-slot-card">
+      <h2>Add a Slot</h2>
+      <div class="slot-form">
+        <div class="slot-field">
+          <label>Type</label>
+          <select [(ngModel)]="newSlotType" name="slotType">
+            <option value="practical">Practical Hours</option>
+            <option value="theory">Theory Class</option>
+          </select>
+        </div>
+        <div class="slot-field">
+          <label>Date</label>
+          <input type="date" [(ngModel)]="newSlotDate" name="slotDate" />
+        </div>
+        <div class="slot-field">
+          <label>Time</label>
+          <input type="time" [(ngModel)]="newSlotTime" name="slotTime" />
+        </div>
+        <div class="slot-field wide">
+          <label>Note (optional)</label>
+          <input type="text" [(ngModel)]="newSlotNote" name="slotNote" placeholder="e.g. City center practice" />
+        </div>
+        <button class="add-slot-btn" (click)="addSlot()">Add Slot</button>
+      </div>
+      @if (slotMessage()) { <p class="slot-msg">{{ slotMessage() }}</p> }
+    </div>
+
+    <!-- <div class="add-slot-card">
+      <h2>Add a Practice Slot</h2>
+      <div class="slot-form">
+        <div class="slot-field">
+          <label>Date</label>
+          <input type="date" [(ngModel)]="newSlotDate" name="slotDate" />
+        </div>
+        <div class="slot-field">
+          <label>Time</label>
+          <input type="time" [(ngModel)]="newSlotTime" name="slotTime" />
+        </div>
+        <div class="slot-field wide">
+          <label>Note (optional)</label>
+          <input type="text" [(ngModel)]="newSlotNote" name="slotNote" placeholder="e.g. City center practice" />
+        </div>
+        <button class="add-slot-btn" (click)="addSlot()">Add Slot</button>
+      </div>
+      @if (slotMessage()) { <p class="slot-msg">{{ slotMessage() }}</p> }
+    </div> -->
+  </div>
+</div>
