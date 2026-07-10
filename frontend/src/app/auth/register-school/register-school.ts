@@ -52,6 +52,9 @@ export class RegisterSchool implements OnInit{
     postalCode: new FormControl('',{
       validators: [Validators.required]
     }),
+    licenseCategory: new FormControl('', {
+      validators: [Validators.required]
+    }),
     embg: new FormControl('', {
       validators: [Validators.required, Validators.minLength(13), Validators.maxLength(13)]
     }),
@@ -125,6 +128,7 @@ export class RegisterSchool implements OnInit{
     data.append('postalCode', this.form.value.postalCode!);
     data.append('embg', this.form.value.embg!);
     data.append('dateOfBirth', this.form.value.dateOfBirth!);
+    data.append('licenseCategory', this.form.value.licenseCategory!)
     if (this.selectedFile) {
       data.append('idDocument', this.selectedFile);
     }

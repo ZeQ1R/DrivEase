@@ -14,7 +14,8 @@ export interface AdminRegistration {
   postal_code: string;
   embg: string;
   date_of_birth: string;
-  id_document_url: string | null
+  id_document_url: string | null;
+  licenseCategory: string
 }
 
 

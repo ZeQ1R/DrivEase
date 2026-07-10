@@ -51,6 +51,18 @@
             @if (isInvalid('phone')) { <p class="field-error"><span class="dot"></span>Required</p> }
           </div>
         </div>
+        <div class="field-row">
+          <label>License Category</label>
+          <select formControlName="licenseCategory" name="licenseCategory" id="">
+            <option value="A">A - Motorcycles</option>
+            <option value="B">B - Cars</option>
+            <option value="C">C - Trucks</option>
+            <option value="D">D - Buses</option>
+          </select>
+          @if(isInvalid('licenseCategory')){
+            <p class="field-error"><span class="dot">Please select a category</span></p>
+          }
+        </div>
       </div>
 
       <app-lane-divider class="form-divider"></app-lane-divider>

@@ -176,7 +176,7 @@ app.post("/register-school", authenticate,uploadId.single("idDocument"), async (
   const client = await pool.connect();
   try {
     const studentId = req.user.id;
-    const { schoolId, firstName, lastName, email, phone, address, postalCode, embg, dateOfBirth } = req.body;
+    const { schoolId, firstName, lastName, email, phone, address, postalCode, embg, dateOfBirth,licenseCategory } = req.body;
 
     if (!schoolId || !firstName || !lastName || !email || !dateOfBirth) {
       return res.status(400).json({ message: "Missing required fields" });
@@ -210,9 +210,9 @@ app.post("/register-school", authenticate,uploadId.single("idDocument"), async (
     const registrationId = regResult.rows[0].id;
     await client.query(
       `INSERT INTO registration_details
-       (registration_id, first_name, last_name, email, phone, address, postal_code, embg, date_of_birth,id_document_url)
+       (registration_id, first_name, last_name, email, phone, address, postal_code, embg, date_of_birth,id_document_url,license_category)
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9,$10)`,
-      [registrationId, firstName, lastName, email, phone, address, postalCode, embg, dateOfBirth,documentUrl]
+      [registrationId, firstName, lastName, email, phone, address, postalCode, embg, dateOfBirth,documentUrl,licenseCategory]
     );
     await client.query("COMMIT");
     res.status(201).json({ message: "Registration submitted.", registrationId });
