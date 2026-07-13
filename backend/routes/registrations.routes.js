@@ -8,9 +8,11 @@ const router = Router();
 router.get("/registrations/me", authenticate, async (req, res) => {
   try {
     const result = await pool.query(
-      `SELECT r.id, r.status, r.registered_at, s.id AS school_id, s.name AS school_name, s.city
+      `SELECT r.id, r.status, r.registered_at, s.id AS school_id, s.name AS school_name, s.city,
+              i.first_name AS instructor_first_name, i.last_name AS instructor_last_name
        FROM registrations r
        JOIN driving_schools s ON s.id = r.school_id
+       LEFT JOIN users i ON i.id = r.instructor_id
        WHERE r.student_id = $1
        ORDER BY r.registered_at DESC
        LIMIT 1`,

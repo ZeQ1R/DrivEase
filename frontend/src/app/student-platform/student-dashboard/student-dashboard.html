@@ -26,6 +26,9 @@
                 <p>Your application is being reviewed by <strong>{{ registration.school_name }}</strong>. You'll be notified once it's processed.</p>
               } @else if (registration.status === 'approved') {
                 <p class="success">✓ Your application has been approved. Welcome aboard!</p>
+                @if (registration.instructor_first_name) {
+                  <p class="instructor-note">Your instructor for practical hours is <strong>{{ registration.instructor_first_name }} {{ registration.instructor_last_name }}</strong>.</p>
+                }
               }
             </div>
           } @else {

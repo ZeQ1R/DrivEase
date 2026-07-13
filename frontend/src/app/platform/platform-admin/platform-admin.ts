@@ -4,7 +4,6 @@ import { SchoolsService } from '../../schools/schools.service';
 import { NavBar } from "../../shared/nav-bar/nav-bar";
 import { LaneDivider } from "../../shared/lane-divider/lane-divider";
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { CustomPipe } from '../../shared/customPipe.directive';
 import { ConfirmBox } from '../../shared/confirm-box/confirm-box';
 
 

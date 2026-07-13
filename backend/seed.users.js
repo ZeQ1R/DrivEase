@@ -7,6 +7,9 @@ const users = [
   { firstName: "Ana",    lastName: "Petrovska", email: "ana@test.com",    phone: "070111222", role: "student" },
   { firstName: "Bujar",  lastName: "Ismaili",   email: "bujar@test.com",  phone: "070333444", role: "student" },
   { firstName: "Elena",  lastName: "Markoska",  email: "elena@test.com",  phone: "070555666", role: "student" },
+  { firstName: "Kushtrim",    lastName: "Kushtrim", email: "kushtrim@test.com",    phone: "070111222", role: "student" },
+  { firstName: "Leotrim",  lastName: "Ismaili",   email: "leotrim@test.com",  phone: "070333444", role: "student" },
+  { firstName: "Albulena",  lastName: "Albulena",  email: "albulena@test.com",  phone: "070555666", role: "student" },
   { firstName: "Arben",  lastName: "Krasniqi",  email: "arben@test.com",  phone: "070777888", role: "instructor", schoolId: 3 },
 ];
 

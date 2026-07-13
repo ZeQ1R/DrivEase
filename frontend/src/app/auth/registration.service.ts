@@ -8,6 +8,8 @@ export interface Registration {
   school_id: number;
   school_name: string;
   city: string;
+  instructor_first_name: string | null;
+  instructor_last_name: string | null;
 }
 
 @Injectable({ 
