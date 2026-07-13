@@ -4,11 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { AdminRegistration, AdminSchoolService, Instructor } from '../admin-school.service';
 import { NavBar } from '../../shared/nav-bar/nav-bar';
 import { LaneDivider } from '../../shared/lane-divider/lane-divider';
+import { ConfirmBox } from '../../shared/confirm-box/confirm-box';
 
 @Component({
   selector: 'app-admin-school',
   standalone: true,
-  imports: [CommonModule, DatePipe, FormsModule, NavBar, LaneDivider],
+  imports: [CommonModule, DatePipe, FormsModule, NavBar, LaneDivider, ConfirmBox],
   templateUrl: './admin-school.html',
   styleUrl: './admin-school.css',
 })
@@ -28,6 +29,37 @@ export class AdminSchool implements OnInit {
   newInstrEmail = '';
   newInstrPhone = '';
   instrMessage = signal('');
+
+  // inline instructor editing
+  editingInstructorId = signal<number | null>(null);
+  editInstr = { firstName: '', lastName: '', email: '', phone: '' };
+
+  // inline registration (applicant) editing
+  editingRegId = signal<number | null>(null);
+  editReg = { firstName: '', lastName: '', email: '', phone: '', address: '', postalCode: '', embg: '', licenseCategory: '' };
+
+  // shared confirm box
+  confirmMessage = signal('');
+  confirmText = signal('Yes');
+  private pendingAction: (() => void) | null = null;
+
+  askConfirm(message: string, action: () => void, confirmText = 'Yes') {
+    this.confirmMessage.set(message);
+    this.confirmText.set(confirmText);
+    this.pendingAction = action;
+  }
+
+  onConfirmYes() {
+    const action = this.pendingAction;
+    this.confirmMessage.set('');
+    this.pendingAction = null;
+    action?.();
+  }
+
+  onConfirmNo() {
+    this.confirmMessage.set('');
+    this.pendingAction = null;
+  }
 
   filtered = computed(() => {
     const f = this.filter();
@@ -104,6 +136,86 @@ export class AdminSchool implements OnInit {
         this.loadInstructors();
       },
       error: (err) => this.instrMessage.set(err.error?.message || 'Failed to create instructor.'),
+    });
+  }
+
+  // ---- instructor edit / delete ----
+  startEditInstructor(i: Instructor) {
+    this.editingInstructorId.set(i.id);
+    this.editInstr = { firstName: i.first_name, lastName: i.last_name, email: i.email, phone: i.phone || '' };
+  }
+
+  cancelEditInstructor() {
+    this.editingInstructorId.set(null);
+  }
+
+  saveInstructor(id: number) {
+    const { firstName, lastName, email, phone } = this.editInstr;
+    if (!firstName || !lastName || !email) {
+      this.instrMessage.set('First name, last name and email are required.');
+      return;
+    }
+    this.adminService.updateInstructor(id, firstName, lastName, email, phone).subscribe({
+      next: (res) => {
+        this.instructors.set(this.instructors().map(i => i.id === id ? res.instructor : i));
+        this.editingInstructorId.set(null);
+        this.instrMessage.set('Instructor updated.');
+      },
+      error: (err) => this.instrMessage.set(err.error?.message || 'Failed to update instructor.'),
+    });
+  }
+
+  deleteInstructor(i: Instructor) {
+    this.adminService.deleteInstructor(i.id).subscribe({
+      next: () => {
+        this.instructors.set(this.instructors().filter(x => x.id !== i.id));
+        this.instrMessage.set('Instructor deleted.');
+      },
+      error: (err) => this.instrMessage.set(err.error?.message || 'Failed to delete instructor.'),
+    });
+  }
+
+  // ---- registration (applicant) edit / delete ----
+  startEditReg(reg: AdminRegistration) {
+    this.editingRegId.set(reg.id);
+    this.editReg = {
+      firstName: reg.first_name, lastName: reg.last_name, email: reg.email,
+      phone: reg.phone || '', address: reg.address || '', postalCode: reg.postal_code || '',
+      embg: reg.embg || '', licenseCategory: reg.licenseCategory || '',
+    };
+  }
+
+  cancelEditReg() {
+    this.editingRegId.set(null);
+  }
+
+  saveReg(id: number) {
+    const e = this.editReg;
+    if (!e.firstName || !e.lastName || !e.email) {
+      this.statusMessage.set('First name, last name and email are required.');
+      return;
+    }
+    this.adminService.updateRegistration(id, e).subscribe({
+      next: () => {
+        this.registrations.set(this.registrations().map(r => r.id === id ? {
+          ...r,
+          first_name: e.firstName, last_name: e.lastName, email: e.email, phone: e.phone,
+          address: e.address, postal_code: e.postalCode, embg: e.embg, licenseCategory: e.licenseCategory,
+        } : r));
+        this.editingRegId.set(null);
+        this.statusMessage.set('Application updated.');
+      },
+      error: (err) => this.statusMessage.set(err.error?.message || 'Failed to update application.'),
+    });
+  }
+
+  deleteReg(reg: AdminRegistration) {
+    this.adminService.deleteRegistration(reg.id).subscribe({
+      next: () => {
+        this.registrations.set(this.registrations().filter(r => r.id !== reg.id));
+        this.statusMessage.set('Application deleted.');
+      },
+      error: (err) => this.statusMessage.set(err.error?.message || 'Failed to delete application.'),
     });
   }
 }

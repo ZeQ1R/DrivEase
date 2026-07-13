@@ -57,4 +57,23 @@ export class AdminSchoolService {
     );
     }
 
+    updateInstructor(id: number, firstName: string, lastName: string, email: string, phone: string) {
+    return this.http.put<{ instructor: Instructor }>(
+        `${this.apiUrl}/admin/instructors/${id}`,
+        { firstName, lastName, email, phone }
+    );
+    }
+
+    deleteInstructor(id: number) {
+    return this.http.delete<{ message: string }>(`${this.apiUrl}/admin/instructors/${id}`);
+    }
+
+    updateRegistration(id: number, data: Partial<AdminRegistration> & { postalCode?: string; licenseCategory?: string }) {
+    return this.http.put<{ details: any }>(`${this.apiUrl}/admin/registrations/${id}`, data);
+    }
+
+    deleteRegistration(id: number) {
+    return this.http.delete<{ message: string }>(`${this.apiUrl}/admin/registrations/${id}`);
+    }
+
 }

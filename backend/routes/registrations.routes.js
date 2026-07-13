@@ -156,4 +156,57 @@ router.patch("/admin/registrations/:id/status", authenticate, async (req, res) =
   }
 });
 
+// SCHOOL ADMIN: edit an applicant's registration details
+router.put("/admin/registrations/:id", authenticate, async (req, res) => {
+  try {
+    const { firstName, lastName, email, phone, address, postalCode, embg, licenseCategory } = req.body;
+    if (!firstName || !lastName || !email) {
+      return res.status(400).json({ message: "First name, last name and email are required." });
+    }
+
+    // registration must belong to the admin's school
+    const check = await pool.query(
+      `SELECT r.id FROM registrations r
+       JOIN driving_schools s ON s.id = r.school_id
+       WHERE r.id = $1 AND s.owner_user_id = $2`,
+      [req.params.id, req.user.id]
+    );
+    if (check.rows.length === 0) {
+      return res.status(403).json({ message: "Not your school's registration." });
+    }
+
+    const result = await pool.query(
+      `UPDATE registration_details SET
+         first_name = $1, last_name = $2, email = $3, phone = $4,
+         address = $5, postal_code = $6, embg = $7, license_category = $8
+       WHERE registration_id = $9
+       RETURNING first_name, last_name, email, phone, address, postal_code, embg, license_category`,
+      [firstName, lastName, email, phone || null, address || null, postalCode || null, embg || null, licenseCategory || null, req.params.id]
+    );
+    res.status(200).json({ details: result.rows[0] });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to update registration.", error: error.message });
+  }
+});
+
+// SCHOOL ADMIN: delete a registration (removes the enrollment; details cascade)
+router.delete("/admin/registrations/:id", authenticate, async (req, res) => {
+  try {
+    const check = await pool.query(
+      `SELECT r.id FROM registrations r
+       JOIN driving_schools s ON s.id = r.school_id
+       WHERE r.id = $1 AND s.owner_user_id = $2`,
+      [req.params.id, req.user.id]
+    );
+    if (check.rows.length === 0) {
+      return res.status(403).json({ message: "Not your school's registration." });
+    }
+
+    await pool.query(`DELETE FROM registrations WHERE id = $1`, [req.params.id]);
+    res.status(200).json({ message: "Registration deleted." });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to delete registration.", error: error.message });
+  }
+});
+
 export default router;

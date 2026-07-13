@@ -52,6 +52,85 @@ router.get("/admin/instructors", authenticate, async (req, res) => {
   } catch (e) { res.status(500).json({ message: "Failed.", error: e.message }); }
 });
 
+// SCHOOL ADMIN: edit one of their instructors
+router.put("/admin/instructors/:id", authenticate, async (req, res) => {
+  try {
+    const { firstName, lastName, email, phone } = req.body;
+    if (!firstName || !lastName || !email) {
+      return res.status(400).json({ message: "First name, last name and email are required." });
+    }
+
+    // instructor must belong to the admin's school
+    const owns = await pool.query(
+      `SELECT u.id FROM users u
+       JOIN driving_schools s ON s.id = u.school_id
+       WHERE u.id = $1 AND u.role = 'instructor' AND s.owner_user_id = $2`,
+      [req.params.id, req.user.id]
+    );
+    if (owns.rows.length === 0) return res.status(403).json({ message: "Not your school's instructor." });
+
+    // email must be free (unless it's still theirs)
+    const emailTaken = await pool.query(
+      `SELECT id FROM users WHERE email = $1 AND id <> $2`, [email, req.params.id]
+    );
+    if (emailTaken.rows.length > 0) return res.status(409).json({ message: "Email already in use." });
+
+    const result = await pool.query(
+      `UPDATE users SET first_name = $1, last_name = $2, email = $3, phone = $4
+       WHERE id = $5 RETURNING id, first_name, last_name, email, phone`,
+      [firstName, lastName, email, phone || null, req.params.id]
+    );
+    res.status(200).json({ instructor: result.rows[0] });
+  } catch (e) { res.status(500).json({ message: "Failed to update instructor.", error: e.message }); }
+});
+
+// SCHOOL ADMIN: delete one of their instructors
+router.delete("/admin/instructors/:id", authenticate, async (req, res) => {
+  const client = await pool.connect();
+  try {
+    // instructor must belong to the admin's school
+    const owns = await client.query(
+      `SELECT u.id FROM users u
+       JOIN driving_schools s ON s.id = u.school_id
+       WHERE u.id = $1 AND u.role = 'instructor' AND s.owner_user_id = $2`,
+      [req.params.id, req.user.id]
+    );
+    if (owns.rows.length === 0) return res.status(403).json({ message: "Not your school's instructor." });
+
+    // can't delete while students are assigned to them
+    const assigned = await client.query(
+      `SELECT id FROM registrations WHERE instructor_id = $1 AND status = 'approved' LIMIT 1`,
+      [req.params.id]
+    );
+    if (assigned.rows.length > 0) {
+      return res.status(409).json({ message: "This instructor still has assigned students. Reassign them first." });
+    }
+
+    // can't delete while any of their slots have a booking (would lose lesson history)
+    const booked = await client.query(
+      `SELECT b.id FROM lesson_bookings b
+       JOIN lesson_slots s ON s.id = b.slot_id
+       WHERE s.instructor_id = $1 LIMIT 1`,
+      [req.params.id]
+    );
+    if (booked.rows.length > 0) {
+      return res.status(409).json({ message: "This instructor has booked lessons and can't be deleted." });
+    }
+
+    await client.query("BEGIN");
+    // free up their (unbooked) slots and detach from any past registrations
+    await client.query(`DELETE FROM lesson_slots WHERE instructor_id = $1`, [req.params.id]);
+    await client.query(`UPDATE registrations SET instructor_id = NULL WHERE instructor_id = $1`, [req.params.id]);
+    await client.query(`DELETE FROM users WHERE id = $1`, [req.params.id]);
+    await client.query("COMMIT");
+
+    res.status(200).json({ message: "Instructor deleted." });
+  } catch (e) {
+    await client.query("ROLLBACK");
+    res.status(500).json({ message: "Failed to delete instructor.", error: e.message });
+  } finally { client.release(); }
+});
+
 router.post("/instructor/slots", authenticate, requireInstructor, async (req, res) => {
   try {
     const { slotDate, slotTime, note, slotType } = req.body;

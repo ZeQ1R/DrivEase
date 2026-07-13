@@ -41,6 +41,22 @@
               <span class="status-pill" [class]="reg.status">{{ reg.status }}</span>
             </div>
 
+            @if (editingRegId() === reg.id) {
+              <div class="applicant-edit">
+                <div class="slot-field"><label>First Name</label><input [(ngModel)]="editReg.firstName" [name]="'er-first-' + reg.id" /></div>
+                <div class="slot-field"><label>Last Name</label><input [(ngModel)]="editReg.lastName" [name]="'er-last-' + reg.id" /></div>
+                <div class="slot-field"><label>Email</label><input type="email" [(ngModel)]="editReg.email" [name]="'er-email-' + reg.id" /></div>
+                <div class="slot-field"><label>Phone</label><input [(ngModel)]="editReg.phone" [name]="'er-phone-' + reg.id" /></div>
+                <div class="slot-field"><label>Address</label><input [(ngModel)]="editReg.address" [name]="'er-addr-' + reg.id" /></div>
+                <div class="slot-field"><label>Postal Code</label><input [(ngModel)]="editReg.postalCode" [name]="'er-postal-' + reg.id" /></div>
+                <div class="slot-field"><label>EMBG</label><input [(ngModel)]="editReg.embg" [name]="'er-embg-' + reg.id" maxlength="13"/></div>
+                <div class="slot-field"><label>Category</label><input [(ngModel)]="editReg.licenseCategory" [name]="'er-cat-' + reg.id" /></div>
+                <div class="applicant-actions">
+                  <button class="btn btn-ghost" (click)="cancelEditReg()">Cancel</button>
+                  <button class="btn btn-primary" (click)="askConfirm('Save changes to ' + editReg.firstName + ' ' + editReg.lastName + '?', () => saveReg(reg.id), 'Save')">Save</button>
+                </div>
+              </div>
+            } @else {
             <div class="applicant-grid">
               <div class="af"><span class="af-label">Email</span><span class="af-value">{{ reg.email }}</span></div>
               <div class="af"><span class="af-label">Phone</span><span class="af-value">{{ reg.phone || '—' }}</span></div>
@@ -57,6 +73,16 @@
                 }
               </div>
             </div>
+
+            <div class="applicant-manage">
+              <button class="btn btn-edit" (click)="startEditReg(reg)">
+                <span class="btn-ico">✎</span> Edit
+              </button>
+              <button class="btn btn-danger" (click)="askConfirm('Delete the application from ' + reg.first_name + ' ' + reg.last_name + '? This cannot be undone.', () => deleteReg(reg), 'Delete')">
+                <span class="btn-ico">🗑</span> Delete
+              </button>
+            </div>
+            }
 
             @if (reg.status === 'pending') {
               <div class="approve-block">
@@ -89,10 +115,31 @@
       @if (instructors().length > 0) {
         <div class="instr-list">
           @for (i of instructors(); track i.id) {
-            <div class="instr-row">
-              <span class="instr-name">{{ i.first_name }} {{ i.last_name }}</span>
-              <span class="instr-email mono">{{ i.email }}</span>
-            </div>
+            @if (editingInstructorId() === i.id) {
+              <div class="instr-row editing">
+                <input [(ngModel)]="editInstr.firstName" [name]="'ei-first-' + i.id" placeholder="First name" />
+                <input [(ngModel)]="editInstr.lastName" [name]="'ei-last-' + i.id" placeholder="Last name" />
+                <input type="email" [(ngModel)]="editInstr.email" [name]="'ei-email-' + i.id" placeholder="Email" />
+                <input [(ngModel)]="editInstr.phone" [name]="'ei-phone-' + i.id" placeholder="Phone" />
+                <div class="instr-row-actions">
+                  <button class="btn btn-ghost" (click)="cancelEditInstructor()">Cancel</button>
+                  <button class="btn btn-primary" (click)="askConfirm('Save changes to ' + editInstr.firstName + ' ' + editInstr.lastName + '?', () => saveInstructor(i.id), 'Save')">Save</button>
+                </div>
+              </div>
+            } @else {
+              <div class="instr-row">
+                <span class="instr-name">{{ i.first_name }} {{ i.last_name }}</span>
+                <span class="instr-email mono">{{ i.email }}</span>
+                <div class="instr-row-actions">
+                  <button class="btn btn-edit" (click)="startEditInstructor(i)">
+                    <span class="btn-ico">✎</span> Edit
+                  </button>
+                  <button class="btn btn-danger" (click)="askConfirm('Delete instructor ' + i.first_name + ' ' + i.last_name + '? This cannot be undone.', () => deleteInstructor(i), 'Delete')">
+                    <span class="btn-ico">🗑</span> Delete
+                  </button>
+                </div>
+              </div>
+            }
           }
         </div>
       } @else {
@@ -112,3 +159,13 @@
 
   </div>
 </div>
+
+@if (confirmMessage()) {
+  <app-confirm-box
+    [message]="confirmMessage()"
+    [confirmText]="confirmText()"
+    cancelText="Cancel"
+    (yes)="onConfirmYes()"
+    (no)="onConfirmNo()">
+  </app-confirm-box>
+}
