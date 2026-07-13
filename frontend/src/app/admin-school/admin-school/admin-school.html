@@ -110,58 +110,5 @@
       @if (instrMessage()) { <p class="instr-msg">{{ instrMessage() }}</p> }
     </div>
 
-    <!-- BOOKINGS -->
-    <div class="bookings-card">
-      <h2>Booked Lessons & Hours</h2>
-      @if (bookings().length > 0) {
-        @for (b of bookings(); track b.id) {
-          <div class="booking-row" @fadeOut>
-            <div class="booking-info">
-              <span class="booking-name">{{ b.first_name }} {{ b.last_name }}</span>
-              <span class="booking-when">
-                {{ b.slot_date | date:'mediumDate' }} · {{ b.slot_time }}
-                <span class="type-badge" [class.practical]="b.slot_type === 'practical'">{{ b.slot_type }}</span>
-                ({{ b.duration_hours }}h)
-              </span>
-            </div>
-            @if (b.attended) {
-              <span class="attended-pill">✓ Attended</span>
-            } @else {
-              <button class="attend-btn" (click)="markAttended(b)">Mark Attended</button>
-            }
-          </div>
-        }
-      } @else {
-        <p class="no-bookings">No booked lessons yet.</p>
-      }
-    </div>
-
-    <!-- ADD SLOT -->
-    <div class="add-slot-card">
-      <h2>Add a Slot</h2>
-      <div class="slot-form">
-        <div class="slot-field">
-          <label>Type</label>
-          <select [(ngModel)]="newSlotType" name="slotType">
-            <option value="practical">Practical Hours</option>
-            <option value="theory">Theory Class</option>
-          </select>
-        </div>
-        <div class="slot-field">
-          <label>Date</label>
-          <input type="date" [(ngModel)]="newSlotDate" name="slotDate" />
-        </div>
-        <div class="slot-field">
-          <label>Time</label>
-          <input type="time" [(ngModel)]="newSlotTime" name="slotTime" />
-        </div>
-        <div class="slot-field wide">
-          <label>Note (optional)</label>
-          <input type="text" [(ngModel)]="newSlotNote" name="slotNote" placeholder="e.g. City center practice" />
-        </div>
-        <button class="add-slot-btn" (click)="addSlot()">Add Slot</button>
-      </div>
-      @if (slotMessage()) { <p class="slot-msg">{{ slotMessage() }}</p> }
-    </div>
   </div>
 </div>

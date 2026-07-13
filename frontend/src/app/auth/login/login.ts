@@ -74,27 +74,25 @@ export class Login implements OnInit {
     }
 
     this.loginError = '';
+    this.loading.set(true)
 
     this.authService.login(this.form.value.email!, this.form.value.password!)
       .subscribe({
         next: (res) => {
-          
           this.authService.storeSession(res)
-          this.loading.set(true)
           const role = res.user.role
-          setTimeout(() => {
-            if(role === 'school_admin'){
-              this.router.navigate(['/school-admin-dashboard'],{queryParams: {checkEmail:true}});
-            }else if(role === 'platform_admin'){
-              this.router.navigate(['/platform-admin'],{queryParams: {checkEmail:true}});
-            }else if(role === 'instructor'){
-              this.router.navigate(['/instructor'], {queryParams: {checkEmail: true}})
-            }else{
-              this.router.navigate(['/student-platform-dashboard'], {queryParams: {checkEmail:true}});
-            }
-          },5000)
+          if(role === 'school_admin'){
+            this.router.navigate(['/school-admin-dashboard'],{queryParams: {checkEmail:true}});
+          }else if(role === 'platform_admin'){
+            this.router.navigate(['/platform-admin'],{queryParams: {checkEmail:true}});
+          }else if(role === 'instructor'){
+            this.router.navigate(['/instructor'], {queryParams: {checkEmail: true}})
+          }else{
+            this.router.navigate(['/student-platform-dashboard'], {queryParams: {checkEmail:true}});
+          }
         },
         error: (err) => {
+          this.loading.set(false)
           this.loginError =
             err.error?.message || 'Login failed. Please try again.';
         },

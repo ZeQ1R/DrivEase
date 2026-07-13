@@ -5,7 +5,6 @@ import { authenticate, requireInstructor } from "../middleware/auth.js";
 
 const router = Router();
 
-/* SCHOOL ADMIN */
 router.post("/admin/instructors", authenticate, async (req, res) => {
   const client = await pool.connect();
   try {
@@ -53,7 +52,6 @@ router.get("/admin/instructors", authenticate, async (req, res) => {
   } catch (e) { res.status(500).json({ message: "Failed.", error: e.message }); }
 });
 
-/* INSTRUCTOR */
 router.post("/instructor/slots", authenticate, requireInstructor, async (req, res) => {
   try {
     const { slotDate, slotTime, note, slotType } = req.body;

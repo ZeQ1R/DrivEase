@@ -4,7 +4,6 @@ import { authenticate } from "../middleware/auth.js";
 
 const router = Router();
 
-// STUDENT: my upcoming lessons
 router.get("/bookings/me", authenticate, async (req, res) => {
   try {
     const result = await pool.query(
@@ -28,7 +27,6 @@ router.get("/hours/me", authenticate, async (req, res) => {
       WHERE b.student_id = $1 AND b.attended = true AND s.slot_type = 'practical'`,
       [req.user.id]
     );
-    // required hours from their approved registration
     const required = await pool.query(
       `SELECT required_hours FROM registrations
        WHERE student_id = $1 AND status = 'approved' LIMIT 1`,
@@ -36,14 +34,13 @@ router.get("/hours/me", authenticate, async (req, res) => {
     );
     res.status(200).json({
       completed: Number(completed.rows[0].hours),
-      required: required.rows[0] ? Number(required.rows[0].required_hours) : 30,
+      required: required.rows[0] ? Number(required.rows[0].required_hours) : 40,
     });
   } catch (e) {
     res.status(500).json({ message: "Failed to load hours.", error: e.message });
   }
 });
 
-// admin sees their school's bookings
 router.get("/admin/bookings", authenticate, async (req, res) => {
   try {
     const school = await pool.query(`SELECT id FROM driving_schools WHERE owner_user_id = $1`, [req.user.id]);
@@ -62,7 +59,6 @@ router.get("/admin/bookings", authenticate, async (req, res) => {
   } catch (e) { res.status(500).json({ message: "Failed.", error: e.message }); }
 });
 
-// admin marks a booking attended
 router.patch("/admin/bookings/:id/attended", authenticate, async (req, res) => {
   try {
     const check = await pool.query(

@@ -1,6 +1,14 @@
 import { HttpClient } from "@angular/common/http";
 import { inject, Injectable } from "@angular/core";
 
+export interface Instructor {
+  id: number;
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone: string;
+}
+
 
 @Injectable({
     providedIn: 'root'
@@ -19,7 +27,7 @@ export class InstructorService{
     }
 
     markAttended(id: number){
-        return this.http.patch(`${this.api}/instructor/bookings/${id}/attented`, {})
+        return this.http.patch(`${this.api}/instructor/bookings/${id}/attended`, {})
     }
 
     createSlot(slotDate:string, slotTime: string, note:string, slotType:string){

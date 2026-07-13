@@ -5,7 +5,6 @@ import { uploadId } from "../middleware/upload.js";
 
 const router = Router();
 
-/* STUDENT */
 router.get("/registrations/me", authenticate, async (req, res) => {
   try {
     const result = await pool.query(
@@ -54,15 +53,15 @@ router.post("/register-school", authenticate, uploadId.single("idDocument"), asy
 
     await client.query("BEGIN");
     const regResult = await client.query(
-      `INSERT INTO registrations (student_id, school_id, status)
-       VALUES ($1, $2, 'pending') RETURNING id`,
+      `INSERT INTO registrations (student_id, school_id, status, required_hours)
+       VALUES ($1, $2, 'pending', 40) RETURNING id`,
       [studentId, schoolId]
     );
     const registrationId = regResult.rows[0].id;
     await client.query(
       `INSERT INTO registration_details
        (registration_id, first_name, last_name, email, phone, address, postal_code, embg, date_of_birth,id_document_url,license_category)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9,$10)`,
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9,$10,$11)`,
       [registrationId, firstName, lastName, email, phone, address, postalCode, embg, dateOfBirth, documentUrl, licenseCategory]
     );
     await client.query("COMMIT");
@@ -75,7 +74,6 @@ router.post("/register-school", authenticate, uploadId.single("idDocument"), asy
   }
 });
 
-/* SCHOOL ADMIN */
 router.get("/admin/registrations", authenticate, async (req, res) => {
   try {
     const schoolResult = await pool.query(
@@ -91,7 +89,7 @@ router.get("/admin/registrations", authenticate, async (req, res) => {
       `SELECT r.id, r.status, r.registered_at,
               d.first_name, d.last_name, d.email, d.phone,
               d.address, d.postal_code, d.embg, d.date_of_birth,
-              d.id_document_url
+              d.id_document_url, d.license_category AS "licenseCategory"
        FROM registrations r
        JOIN registration_details d ON d.registration_id = r.id
        WHERE r.school_id = $1
@@ -115,7 +113,6 @@ router.patch("/admin/registrations/:id/status", authenticate, async (req, res) =
       return res.status(400).json({ message: "Invalid status." });
     }
 
-    // approving requires an instructor
     if (status === "approved" && !instructorId) {
       return res.status(400).json({ message: "Please assign an instructor." });
     }
@@ -131,7 +128,6 @@ router.patch("/admin/registrations/:id/status", authenticate, async (req, res) =
       return res.status(403).json({ message: "Not your school's registration." });
     }
 
-    // if approving, verify the instructor actually belongs to this admin's school
     if (status === "approved") {
       const instr = await pool.query(
         `SELECT u.id FROM users u

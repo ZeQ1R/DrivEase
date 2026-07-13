@@ -71,6 +71,19 @@ textarea {
 button {
   cursor: pointer;
   border: none;
+  white-space: nowrap;
+}
+
+/* global click-press feedback for every button-like element in the app */
+button,
+[class*="-btn"] {
+  transition: transform 0.08s ease, opacity 0.08s ease;
+}
+
+button:not(:disabled):active,
+[class*="-btn"]:not(:disabled):active {
+  transform: scale(0.96);
+  opacity: 0.85;
 }
 
 .section-container {

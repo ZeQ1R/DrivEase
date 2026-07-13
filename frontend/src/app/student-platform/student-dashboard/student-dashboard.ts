@@ -44,11 +44,7 @@ export class StudentDashboard implements OnInit {
           if (res.registration?.status === 'approved') {
           this.loadSchedule();
         }
-      
-       
-
-        
-        
+  
       },
       error: (err) => console.error('Failed to load registration', err),
     });

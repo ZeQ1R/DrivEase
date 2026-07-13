@@ -101,14 +101,22 @@
     </div>
 
     <div class="dashboard-sidebar">
-      @if (registration(); as registration) {
-        <div class="school-card-mini">
-          <p class="info-label">Your School</p>
-          <h3>{{ registration.school_name }}</h3>
-          <div class="school-city">📍 {{ registration.city }}</div>
-          <app-lane-divider class="mini-divider"></app-lane-divider>
-          <p class="active-reg-note">You have 1 active registration.</p>
-        </div>
+      @if (registration(); as registration; ) {
+        @if (registration.status !== 'rejected') {
+          <div class="school-card-mini">
+            <p class="info-label">Your School</p>
+            <h3>{{ registration.school_name }}</h3>
+            <div class="school-city">📍 {{ registration.city }}</div>
+            <app-lane-divider class="mini-divider"></app-lane-divider>
+            <p class="active-reg-note">You have 1 active registration.</p>
+          </div>
+        } @else {
+          <div class="cta-card">
+            <h3>Try Another School?</h3>
+            <p>Your last application wasn't approved. You're free to register at another driving school.</p>
+            <a routerLink="/browse" class="cta-btn">Browse Schools →</a>
+          </div>
+        }
       } @else {
         <div class="cta-card">
           <h3>Ready to Start?</h3>

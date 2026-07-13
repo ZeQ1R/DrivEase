@@ -64,11 +64,14 @@ export class RegisterSchool implements OnInit{
     const id = Number(this.route.snapshot.paramMap.get('id'))
     this.submitting.set(true)
     this.schoolsService.getSchoolById(id).subscribe({
-      next: (school) => {this.school.set(school)
-      setTimeout(() => {
+      next: (school) => {
+        this.school.set(school)
         this.submitting.set(false)
-      }, 3000)},
-      error: (err) => console.error('Failed to load school', err)
+      },
+      error: (err) => {
+        console.error('Failed to load school', err)
+        this.submitting.set(false)
+      }
     })
   }
 

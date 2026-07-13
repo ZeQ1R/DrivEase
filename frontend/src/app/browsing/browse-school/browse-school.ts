@@ -38,10 +38,12 @@ export class BrowseSchool implements OnInit {
     this.schoolsService.getSchoolById(id).subscribe({
       next: (school) => {
         this.school.set(school)
-      setTimeout(() => {
         this.submitting.set(false)
-      }, 3000)},
-      error: (err) => console.error('Failed to load school', err),
+      },
+      error: (err) => {
+        console.error('Failed to load school', err)
+        this.submitting.set(false)
+      },
     });
 
     if (this.user) {
@@ -52,7 +54,12 @@ export class BrowseSchool implements OnInit {
     }
   }
 
-  get isTheirSchool() { return this.registration()?.school_id === this.school()?.id; }
-  get hasOtherReg() { return !!this.registration() && this.registration()!.school_id !== this.school()?.id; }
+  // a rejected registration doesn't block re-registering — only pending/approved do
+  private get hasActiveReg() {
+    const status = this.registration()?.status;
+    return status === 'pending' || status === 'approved';
+  }
+  get isTheirSchool() { return this.hasActiveReg && this.registration()?.school_id === this.school()?.id; }
+  get hasOtherReg() { return this.hasActiveReg && this.registration()!.school_id !== this.school()?.id; }
   get imageUrl() { return this.school() ? `http://localhost:3000/${this.school()!.image.src}` : ''; }
 }

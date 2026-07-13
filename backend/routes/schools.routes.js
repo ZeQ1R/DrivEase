@@ -26,7 +26,6 @@ function mapSchool(row) {
   };
 }
 
-/* PUBLIC */
 router.get("/schools", async (req, res) => {
   try {
     const result = await pool.query("SELECT * FROM driving_schools ORDER BY id ASC");
@@ -48,7 +47,6 @@ router.get("/schools/:id", async (req, res) => {
   }
 });
 
-/* PLATFORM ADMIN */
 router.post("/admin/schools", authenticate, requirePlatformAdmin, uploadSchool.single("image"), async (req, res) => {
   const client = await pool.connect();
   try {
@@ -66,7 +64,6 @@ router.post("/admin/schools", authenticate, requirePlatformAdmin, uploadSchool.s
 
     await client.query("BEGIN");
 
-    // 1. create the school_admin user account for this school
     const defaultPassword = "admin123";  // admin can change later
     const passwordHash = await bcrypt.hash(defaultPassword, 10);
     const userResult = await client.query(
@@ -77,7 +74,6 @@ router.post("/admin/schools", authenticate, requirePlatformAdmin, uploadSchool.s
     );
     const adminUserId = userResult.rows[0].id;
 
-    // 2. create the school, linked to that admin
     const schoolResult = await client.query(
       `INSERT INTO driving_schools
        (name, description, city, address, phone, email, price, rating, image_url, transmission, instructors_count, pass_rate, owner_user_id)
@@ -88,7 +84,7 @@ router.post("/admin/schools", authenticate, requirePlatformAdmin, uploadSchool.s
     await client.query("COMMIT");
     res.status(201).json({
       school: schoolResult.rows[0],
-      adminLogin: { email, password: defaultPassword },  // so the platform admin knows the credentials
+      adminLogin: { email, password: defaultPassword },  
     });
   } catch (e) {
     await client.query("ROLLBACK");
@@ -101,7 +97,6 @@ router.post("/admin/schools", authenticate, requirePlatformAdmin, uploadSchool.s
 router.put("/admin/schools/:id", authenticate, requirePlatformAdmin, uploadSchool.single("image"), async (req, res) => {
   try {
     const { name, description, city, address, phone, email, price, rating, transmission, instructors_count, pass_rate } = req.body;
-    // if a new image was uploaded, use it; otherwise keep the old one
     let image_url = req.file ? req.file.filename : null;
     const result = await pool.query(
       `UPDATE driving_schools SET

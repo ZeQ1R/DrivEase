@@ -7,12 +7,20 @@ import { AuthService, AuthUser } from '../auth/auth.service';
 import { retry } from 'rxjs';
 import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { trigger, transition, style, animate } from '@angular/animations';
 
 @Component({
   selector: 'app-instructor-platform',
   imports: [NavBar,LaneDivider,DatePipe,FormsModule],
   templateUrl: './instructor-platform.html',
   styleUrl: './instructor-platform.css',
+  animations: [
+    trigger('fadeOut', [
+      transition(':leave', [
+        animate('600ms ease', style({ opacity: 0, transform: 'translateX(20px)' }))
+      ])
+    ])
+  ]
 })
 export class InstructorPlatform implements OnInit{
 
@@ -35,7 +43,7 @@ export class InstructorPlatform implements OnInit{
 
 
   ngOnInit() {
-    this.authService.getCurrentUser()
+    this.user = this.authService.getCurrentUser()
     this.loadBookings()
     this.loadStudents()
   }
@@ -62,7 +70,7 @@ export class InstructorPlatform implements OnInit{
     this.instructorService.markAttended(b.id).subscribe({
       next: () => {
         this.bookings.set(
-          this.bookings().map(x => x.id === b.id ? {...x,attented: true}: x)
+          this.bookings().map(x => x.id === b.id ? {...x,attended: true}: x)
         )
         this.loadStudents()
 
@@ -70,7 +78,7 @@ export class InstructorPlatform implements OnInit{
           this.bookings.set(this.bookings().filter(x => x.id !== b.id))
         },2000)
       },
-      error: (err) => console.error('Failed to mark attented', err)
+      error: (err) => console.error('Failed to mark attended', err)
     })
   }
 

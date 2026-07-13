@@ -129,6 +129,7 @@ export class Signup implements OnInit {
     }
 
     this.signupError = '';
+    this.submitting.set(true)
 
     this.authService.signup({
         firstName: this.form.value.firstName!,
@@ -140,12 +141,10 @@ export class Signup implements OnInit {
       .subscribe({
         next: (res) => {
           this.authService.storeSession(res)
-          this.submitting.set(true)
-          setTimeout(() => {
-            this.router.navigate(['/login'], {queryParams: {checkEmail: true}});
-          },5000)
+          this.router.navigate(['/login'], {queryParams: {checkEmail: true}});
         },
         error: (err) => {
+          this.submitting.set(false)
           this.signupError =
             err.error?.message || 'Signup failed. Please try again.';
         },

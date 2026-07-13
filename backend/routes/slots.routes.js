@@ -4,7 +4,7 @@ import { authenticate } from "../middleware/auth.js";
 
 const router = Router();
 
-// ADMIN: create a slot for their school
+
 router.post("/admin/slots", authenticate, async (req, res) => {
   try {
     const { slotDate, slotTime, note, slotType, durationHours } = req.body;
@@ -22,39 +22,52 @@ router.post("/admin/slots", authenticate, async (req, res) => {
   } catch (e) { res.status(500).json({ message: "Failed to create slot.", error: e.message }); }
 });
 
-// STUDENT: available slots at the school they're approved to
+
 router.get("/slots/available", authenticate, async (req, res) => {
   try {
-    // find the school this student is APPROVED at
     const reg = await pool.query(
-      `SELECT school_id FROM registrations WHERE student_id = $1 AND status = 'approved' LIMIT 1`,
+      `SELECT school_id, instructor_id FROM registrations WHERE student_id = $1 AND status = 'approved' LIMIT 1`,
       [req.user.id]
     );
-    if (reg.rows.length === 0) return res.status(200).json({ slots: [] }); // not approved yet
+    if (reg.rows.length === 0) return res.status(200).json({ slots: [] }); 
 
+    const { school_id, instructor_id } = reg.rows[0];
     const result = await pool.query(
-      `SELECT id, slot_date, slot_time,slot_type note FROM lesson_slots
+      `SELECT id, slot_date, slot_time, slot_type, note FROM lesson_slots
        WHERE school_id = $1 AND is_booked = false
+         AND (instructor_id IS NULL OR instructor_id = $2)
        ORDER BY slot_date, slot_time`,
-      [reg.rows[0].school_id]
+      [school_id, instructor_id]
     );
     res.status(200).json({ slots: result.rows });
   } catch (e) { res.status(500).json({ message: "Failed to load slots.", error: e.message }); }
 });
 
-// STUDENT: book a slot (transaction — mark booked + create booking together)
 router.post("/slots/:id/book", authenticate, async (req, res) => {
   const client = await pool.connect();
   try {
     await client.query("BEGIN");
-    // lock the slot row so two students can't grab it at once
     const slot = await client.query(
-      `SELECT id, is_booked FROM lesson_slots WHERE id = $1 FOR UPDATE`, [req.params.id]
+      `SELECT id, is_booked, school_id, instructor_id FROM lesson_slots WHERE id = $1 FOR UPDATE`, [req.params.id]
     );
     if (slot.rows.length === 0 || slot.rows[0].is_booked) {
       await client.query("ROLLBACK");
       return res.status(409).json({ message: "That slot is no longer available." });
     }
+    const reg = await client.query(
+      `SELECT school_id, instructor_id FROM registrations WHERE student_id = $1 AND status = 'approved' LIMIT 1`,
+      [req.user.id]
+    );
+    const registration = reg.rows[0];
+    const { school_id, instructor_id } = slot.rows[0];
+    const ownsSlot = registration
+      && registration.school_id === school_id
+      && (instructor_id === null || instructor_id === registration.instructor_id);
+    if (!ownsSlot) {
+      await client.query("ROLLBACK");
+      return res.status(403).json({ message: "This slot isn't available to you." });
+    }
+
     await client.query(`UPDATE lesson_slots SET is_booked = true WHERE id = $1`, [req.params.id]);
     await client.query(
       `INSERT INTO lesson_bookings (slot_id, student_id) VALUES ($1, $2)`,
