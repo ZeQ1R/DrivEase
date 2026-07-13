@@ -1,0 +1,47 @@
+.in-page { min-height: 100vh; background: #F3F5F6; }
+.in-header { background: #1C1F26; width: 100%; }
+.in-header-inner { max-width: 1152px; margin: 0 auto; padding: 40px 24px 32px; }
+.eyebrow { font-family: 'IBM Plex Mono', monospace; color: #FFC93C; font-size: 12px; text-transform: uppercase; letter-spacing: 0.2em; margin: 0 0 8px; }
+.in-header h1 { font-family: 'Big Shoulders Display', sans-serif; font-weight: 900; font-size: 36px; text-transform: uppercase; color: white; margin: 0; }
+.in-sub { font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: #9CA3AF; margin: 8px 0 0; }
+
+.in-content { max-width: 1152px; margin: 0 auto; padding: 32px 24px; display: grid; grid-template-columns: 2fr 1fr; gap: 24px; align-items: start; }
+.in-main { display: flex; flex-direction: column; gap: 24px; }
+
+.in-card { background: white; border: 1px solid #E2E6E9; padding: 24px; }
+.in-card h2 { font-family: 'Big Shoulders Display', sans-serif; font-weight: 700; font-size: 20px; text-transform: uppercase; color: #1C1F26; margin: 0 0 16px; }
+
+.lesson-row { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 1px solid #E2E6E9; }
+.lesson-row:last-child { border-bottom: none; }
+.lesson-info { display: flex; flex-direction: column; gap: 3px; }
+.lesson-student { font-weight: 600; color: #1C1F26; }
+.lesson-when { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #717182; display: flex; align-items: center; gap: 8px; }
+.type-badge { font-size: 10px; text-transform: uppercase; padding: 2px 8px; background: #E2E6E9; color: #717182; letter-spacing: 0.05em; }
+.type-badge.practical { background: rgba(30,75,140,0.1); color: #1E4B8C; }
+.attend-btn { background: #2F9E6E; color: white; border: none; padding: 8px 16px; font-size: 13px; cursor: pointer; }
+.attend-btn:hover { background: #268159; }
+
+.slot-form { display: grid; grid-template-columns: auto auto auto 1fr auto; gap: 12px; align-items: end; }
+.slot-field { display: flex; flex-direction: column; gap: 6px; }
+.slot-field label { font-family: 'IBM Plex Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: #717182; }
+.slot-field input, .slot-field select { padding: 9px 12px; border: 1px solid #E2E6E9; font-size: 14px; font-family: 'IBM Plex Sans', sans-serif; }
+.slot-field input:focus, .slot-field select:focus { outline: none; border-color: #1E4B8C; }
+.add-slot-btn { background: #1E4B8C; color: white; border: none; padding: 10px 20px; font-size: 14px; cursor: pointer; height: fit-content; }
+.add-slot-btn:hover { background: #163a6e; }
+.slot-msg { margin: 12px 0 0; font-size: 13px; color: #2F9E6E; }
+
+.student-row { padding: 12px 0; border-bottom: 1px solid #E2E6E9; }
+.student-row:last-child { border-bottom: none; }
+.student-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+.student-name { font-weight: 600; color: #1C1F26; font-size: 14px; }
+.student-hours { font-size: 12px; color: #717182; }
+.mono { font-family: 'IBM Plex Mono', monospace; }
+.hours-bar { height: 6px; background: #E2E6E9; overflow: hidden; }
+.hours-fill { height: 100%; background: #2F9E6E; transition: width 0.4s ease; }
+
+.empty-text { color: #9CA3AF; font-size: 14px; margin: 0; }
+
+@media (max-width: 900px) {
+  .in-content { grid-template-columns: 1fr; }
+  .slot-form { grid-template-columns: 1fr; }
+}

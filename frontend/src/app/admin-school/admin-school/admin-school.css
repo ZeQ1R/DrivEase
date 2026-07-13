@@ -1,12 +1,15 @@
 .sa-page { min-height: 100vh; background: #F3F5F6; }
+
+/* HEADER */
 .sa-header { background: #1C1F26; width: 100%; }
 .sa-header-inner { max-width: 1152px; margin: 0 auto; padding: 40px 24px 32px; }
 .eyebrow { font-family: 'IBM Plex Mono', monospace; color: #FFC93C; font-size: 12px; text-transform: uppercase; letter-spacing: 0.2em; margin: 0 0 8px; }
 .sa-header h1 { font-family: 'Big Shoulders Display', sans-serif; font-weight: 900; font-size: 36px; text-transform: uppercase; color: white; margin: 0; }
 .sa-sub { font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: #9CA3AF; margin: 8px 0 0; }
 
-.sa-content { max-width: 1152px; margin: 0 auto; padding: 32px 24px; }
+.sa-content { max-width: 1152px; margin: 0 auto; padding: 32px 24px 60px; }
 
+/* STATS */
 .sa-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 32px; }
 .stat-box { background: white; border: 1px solid #E2E6E9; padding: 20px; display: flex; flex-direction: column; gap: 4px; }
 .stat-box.total { background: #1C1F26; }
@@ -14,19 +17,24 @@
 .stat-box.total .stat-num { color: #FFC93C; }
 .stat-label { font-family: 'IBM Plex Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: #9CA3AF; }
 
-.sa-toolbar { margin-bottom: 24px; }
+/* FILTER TABS */
+.sa-toolbar { margin-bottom: 20px; }
 .filter-tabs { display: inline-flex; gap: 4px; background: white; border: 1px solid #E2E6E9; padding: 4px; }
-.filter-tabs button { background: none; border: none; padding: 8px 18px; font-size: 13px; font-weight: 500; cursor: pointer; color: #717182; font-family: 'IBM Plex Sans', sans-serif; }
+.filter-tabs button { background: none; border: none; padding: 8px 18px; font-size: 13px; font-weight: 500; cursor: pointer; color: #717182; font-family: 'IBM Plex Sans', sans-serif; transition: background .2s ease, color .2s ease; }
 .filter-tabs button.active { background: #1C1F26; color: white; }
 
+.status-msg { margin: 0 0 16px; font-size: 13px; color: #D14B3D; }
+
+/* APPLICANT CARDS */
 .applicant-cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
-.applicant-card { background: white; border: 1px solid #E2E6E9; padding: 20px; }
+.applicant-card { background: white; border: 1px solid #E2E6E9; padding: 20px; transition: transform .22s ease, box-shadow .22s ease; }
+.applicant-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(28,31,38,.08); }
 .applicant-head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
 .applicant-head h3 { font-family: 'Big Shoulders Display', sans-serif; font-weight: 700; font-size: 20px; text-transform: uppercase; color: #1C1F26; margin: 0; }
 .applicant-meta { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #9CA3AF; margin: 2px 0 0; }
 
 .status-pill { font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 700; text-transform: uppercase; padding: 3px 10px; white-space: nowrap; height: fit-content; }
-.status-pill.pending { background: rgba(255,201,60,0.18); color: #B8860B; border: 1px solid rgba(255,201,60,0.4); }
+.status-pill.pending  { background: rgba(255,201,60,0.18); color: #A67C00; border: 1px solid rgba(255,201,60,0.4); }
 .status-pill.approved { background: rgba(47,158,110,0.1); color: #2F9E6E; border: 1px solid rgba(47,158,110,0.3); }
 .status-pill.rejected { background: rgba(209,75,61,0.1); color: #D14B3D; border: 1px solid rgba(209,75,61,0.3); }
 
@@ -36,40 +44,76 @@
 .af-label { font-family: 'IBM Plex Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: #9CA3AF; }
 .af-value { font-size: 14px; color: #1C1F26; }
 .af-value.mono { font-family: 'IBM Plex Mono', monospace; }
+.af-value.muted { color: #9CA3AF; }
+.doc-link { color: #1E4B8C; text-decoration: none; font-weight: 500; }
+.doc-link:hover { text-decoration: underline; }
 
-.applicant-actions { display: flex; gap: 12px; margin-top: 16px; padding-top: 16px; border-top: 1px solid #E2E6E9; }
-.accept-btn, .reject-btn { flex: 1; padding: 10px; font-size: 14px; font-weight: 500; border: none; cursor: pointer; }
+/* APPROVE BLOCK */
+.approve-block { margin-top: 16px; padding-top: 16px; border-top: 1px solid #E2E6E9; }
+.instr-select { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
+.instr-select label { font-family: 'IBM Plex Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: .1em; color: #717182; }
+.instr-select select { padding: 9px 12px; border: 1px solid #E2E6E9; font-size: 14px; font-family: 'IBM Plex Sans', sans-serif; transition: border-color .18s ease, box-shadow .18s ease; }
+.instr-select select:focus { outline: none; border-color: #1E4B8C; box-shadow: 0 0 0 3px rgba(30,75,140,.12); }
+
+.applicant-actions { display: flex; gap: 12px; }
+.accept-btn, .reject-btn { flex: 1; padding: 10px; font-size: 14px; font-weight: 500; border: none; cursor: pointer; transition: transform .12s ease, background .2s ease, box-shadow .2s ease; }
 .accept-btn { background: #2F9E6E; color: white; }
-.accept-btn:hover { background: #268159; }
+.accept-btn:hover { background: #268159; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(47,158,110,.24); }
 .reject-btn { background: white; border: 1px solid #E2E6E9; color: #D14B3D; }
-.reject-btn:hover { border-color: #D14B3D; }
+.reject-btn:hover { border-color: #D14B3D; transform: translateY(-1px); }
+.accept-btn:active, .reject-btn:active { transform: translateY(0) scale(.98); }
 
 .empty-state { background: white; border: 1px dashed #CBD5E1; padding: 60px; text-align: center; }
 .empty-state p { margin: 0; font-family: 'Big Shoulders Display', sans-serif; font-weight: 700; font-size: 20px; text-transform: uppercase; color: #9CA3AF; }
 
-@media (max-width: 800px) { .applicant-cards { grid-template-columns: 1fr; } .sa-stats { grid-template-columns: repeat(2, 1fr); } }
+/* INSTRUCTORS */
+.instructors-card { background: white; border: 1px solid #E2E6E9; padding: 20px; margin-top: 24px; }
+.instructors-card h2 { font-family: 'Big Shoulders Display', sans-serif; font-weight: 700; font-size: 18px; text-transform: uppercase; color: #1C1F26; margin: 0 0 16px; }
+.instructors-card h3 { font-family: 'IBM Plex Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: .1em; color: #717182; margin: 24px 0 12px; }
+.instr-list { display: flex; flex-direction: column; }
+.instr-row { display: flex; justify-content: space-between; align-items: center; padding: 11px 0; border-bottom: 1px solid #E2E6E9; }
+.instr-row:last-child { border-bottom: none; }
+.instr-name { font-weight: 600; color: #1C1F26; font-size: 14px; }
+.instr-email { font-size: 13px; color: #717182; }
+.mono { font-family: 'IBM Plex Mono', monospace; }
+.no-instr { color: #9CA3AF; font-size: 14px; margin: 0; }
+.instr-form { display: grid; grid-template-columns: repeat(4, 1fr) auto; gap: 12px; align-items: end; }
+.instr-msg { margin: 14px 0 0; font-size: 13px; color: #2F9E6E; }
 
-.add-slot-card { background: white; border: 1px solid #E2E6E9; padding: 20px; margin-bottom: 24px; }
-.add-slot-card h2 { font-family: 'Big Shoulders Display', sans-serif; font-weight: 700; font-size: 18px; text-transform: uppercase; color: #1C1F26; margin: 0 0 16px; }
-.slot-form { display: grid; grid-template-columns: auto auto 1fr auto; gap: 12px; align-items: end; }
-.slot-field { display: flex; flex-direction: column; gap: 6px; }
-.slot-field.wide { min-width: 200px; }
-.slot-field label { font-family: 'IBM Plex Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: #717182; }
-.slot-field input { padding: 9px 12px; border: 1px solid #E2E6E9; font-size: 14px; font-family: 'IBM Plex Sans', sans-serif; }
-.slot-field input:focus { outline: none; border-color: #1E4B8C; }
-.add-slot-btn { background: #1E4B8C; color: white; border: none; padding: 10px 20px; font-size: 14px; cursor: pointer; height: fit-content; }
-.add-slot-btn:hover { background: #163a6e; }
-.slot-msg { margin: 12px 0 0; font-size: 13px; color: #2F9E6E; }
-@media (max-width: 800px) { .slot-form { grid-template-columns: 1fr; } }
-
+/* BOOKINGS */
 .bookings-card { background: white; border: 1px solid #E2E6E9; padding: 20px; margin-top: 24px; }
 .bookings-card h2 { font-family: 'Big Shoulders Display', sans-serif; font-weight: 700; font-size: 18px; text-transform: uppercase; color: #1C1F26; margin: 0 0 16px; }
 .booking-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #E2E6E9; }
 .booking-row:last-child { border-bottom: none; }
-.booking-info { display: flex; flex-direction: column; gap: 2px; }
+.booking-info { display: flex; flex-direction: column; gap: 3px; }
 .booking-name { font-weight: 600; color: #1C1F26; }
-.booking-when { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #717182; }
-.attend-btn { background: #1E4B8C; color: white; border: none; padding: 8px 16px; font-size: 13px; cursor: pointer; }
-.attend-btn:hover { background: #163a6e; }
+.booking-when { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #717182; display: flex; align-items: center; gap: 8px; }
+.type-badge { font-size: 10px; text-transform: uppercase; padding: 2px 8px; background: #E2E6E9; color: #717182; letter-spacing: .05em; }
+.type-badge.practical { background: rgba(30,75,140,.1); color: #1E4B8C; }
+.attend-btn { background: #1E4B8C; color: white; border: none; padding: 8px 16px; font-size: 13px; cursor: pointer; transition: transform .12s ease, background .2s ease; }
+.attend-btn:hover { background: #163A6E; transform: translateY(-1px); }
+.attend-btn:active { transform: translateY(0) scale(.98); }
 .attended-pill { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #2F9E6E; font-weight: 700; }
-.no-bookings { color: #9CA3AF; font-size: 14px; }
+.no-bookings { color: #9CA3AF; font-size: 14px; margin: 0; }
+
+/* ADD SLOT */
+.add-slot-card { background: white; border: 1px solid #E2E6E9; padding: 20px; margin-top: 24px; }
+.add-slot-card h2 { font-family: 'Big Shoulders Display', sans-serif; font-weight: 700; font-size: 18px; text-transform: uppercase; color: #1C1F26; margin: 0 0 16px; }
+.slot-form { display: grid; grid-template-columns: auto auto auto 1fr auto; gap: 12px; align-items: end; }
+.slot-field { display: flex; flex-direction: column; gap: 6px; }
+.slot-field.wide { min-width: 200px; }
+.slot-field label { font-family: 'IBM Plex Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: #717182; }
+.slot-field input, .slot-field select { padding: 9px 12px; border: 1px solid #E2E6E9; font-size: 14px; font-family: 'IBM Plex Sans', sans-serif; transition: border-color .18s ease, box-shadow .18s ease; }
+.slot-field input:focus, .slot-field select:focus { outline: none; border-color: #1E4B8C; box-shadow: 0 0 0 3px rgba(30,75,140,.12); }
+.add-slot-btn { background: #1E4B8C; color: white; border: none; padding: 10px 20px; font-size: 14px; cursor: pointer; height: fit-content; transition: transform .12s ease, background .2s ease; }
+.add-slot-btn:hover { background: #163A6E; transform: translateY(-1px); }
+.add-slot-btn:active { transform: translateY(0) scale(.98); }
+.slot-msg { margin: 12px 0 0; font-size: 13px; color: #2F9E6E; }
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .applicant-cards { grid-template-columns: 1fr; }
+  .sa-stats { grid-template-columns: repeat(2, 1fr); }
+  .slot-form, .instr-form { grid-template-columns: 1fr; }
+}
+

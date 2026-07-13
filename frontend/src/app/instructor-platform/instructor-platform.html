@@ -1,0 +1,85 @@
+<app-nav-bar />
+
+<div class="in-page">
+  <div class="in-header">
+    <div class="in-header-inner">
+      <p class="eyebrow">Instructor</p>
+      <h1>Hello, {{ user?.firstName }}</h1>
+      <p class="in-sub">{{ bookings().length }} upcoming lessons</p>
+    </div>
+  </div>
+  <app-lane-divider class="flush" />
+
+  <div class="in-content">
+    <div class="in-main">
+      <div class="in-card">
+        <h2>Upcoming Lessons</h2>
+        @if (bookings().length > 0) {
+          @for (b of bookings(); track b.id) {
+            <div class="lesson-row" @fadeOut>
+              <div class="lesson-info">
+                <span class="lesson-student">{{ b.first_name }} {{ b.last_name }}</span>
+                <span class="lesson-when">
+                  {{ b.slot_date | date:'mediumDate' }} · {{ b.slot_time }}
+                  <span class="type-badge" [class.practical]="b.slot_type === 'practical'">{{ b.slot_type }}</span>
+                  ({{ b.duration_hours }}h)
+                </span>
+              </div>
+              <button class="attend-btn" (click)="markAttended(b)">Mark Attended</button>
+            </div>
+          }
+        } @else {
+          <p class="empty-text">No upcoming lessons.</p>
+        }
+      </div>
+
+      <div class="in-card">
+        <h2>Add Availability</h2>
+        <div class="slot-form">
+          <div class="slot-field">
+            <label>Type</label>
+            <select [(ngModel)]="newSlotType" name="slotType">
+              <option value="practical">Practical Hours</option>
+              <option value="theory">Theory Class</option>
+            </select>
+          </div>
+          <div class="slot-field">
+            <label>Date</label>
+            <input type="date" [(ngModel)]="newSlotDate" name="slotDate" />
+          </div>
+          <div class="slot-field">
+            <label>Time</label>
+            <input type="time" [(ngModel)]="newSlotTime" name="slotTime" />
+          </div>
+          <div class="slot-field wide">
+            <label>Note (optional)</label>
+            <input type="text" [(ngModel)]="newSlotNote" name="slotNote" placeholder="e.g. City center practice" />
+          </div>
+          <button class="add-slot-btn" (click)="addSlot()">Add Slot</button>
+        </div>
+        @if (newSlotMessage()) { <p class="slot-msg">{{ newSlotMessage() }}</p> }
+      </div>
+    </div>
+
+    <div class="in-sidebar">
+      <div class="in-card">
+        <h2>My Students</h2>
+        @if (students().length > 0) {
+          @for (s of students(); track s.id) {
+            <div class="student-row">
+              <div class="student-head">
+                <span class="student-name">{{ s.first_name }} {{ s.last_name }}</span>
+                <span class="student-hours mono">{{ s.completed_hours }} / 40h</span>
+              </div>
+              <div class="hours-bar">
+                <div class="hours-fill" [style.width.%]="progress(s.completed_hours)"></div>
+              </div>
+            </div>
+          }
+        } @else {
+          <p class="empty-text">No students yet.</p>
+        }
+      </div>
+    </div>
+  </div>
+</div>

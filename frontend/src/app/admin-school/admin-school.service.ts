@@ -18,6 +18,14 @@ export interface AdminRegistration {
   licenseCategory: string
 }
 
+export interface Instructor {
+  id: number;
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone: string;
+}
+
 
 @Injectable({
     providedIn: 'root'
@@ -31,8 +39,22 @@ export class AdminSchoolService {
         return this.http.get<{schoolName: string;registrations: AdminRegistration[]}>(`${this.apiUrl}/admin/registrations`)
     }
 
-    updateStatus(id: number, status: 'approved' | 'rejected'){
-        return this.http.patch<{registration: {id: number; status: string}}>(`${this.apiUrl}/admin/registrations/${id}/status`, {status})
+    getInstructors() {
+  return this.http.get<{ instructors: Instructor[] }>(`${this.apiUrl}/admin/instructors`);
+    }
+
+    updateStatus(id: number, status: 'approved' | 'rejected', instructorId?: number) {
+    return this.http.patch<{ registration: any }>(
+        `${this.apiUrl}/admin/registrations/${id}/status`,
+        { status, instructorId }
+    );
+    }
+
+    createInstructor(firstName: string, lastName: string, email: string, phone: string) {
+    return this.http.post<{ instructor: Instructor; login: { email: string; password: string } }>(
+        `${this.apiUrl}/admin/instructors`,
+        { firstName, lastName, email, phone }
+    );
     }
 
 }

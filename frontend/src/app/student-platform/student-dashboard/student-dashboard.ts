@@ -12,7 +12,7 @@ import { LoadingScreen } from '../../shared/loading-screen/loading-screen/loadin
 @Component({
   selector: 'app-student-dashboard',
   standalone: true,
-  imports: [RouterLink, LaneDivider, ProgressTrack, NavBar,DatePipe,LoadingScreen],
+  imports: [RouterLink, LaneDivider, ProgressTrack, NavBar,DatePipe],
   templateUrl: './student-dashboard.html',
   styleUrl: './student-dashboard.css',
 })

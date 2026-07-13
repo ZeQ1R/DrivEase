@@ -87,6 +87,8 @@ export class Login implements OnInit {
               this.router.navigate(['/school-admin-dashboard'],{queryParams: {checkEmail:true}});
             }else if(role === 'platform_admin'){
               this.router.navigate(['/platform-admin'],{queryParams: {checkEmail:true}});
+            }else if(role === 'instructor'){
+              this.router.navigate(['/instructor'], {queryParams: {checkEmail: true}})
             }else{
               this.router.navigate(['/student-platform-dashboard'], {queryParams: {checkEmail:true}});
             }
