@@ -6,11 +6,14 @@ const router = Router();
 
 router.get("/bookings/me", authenticate, async (req, res) => {
   try {
+    // only genuinely upcoming lessons — hide ones already attended or whose time has passed
     const result = await pool.query(
       `SELECT b.id, s.slot_date, s.slot_time, s.note
        FROM lesson_bookings b
        JOIN lesson_slots s ON s.id = b.slot_id
        WHERE b.student_id = $1
+         AND b.attended = false
+         AND (s.slot_date + s.slot_time) >= NOW()
        ORDER BY s.slot_date, s.slot_time`,
       [req.user.id]
     );

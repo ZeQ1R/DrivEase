@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { API_URL } from '../shared/api.config';
 
-export type { Instructor } from '../shared/models/instructor.model';
+export type { Instructor } from './instructor.model';
 
 export interface InstructorBooking {
   id: number;
@@ -21,6 +21,7 @@ export interface InstructorStudent {
   last_name: string;
   email: string;
   completed_hours: number;
+  required_hours: number;
 }
 
 @Injectable({ providedIn: 'root' })

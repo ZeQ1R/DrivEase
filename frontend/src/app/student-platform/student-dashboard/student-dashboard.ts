@@ -7,7 +7,6 @@ import { ProgressTrack } from '../../shared/progress-track/progress-track';
 import { NavBar } from '../../shared/nav-bar/nav-bar';
 import { Booking, ScheduleService, Slot } from './schedule.service';
 import { DatePipe } from '@angular/common';
-import { LoadingScreen } from '../../shared/loading-screen/loading-screen/loading-screen';
 import { ConfirmBox } from '../../shared/confirm-box/confirm-box';
 
 @Component({
@@ -31,6 +30,10 @@ export class StudentDashboard implements OnInit {
   hoursPercent = computed(() => {
     const h = this.hours()
     return h.required > 0 ? Math.min(100, (h.completed / h.required) * 100) : 0
+  })
+  readyForTest = computed(() => {
+    const h = this.hours()
+    return h.required > 0 && h.completed >= h.required
   })
 
   user: AuthUser | null = null;

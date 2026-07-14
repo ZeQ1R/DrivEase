@@ -2,9 +2,7 @@ import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { NavBar } from '../shared/nav-bar/nav-bar';
 import { LaneDivider } from '../shared/lane-divider/lane-divider';
 import { InstructorService } from './instructor.service';
-import { RegistrationService } from '../auth/registration.service';
 import { AuthService, AuthUser } from '../auth/auth.service';
-import { retry } from 'rxjs';
 import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { trigger, transition, style, animate } from '@angular/animations';
@@ -38,8 +36,13 @@ export class InstructorPlatform implements OnInit{
   bookings = signal<any[]>([])
   students = signal<any[]>([])
 
+  // students still working toward their hours — once complete they fade out of the list
+  visibleStudents = computed(() =>
+    this.students().filter(s => Number(s.completed_hours) < Number(s.required_hours ?? 40))
+  )
+
   upcomingCount = computed(() => this.bookings().length)
-  studentCount = computed(() => this.students().length)
+  studentCount = computed(() => this.visibleStudents().length)
 
 
   ngOnInit() {
@@ -104,8 +107,9 @@ export class InstructorPlatform implements OnInit{
     })
   }
 
-  progress(completedHours: number){
-    return Math.min(100, (completedHours / 40) * 100)
+  progress(completedHours: number, requiredHours = 40){
+    const required = Number(requiredHours) || 40
+    return Math.min(100, (Number(completedHours) / required) * 100)
   }
 }
 

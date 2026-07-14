@@ -180,10 +180,12 @@ router.get("/instructor/students", authenticate, requireInstructor, async (req, 
   try {
     const result = await pool.query(
       `SELECT u.id, u.first_name, u.last_name, u.email,
-              COALESCE(SUM(CASE WHEN b.attended AND s.slot_type='practical' THEN s.duration_hours ELSE 0 END), 0) AS completed_hours
+              COALESCE(SUM(CASE WHEN b.attended AND s.slot_type='practical' THEN s.duration_hours ELSE 0 END), 0) AS completed_hours,
+              COALESCE(MAX(r.required_hours), 40) AS required_hours
        FROM lesson_bookings b
        JOIN lesson_slots s ON s.id = b.slot_id
        JOIN users u ON u.id = b.student_id
+       LEFT JOIN registrations r ON r.student_id = u.id AND r.instructor_id = $1 AND r.status = 'approved'
        WHERE s.instructor_id = $1
        GROUP BY u.id, u.first_name, u.last_name, u.email
        ORDER BY u.first_name`,

@@ -1,9 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { API_URL } from '../shared/api.config';
-import { Instructor } from '../shared/models/instructor.model';
+import { Instructor } from '../instructor-platform/instructor.model';
 
-export type { Instructor } from '../shared/models/instructor.model';
+export type { Instructor } from '../instructor-platform/instructor.model';
 
 export interface AdminRegistration {
   id: number;

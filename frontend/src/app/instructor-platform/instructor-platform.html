@@ -64,20 +64,20 @@
     <div class="in-sidebar">
       <div class="in-card">
         <h2>My Students</h2>
-        @if (students().length > 0) {
-          @for (s of students(); track s.id) {
-            <div class="student-row">
+        @if (visibleStudents().length > 0) {
+          @for (s of visibleStudents(); track s.id) {
+            <div class="student-row" @fadeOut>
               <div class="student-head">
                 <span class="student-name">{{ s.first_name }} {{ s.last_name }}</span>
-                <span class="student-hours mono">{{ s.completed_hours }} / 40h</span>
+                <span class="student-hours mono">{{ s.completed_hours }} / {{ s.required_hours }}h</span>
               </div>
               <div class="hours-bar">
-                <div class="hours-fill" [style.width.%]="progress(s.completed_hours)"></div>
+                <div class="hours-fill" [style.width.%]="progress(s.completed_hours, s.required_hours)"></div>
               </div>
             </div>
           }
         } @else {
-          <p class="empty-text">No students yet.</p>
+          <p class="empty-text">No students in training right now.</p>
         }
       </div>
     </div>

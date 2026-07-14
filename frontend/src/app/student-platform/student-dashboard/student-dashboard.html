@@ -94,6 +94,24 @@
               }
             </p>
           </div>
+
+          @if (readyForTest()) {
+            <div class="congrats-card">
+              <div class="congrats-glow"></div>
+              <div class="congrats-emoji">🏆</div>
+              <p class="congrats-eyebrow">All hours complete</p>
+              <h2>Congratulations, {{ user?.firstName }}!</h2>
+              <p class="congrats-text">
+                You've completed all {{ hours().required }} required practical hours.
+              </p>
+              <div class="congrats-actions">
+                <p class="congrats-cta">🎉 You're ready to register for your driving test!</p>
+                <a class="congrats-link" href="https://www.autoshkollaonline.com/" target="_blank" rel="noopener">
+                  Practice the tests online ↗
+                </a>
+              </div>
+            </div>
+          }
         </div>
       }
 

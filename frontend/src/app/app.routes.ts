@@ -27,7 +27,6 @@ export const routes: Routes = [
 		path: 'browse/:id',
 		component: BrowseSchool
 	},
-	
 	{
 		path: 'login',
 		component: Login,
