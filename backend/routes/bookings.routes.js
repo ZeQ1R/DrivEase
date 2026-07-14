@@ -18,6 +18,37 @@ router.get("/bookings/me", authenticate, async (req, res) => {
   } catch (e) { res.status(500).json({ message: "Failed to load bookings.", error: e.message }); }
 });
 
+// STUDENT: cancel one of their own bookings (frees the slot)
+router.delete("/bookings/:id", authenticate, async (req, res) => {
+  const client = await pool.connect();
+  try {
+    await client.query("BEGIN");
+    // must be this student's booking; lock it while we work
+    const booking = await client.query(
+      `SELECT id, slot_id, attended FROM lesson_bookings
+       WHERE id = $1 AND student_id = $2 FOR UPDATE`,
+      [req.params.id, req.user.id]
+    );
+    if (booking.rows.length === 0) {
+      await client.query("ROLLBACK");
+      return res.status(404).json({ message: "Booking not found." });
+    }
+    // can't cancel a lesson that already happened
+    if (booking.rows[0].attended) {
+      await client.query("ROLLBACK");
+      return res.status(409).json({ message: "This lesson has already been attended and can't be cancelled." });
+    }
+
+    await client.query(`DELETE FROM lesson_bookings WHERE id = $1`, [req.params.id]);
+    await client.query(`UPDATE lesson_slots SET is_booked = false WHERE id = $1`, [booking.rows[0].slot_id]);
+    await client.query("COMMIT");
+    res.status(200).json({ message: "Booking cancelled." });
+  } catch (e) {
+    await client.query("ROLLBACK");
+    res.status(500).json({ message: "Failed to cancel booking.", error: e.message });
+  } finally { client.release(); }
+});
+
 router.get("/hours/me", authenticate, async (req, res) => {
   try {
     const completed = await pool.query(

@@ -1,36 +1,45 @@
-import { HttpClient } from "@angular/common/http";
-import { inject, Injectable } from "@angular/core";
+import { HttpClient } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
+import { API_URL } from '../shared/api.config';
 
-export interface Instructor {
+export type { Instructor } from '../shared/models/instructor.model';
+
+export interface InstructorBooking {
+  id: number;
+  attended: boolean;
+  slot_date: string;
+  slot_time: string;
+  slot_type: string;
+  duration_hours: number;
+  first_name: string;
+  last_name: string;
+}
+
+export interface InstructorStudent {
   id: number;
   first_name: string;
   last_name: string;
   email: string;
-  phone: string;
+  completed_hours: number;
 }
 
+@Injectable({ providedIn: 'root' })
+export class InstructorService {
+  private http = inject(HttpClient);
 
-@Injectable({
-    providedIn: 'root'
-})
+  getMyBookings() {
+    return this.http.get<{ bookings: InstructorBooking[] }>(`${API_URL}/instructor/bookings`);
+  }
 
-export class InstructorService{
-    private http = inject(HttpClient)
-    private api = 'http://localhost:3000'
+  getMyStudents() {
+    return this.http.get<{ students: InstructorStudent[] }>(`${API_URL}/instructor/students`);
+  }
 
-    getMyBookings(){
-        return this.http.get<{bookings: any[]}>(`${this.api}/instructor/bookings`)
-    }
+  markAttended(id: number) {
+    return this.http.patch(`${API_URL}/instructor/bookings/${id}/attended`, {});
+  }
 
-    getMyStudents(){
-        return this.http.get<{students: any[]}>(`${this.api}/instructor/students`)
-    }
-
-    markAttended(id: number){
-        return this.http.patch(`${this.api}/instructor/bookings/${id}/attended`, {})
-    }
-
-    createSlot(slotDate:string, slotTime: string, note:string, slotType:string){
-        return this.http.post(`${this.api}/instructor/slots`,{slotDate,slotTime,note,slotType})
-    }
+  createSlot(slotDate: string, slotTime: string, note: string, slotType: string) {
+    return this.http.post(`${API_URL}/instructor/slots`, { slotDate, slotTime, note, slotType });
+  }
 }

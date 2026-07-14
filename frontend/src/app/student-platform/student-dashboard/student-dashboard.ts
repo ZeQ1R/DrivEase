@@ -8,11 +8,12 @@ import { NavBar } from '../../shared/nav-bar/nav-bar';
 import { Booking, ScheduleService, Slot } from './schedule.service';
 import { DatePipe } from '@angular/common';
 import { LoadingScreen } from '../../shared/loading-screen/loading-screen/loading-screen';
+import { ConfirmBox } from '../../shared/confirm-box/confirm-box';
 
 @Component({
   selector: 'app-student-dashboard',
   standalone: true,
-  imports: [RouterLink, LaneDivider, ProgressTrack, NavBar,DatePipe],
+  imports: [RouterLink, LaneDivider, ProgressTrack, NavBar, DatePipe, ConfirmBox],
   templateUrl: './student-dashboard.html',
   styleUrl: './student-dashboard.css',
 })
@@ -32,8 +33,29 @@ export class StudentDashboard implements OnInit {
     return h.required > 0 ? Math.min(100, (h.completed / h.required) * 100) : 0
   })
 
-  user: AuthUser | null = null; 
+  user: AuthUser | null = null;
   registration = signal<Registration | null>(null);
+
+  // shared confirm box
+  confirmMessage = signal('');
+  private pendingAction: (() => void) | null = null;
+
+  askConfirm(message: string, action: () => void) {
+    this.confirmMessage.set(message);
+    this.pendingAction = action;
+  }
+
+  onConfirmYes() {
+    const action = this.pendingAction;
+    this.confirmMessage.set('');
+    this.pendingAction = null;
+    action?.();
+  }
+
+  onConfirmNo() {
+    this.confirmMessage.set('');
+    this.pendingAction = null;
+  }
 
   ngOnInit() {
     this.user = this.authService.getCurrentUser();
@@ -66,8 +88,15 @@ private loadSchedule() {
 
   bookSlot(slot: Slot){
     this.scheduleService.bookSlot(slot.id).subscribe({
-    next: () => this.loadSchedule(),   
+    next: () => this.loadSchedule(),
     error: (err) => console.error('Booking failed', err),
   });
 }
+
+  cancelBooking(b: Booking){
+    this.scheduleService.cancelBooking(b.id).subscribe({
+      next: () => this.loadSchedule(),
+      error: (err) => console.error('Cancel failed', err),
+    });
+  }
 }

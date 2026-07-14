@@ -30,15 +30,12 @@ export class AdminSchool implements OnInit {
   newInstrPhone = '';
   instrMessage = signal('');
 
-  // inline instructor editing
   editingInstructorId = signal<number | null>(null);
   editInstr = { firstName: '', lastName: '', email: '', phone: '' };
 
-  // inline registration (applicant) editing
   editingRegId = signal<number | null>(null);
   editReg = { firstName: '', lastName: '', email: '', phone: '', address: '', postalCode: '', embg: '', licenseCategory: '' };
 
-  // shared confirm box
   confirmMessage = signal('');
   confirmText = signal('Yes');
   private pendingAction: (() => void) | null = null;
@@ -139,7 +136,6 @@ export class AdminSchool implements OnInit {
     });
   }
 
-  // ---- instructor edit / delete ----
   startEditInstructor(i: Instructor) {
     this.editingInstructorId.set(i.id);
     this.editInstr = { firstName: i.first_name, lastName: i.last_name, email: i.email, phone: i.phone || '' };
@@ -175,7 +171,6 @@ export class AdminSchool implements OnInit {
     });
   }
 
-  // ---- registration (applicant) edit / delete ----
   startEditReg(reg: AdminRegistration) {
     this.editingRegId.set(reg.id);
     this.editReg = {

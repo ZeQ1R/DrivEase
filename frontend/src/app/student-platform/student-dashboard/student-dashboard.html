@@ -67,6 +67,10 @@
                 <div class="booking">
                   <span>{{ b.slot_date | date:'mediumDate' }} · {{ b.slot_time }}</span>
                   @if (b.note) { <span class="booking-note">{{ b.note }}</span> }
+                  <button class="cancel-booking-btn"
+                    (click)="askConfirm('Cancel your lesson at ' + b.slot_time + '? This will free the slot for others.', () => cancelBooking(b))">
+                    Cancel
+                  </button>
                 </div>
               }
             </div>
@@ -137,4 +141,14 @@
     </div>
   </div>
 </div>
+
+@if (confirmMessage()) {
+  <app-confirm-box
+    [message]="confirmMessage()"
+    confirmText="Cancel Lesson"
+    cancelText="Keep It"
+    (yes)="onConfirmYes()"
+    (no)="onConfirmNo()">
+  </app-confirm-box>
+}
 

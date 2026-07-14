@@ -57,8 +57,10 @@
 .book-btn { background: #2F9E6E; color: white; border: none; padding: 8px 20px; font-size: 14px; cursor: pointer; }
 .book-btn:hover { background: #268159; }
 .no-slots { color: #9CA3AF; font-size: 14px; }
-.booking { display: flex; flex-direction: column; padding: 12px 16px; background: rgba(30,75,140,0.05); border-left: 3px solid #1E4B8C; }
-.booking-note { font-size: 12px; color: #717182; margin-top: 2px; }
+.booking { display: flex; flex-direction: row; align-items: center; flex-wrap: wrap; gap: 4px 12px; padding: 12px 16px; background: rgba(30,75,140,0.05); border-left: 3px solid #1E4B8C; }
+.booking-note { font-size: 12px; color: #717182; }
+.cancel-booking-btn { margin-left: auto; background: white; border: 1px solid rgba(209,75,61,.4); color: #D14B3D; padding: 6px 14px; font-size: 13px; font-weight: 600; font-family: 'IBM Plex Sans', sans-serif; cursor: pointer; transition: background .2s ease, color .2s ease, border-color .2s ease; }
+.cancel-booking-btn:hover { background: #D14B3D; border-color: #D14B3D; color: white; }
 
 .hours-card { background: white; border: 1px solid #E2E6E9; padding: 24px; margin-top: 24px; }
 .hours-card h2 { font-family: 'Big Shoulders Display', sans-serif; font-weight: 700; font-size: 20px; text-transform: uppercase; color: #1C1F26; margin: 0 0 16px; }
