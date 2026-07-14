@@ -1,3 +1,4 @@
+
 export interface Instructor {
   id: number;
   first_name: string;
@@ -5,3 +6,5 @@ export interface Instructor {
   email: string;
   phone: string;
 }
+
+

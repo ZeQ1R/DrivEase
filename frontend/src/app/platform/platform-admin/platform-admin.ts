@@ -26,7 +26,21 @@ export class PlatformAdmin implements OnInit{
 
   confirmMessage = signal('')
   pendingAction: (() => void) | null = null
-  message = signal('')
+
+  // toast notification (success / error feedback)
+  toast = signal<{ text: string; type: 'success' | 'error' } | null>(null)
+  private toastTimer: ReturnType<typeof setTimeout> | null = null
+
+  showToast(text: string, type: 'success' | 'error') {
+    this.toast.set({ text, type })
+    if (this.toastTimer) clearTimeout(this.toastTimer)
+    this.toastTimer = setTimeout(() => this.toast.set(null), 5000)
+  }
+
+  dismissToast() {
+    if (this.toastTimer) clearTimeout(this.toastTimer)
+    this.toast.set(null)
+  }
 
   form = new FormGroup({
   name: new FormControl('', { validators: [Validators.required] }),
@@ -148,15 +162,17 @@ export class PlatformAdmin implements OnInit{
   }
 
   onDelete(school: School){
-    // const confirmed = confirm(`Delete "${school.name}"? This can't be done`)
-    // if(!confirmed) return
-
     this.schoolsService.deleteSchool(school.id).subscribe({
       next: () => {
         this.schools.set(this.schools().filter((s) => s.id !== school.id))
-        this.message.set('School Deleted')
+        this.showToast(`“${school.name}” has been deleted.`, 'success')
       },
-      error: (err) => console.error('Failed to delete the school',err)
+      error: (err) => {
+        this.showToast(
+          err.error?.message || 'Failed to delete the school. Please try again.',
+          'error'
+        )
+      }
     })
   }
 }
