@@ -112,14 +112,41 @@ router.put("/admin/schools/:id", authenticate, requirePlatformAdmin, uploadSchoo
 });
 
 router.delete("/admin/schools/:id", authenticate, requirePlatformAdmin, async (req, res) => {
+  const client = await pool.connect();
   try {
-    const regs = await pool.query(`SELECT id FROM registrations WHERE school_id = $1 LIMIT 1`, [req.params.id]);
-    if (regs.rows.length > 0) {
-      return res.status(409).json({ message: "Cannot delete — this school has student registrations." });
+    const school = await client.query(`SELECT owner_user_id FROM driving_schools WHERE id = $1`, [req.params.id]);
+    if (school.rows.length === 0) {
+      return res.status(404).json({ message: "School not found." });
     }
-    await pool.query(`DELETE FROM driving_schools WHERE id = $1`, [req.params.id]);
+
+    // only block on ACTIVE enrollments — a school with just old rejected applications can still be removed
+    const active = await client.query(
+      `SELECT id FROM registrations WHERE school_id = $1 AND status IN ('pending', 'approved') LIMIT 1`,
+      [req.params.id]
+    );
+    if (active.rows.length > 0) {
+      return res.status(409).json({ message: "Cannot delete — this school has active student registrations." });
+    }
+
+    await client.query("BEGIN");
+    // clear everything that references the school so its foreign keys don't block the delete
+    await client.query(`DELETE FROM registrations WHERE school_id = $1`, [req.params.id]);           // leftover rejected regs (details cascade)
+    await client.query(`DELETE FROM lesson_slots WHERE school_id = $1`, [req.params.id]);              // bookings cascade via slot_id
+    await client.query(`DELETE FROM users WHERE school_id = $1 AND role = 'instructor'`, [req.params.id]);
+    await client.query(`DELETE FROM driving_schools WHERE id = $1`, [req.params.id]);
+    // remove the orphaned school-admin account that owned this school
+    if (school.rows[0].owner_user_id) {
+      await client.query(`DELETE FROM users WHERE id = $1 AND role = 'school_admin'`, [school.rows[0].owner_user_id]);
+    }
+    await client.query("COMMIT");
+
     res.status(200).json({ message: "School deleted." });
-  } catch (e) { res.status(500).json({ message: "Failed to delete school.", error: e.message }); }
+  } catch (e) {
+    await client.query("ROLLBACK");
+    res.status(500).json({ message: "Failed to delete school.", error: e.message });
+  } finally {
+    client.release();
+  }
 });
 
 export default router;

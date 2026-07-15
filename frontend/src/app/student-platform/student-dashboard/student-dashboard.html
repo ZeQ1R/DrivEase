@@ -15,17 +15,17 @@
       <div class="status-card">
         <div class="status-card-header">
           <h2>Application Status</h2>
-          @if (registration(); as registration) { <span class="status-pill" [class]="registration.status">{{ registration.status }}</span> }
+          @if (registration(); as registration) { <span class="status-pill" [class]="displayStatus()">{{ displayStatus() }}</span> }
         </div>
 
         @if (registration(); as registration) {
           @if (registration.status !== 'rejected') {
-            <app-progress-track [status]="registration.status"></app-progress-track>
+            <app-progress-track [status]="displayStatus()"></app-progress-track>
             <div class="status-note">
               @if (registration.status === 'pending') {
                 <p>Your application is being reviewed by <strong>{{ registration.school_name }}</strong>. You'll be notified once it's processed.</p>
               } @else if (registration.status === 'approved') {
-                <p class="success">✓ Your application has been approved. Welcome aboard!</p>
+                <p class="success">✓ You're now enrolled at <strong>{{ registration.school_name }}</strong>. Welcome aboard!</p>
                 @if (registration.instructor_first_name) {
                   <p class="instructor-note">Your instructor for practical hours is <strong>{{ registration.instructor_first_name }} {{ registration.instructor_last_name }}</strong>.</p>
                 }

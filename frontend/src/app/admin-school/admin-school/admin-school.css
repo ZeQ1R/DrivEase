@@ -18,8 +18,17 @@
 .stat-label { font-family: 'IBM Plex Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: #9CA3AF; }
 
 /* FILTER TABS */
-.sa-toolbar { margin-bottom: 20px; }
+.sa-toolbar { margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; }
 .filter-tabs { display: inline-flex; gap: 4px; background: white; border: 1px solid #E2E6E9; padding: 4px; }
+
+.sa-search { display: inline-flex; align-items: center; gap: 8px; background: white; border: 1px solid #E2E6E9; padding: 8px 12px; min-width: 260px; transition: border-color .18s ease, box-shadow .18s ease; }
+.sa-search:focus-within { border-color: #1E4B8C; box-shadow: 0 0 0 3px rgba(30,75,140,.12); }
+.sa-search-icon { font-size: 13px; opacity: .6; }
+.sa-search input { flex: 1; border: none; outline: none; font-size: 14px; font-family: 'IBM Plex Sans', sans-serif; color: #1C1F26; background: transparent; }
+.sa-search-clear { background: none; border: none; font-size: 18px; line-height: 1; color: #9CA3AF; cursor: pointer; padding: 0 2px; transition: color .2s ease; }
+.sa-search-clear:hover { color: #1C1F26; }
+
+@media (max-width: 600px) { .sa-search { min-width: 0; width: 100%; } }
 .filter-tabs button { background: none; border: none; padding: 8px 18px; font-size: 13px; font-weight: 500; cursor: pointer; color: #717182; font-family: 'IBM Plex Sans', sans-serif; transition: background .2s ease, color .2s ease; }
 .filter-tabs button.active { background: #1C1F26; color: white; }
 

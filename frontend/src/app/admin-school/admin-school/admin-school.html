@@ -25,6 +25,14 @@
         <button [class.active]="filter() === 'approved'" (click)="setFilter('approved')">Approved</button>
         <button [class.active]="filter() === 'rejected'" (click)="setFilter('rejected')">Rejected</button>
       </div>
+      <div class="sa-search">
+        <span class="sa-search-icon">🔍</span>
+        <input type="text" placeholder="Search students by name…"
+          [ngModel]="searchTerm()" (ngModelChange)="searchTerm.set($event)" name="studentSearch" />
+        @if (searchTerm()) {
+          <button class="sa-search-clear" (click)="searchTerm.set('')" aria-label="Clear search">×</button>
+        }
+      </div>
     </div>
 
     @if (statusMessage()) { <p class="status-msg">{{ statusMessage() }}</p> }
@@ -105,7 +113,13 @@
         }
       </div>
     } @else {
-      <div class="empty-state"><p>No {{ filter() === 'all' ? '' : filter() }} applications</p></div>
+      <div class="empty-state">
+        @if (searchTerm()) {
+          <p>No students match “{{ searchTerm() }}”</p>
+        } @else {
+          <p>No {{ filter() === 'all' ? '' : filter() }} applications</p>
+        }
+      </div>
     }
 
     <!-- INSTRUCTORS -->

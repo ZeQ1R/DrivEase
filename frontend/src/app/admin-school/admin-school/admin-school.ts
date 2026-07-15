@@ -19,6 +19,7 @@ export class AdminSchool implements OnInit {
   registrations = signal<AdminRegistration[]>([]);
   filter = signal<'all' | 'pending' | 'approved' | 'rejected'>('all');
   schoolName = signal('');
+  searchTerm = signal('');
 
   instructors = signal<Instructor[]>([]);
   selectedInstructor: { [regId: number]: number } = {};  
@@ -60,7 +61,12 @@ export class AdminSchool implements OnInit {
 
   filtered = computed(() => {
     const f = this.filter();
-    return f === 'all' ? this.registrations() : this.registrations().filter(r => r.status === f);
+    const q = this.searchTerm().trim().toLowerCase();
+    let list = f === 'all' ? this.registrations() : this.registrations().filter(r => r.status === f);
+    if (q) {
+      list = list.filter(r => `${r.first_name} ${r.last_name}`.toLowerCase().includes(q));
+    }
+    return list;
   });
 
   pendingCount  = computed(() => this.registrations().filter(r => r.status === 'pending').length);
