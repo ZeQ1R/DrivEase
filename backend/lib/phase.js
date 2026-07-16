@@ -1,10 +1,3 @@
-// Works out where an approved student is in their journey:
-//   'theory'             -> still completing required theory hours (books theory slots)
-//   'awaiting-instructor'-> theory done, school hasn't assigned an instructor yet
-//   'practical'          -> instructor assigned, books that instructor's practical slots
-//
-// `db` can be the pool or a checked-out client (so it can run inside a transaction).
-// Returns null when the student has no approved registration.
 export async function getStudentPhase(db, studentId) {
   const reg = await db.query(
     `SELECT school_id, instructor_id, required_theory_hours
@@ -14,7 +7,6 @@ export async function getStudentPhase(db, studentId) {
   if (reg.rows.length === 0) return null;
   const r = reg.rows[0];
 
-  // theory classes count automatically once their scheduled time has passed
   const theory = await db.query(
     `SELECT COALESCE(SUM(s.duration_hours), 0) AS hours
      FROM lesson_bookings b

@@ -10,11 +10,10 @@ const admins = [
   { email: "hiti@gmail.com",     firstName: "HITI",    lastName: "Admin", schoolId: 6 },
 ];
 
-const PASSWORD = "admin123"; // same password for all, change if you want
+const PASSWORD = "admin123";
 
 for (const a of admins) {
   const hash = await bcrypt.hash(PASSWORD, 10);
-  // create the admin user (skip if email already exists)
   const existing = await pool.query("SELECT id FROM users WHERE email = $1", [a.email]);
   let userId;
   if (existing.rows.length > 0) {
@@ -28,7 +27,6 @@ for (const a of admins) {
     );
     userId = res.rows[0].id;
   }
-  // link the school to this admin
   await pool.query("UPDATE driving_schools SET owner_user_id = $1 WHERE id = $2", [userId, a.schoolId]);
   console.log(`Linked ${a.email} -> school ${a.schoolId}`);
 }

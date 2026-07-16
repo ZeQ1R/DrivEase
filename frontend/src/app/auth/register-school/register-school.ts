@@ -30,7 +30,7 @@ export class RegisterSchool implements OnInit{
   registering = false
   selectedFile: File | null = null
   submitting = signal(false)
-  
+
 
   form = new FormGroup({
     firstName: new FormControl('',{

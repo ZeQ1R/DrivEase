@@ -85,7 +85,7 @@ router.get("/admin/registrations", authenticate, async (req, res) => {
     if (schoolResult.rows.length === 0) {
       return res.status(403).json({ message: "You don't manage a school." });
     }
-    const school = schoolResult.rows[0];   // now has { id, name }
+    const school = schoolResult.rows[0];
 
     const result = await pool.query(
       `SELECT r.id, r.status, r.registered_at, r.instructor_id, r.required_theory_hours,
@@ -116,8 +116,6 @@ router.get("/admin/registrations", authenticate, async (req, res) => {
   }
 });
 
-// Approve or reject a registration. Approving does NOT assign an instructor —
-// the student first completes theory; the instructor is assigned later (see below).
 router.patch("/admin/registrations/:id/status", authenticate, async (req, res) => {
   try {
     const { status } = req.body;
@@ -125,7 +123,6 @@ router.patch("/admin/registrations/:id/status", authenticate, async (req, res) =
       return res.status(400).json({ message: "Invalid status." });
     }
 
-    // verify this registration belongs to the admin's school
     const check = await pool.query(
       `SELECT r.id FROM registrations r
        JOIN driving_schools s ON s.id = r.school_id
@@ -136,7 +133,6 @@ router.patch("/admin/registrations/:id/status", authenticate, async (req, res) =
       return res.status(403).json({ message: "Not your school's registration." });
     }
 
-    // rejecting clears any assigned instructor; approving starts the theory phase (no instructor yet)
     const result = await pool.query(
       `UPDATE registrations
        SET status = $1, instructor_id = CASE WHEN $2 THEN NULL ELSE instructor_id END
@@ -151,14 +147,11 @@ router.patch("/admin/registrations/:id/status", authenticate, async (req, res) =
   }
 });
 
-// Assign an instructor to an approved student — only allowed once their theory hours are complete.
-// This opens the practical phase.
 router.patch("/admin/registrations/:id/instructor", authenticate, async (req, res) => {
   try {
     const { instructorId } = req.body;
     if (!instructorId) return res.status(400).json({ message: "Please choose an instructor." });
 
-    // registration must belong to the admin's school and be approved
     const reg = await pool.query(
       `SELECT r.id, r.student_id, r.status, r.required_theory_hours
        FROM registrations r
@@ -173,7 +166,6 @@ router.patch("/admin/registrations/:id/instructor", authenticate, async (req, re
       return res.status(400).json({ message: "Student must be approved first." });
     }
 
-    // theory must be complete before an instructor can be assigned
     const theory = await pool.query(
       `SELECT COALESCE(SUM(s.duration_hours), 0) AS hours
        FROM lesson_bookings b
@@ -185,7 +177,6 @@ router.patch("/admin/registrations/:id/instructor", authenticate, async (req, re
       return res.status(409).json({ message: "This student hasn't finished their theory classes yet." });
     }
 
-    // instructor must belong to this admin's school
     const instr = await pool.query(
       `SELECT u.id FROM users u
        JOIN driving_schools s ON s.id = u.school_id
@@ -207,7 +198,6 @@ router.patch("/admin/registrations/:id/instructor", authenticate, async (req, re
   }
 });
 
-// SCHOOL ADMIN: edit an applicant's registration details
 router.put("/admin/registrations/:id", authenticate, async (req, res) => {
   try {
     const { firstName, lastName, email, phone, address, postalCode, embg, licenseCategory } = req.body;
@@ -215,7 +205,6 @@ router.put("/admin/registrations/:id", authenticate, async (req, res) => {
       return res.status(400).json({ message: "First name, last name and email are required." });
     }
 
-    // registration must belong to the admin's school
     const check = await pool.query(
       `SELECT r.id FROM registrations r
        JOIN driving_schools s ON s.id = r.school_id
@@ -240,7 +229,6 @@ router.put("/admin/registrations/:id", authenticate, async (req, res) => {
   }
 });
 
-// SCHOOL ADMIN: delete a registration (removes the enrollment; details cascade)
 router.delete("/admin/registrations/:id", authenticate, async (req, res) => {
   try {
     const check = await pool.query(

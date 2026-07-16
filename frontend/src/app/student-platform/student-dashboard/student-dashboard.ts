@@ -46,14 +46,12 @@ export class StudentDashboard implements OnInit {
   user: AuthUser | null = null;
   registration = signal<Registration | null>(null);
 
-  // an approved application means the student is now enrolled
   displayStatus = computed(() => {
     const r = this.registration();
     if (!r) return '';
     return r.status === 'approved' ? 'enrolled' : r.status;
   });
 
-  // shared confirm box
   confirmMessage = signal('');
   private pendingAction: (() => void) | null = null;
 

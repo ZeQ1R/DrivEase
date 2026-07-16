@@ -47,7 +47,6 @@ export class AdminSchoolService {
     );
   }
 
-  // assign an instructor once the student has finished their theory hours (opens the practical phase)
   assignInstructor(id: number, instructorId: number) {
     return this.http.patch<{ registration: any }>(
       `${API_URL}/admin/registrations/${id}/instructor`,
@@ -55,7 +54,6 @@ export class AdminSchoolService {
     );
   }
 
-  // school admin creates a THEORY class slot
   createTheorySlot(slotDate: string, slotTime: string, note: string, durationHours: number) {
     return this.http.post<{ slot: any }>(
       `${API_URL}/admin/slots`,

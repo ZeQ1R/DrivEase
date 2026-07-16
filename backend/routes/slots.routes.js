@@ -6,7 +6,6 @@ import { getStudentPhase } from "../lib/phase.js";
 const router = Router();
 
 
-// SCHOOL ADMIN: create a THEORY class slot (school-wide, no instructor)
 router.post("/admin/slots", authenticate, async (req, res) => {
   try {
     const { slotDate, slotTime, note, durationHours } = req.body;
@@ -27,8 +26,6 @@ router.post("/admin/slots", authenticate, async (req, res) => {
 });
 
 
-// STUDENT: slots to book — theory slots during the theory phase, the assigned
-// instructor's practical slots during the practical phase.
 router.get("/slots/available", authenticate, async (req, res) => {
   try {
     const p = await getStudentPhase(pool, req.user.id);
@@ -50,7 +47,6 @@ router.get("/slots/available", authenticate, async (req, res) => {
         [p.schoolId, p.instructorId]
       );
     } else {
-      // awaiting-instructor — nothing to book until the school assigns an instructor
       return res.status(200).json({ slots: [], phase: p.phase });
     }
     res.status(200).json({ slots: result.rows, phase: p.phase });

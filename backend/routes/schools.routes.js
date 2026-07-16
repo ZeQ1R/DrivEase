@@ -64,7 +64,7 @@ router.post("/admin/schools", authenticate, requirePlatformAdmin, uploadSchool.s
 
     await client.query("BEGIN");
 
-    const defaultPassword = "admin123";  // admin can change later
+    const defaultPassword = "admin123";
     const passwordHash = await bcrypt.hash(defaultPassword, 10);
     const userResult = await client.query(
       `INSERT INTO users (first_name, last_name, email, password_hash, role, is_verified)
@@ -84,7 +84,7 @@ router.post("/admin/schools", authenticate, requirePlatformAdmin, uploadSchool.s
     await client.query("COMMIT");
     res.status(201).json({
       school: schoolResult.rows[0],
-      adminLogin: { email, password: defaultPassword },  
+      adminLogin: { email, password: defaultPassword },
     });
   } catch (e) {
     await client.query("ROLLBACK");
@@ -119,7 +119,6 @@ router.delete("/admin/schools/:id", authenticate, requirePlatformAdmin, async (r
       return res.status(404).json({ message: "School not found." });
     }
 
-    // only block on ACTIVE enrollments — a school with just old rejected applications can still be removed
     const active = await client.query(
       `SELECT id FROM registrations WHERE school_id = $1 AND status IN ('pending', 'approved') LIMIT 1`,
       [req.params.id]
@@ -129,12 +128,10 @@ router.delete("/admin/schools/:id", authenticate, requirePlatformAdmin, async (r
     }
 
     await client.query("BEGIN");
-    // clear everything that references the school so its foreign keys don't block the delete
-    await client.query(`DELETE FROM registrations WHERE school_id = $1`, [req.params.id]);           // leftover rejected regs (details cascade)
-    await client.query(`DELETE FROM lesson_slots WHERE school_id = $1`, [req.params.id]);              // bookings cascade via slot_id
+    await client.query(`DELETE FROM registrations WHERE school_id = $1`, [req.params.id]);
+    await client.query(`DELETE FROM lesson_slots WHERE school_id = $1`, [req.params.id]);
     await client.query(`DELETE FROM users WHERE school_id = $1 AND role = 'instructor'`, [req.params.id]);
     await client.query(`DELETE FROM driving_schools WHERE id = $1`, [req.params.id]);
-    // remove the orphaned school-admin account that owned this school
     if (school.rows[0].owner_user_id) {
       await client.query(`DELETE FROM users WHERE id = $1 AND role = 'school_admin'`, [school.rows[0].owner_user_id]);
     }

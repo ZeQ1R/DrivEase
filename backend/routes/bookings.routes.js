@@ -7,7 +7,6 @@ const router = Router();
 
 router.get("/bookings/me", authenticate, async (req, res) => {
   try {
-    // only genuinely upcoming lessons — hide ones already attended or whose time has passed
     const result = await pool.query(
       `SELECT b.id, s.slot_date, s.slot_time, s.note
        FROM lesson_bookings b
@@ -22,12 +21,10 @@ router.get("/bookings/me", authenticate, async (req, res) => {
   } catch (e) { res.status(500).json({ message: "Failed to load bookings.", error: e.message }); }
 });
 
-// STUDENT: cancel one of their own bookings (frees the slot)
 router.delete("/bookings/:id", authenticate, async (req, res) => {
   const client = await pool.connect();
   try {
     await client.query("BEGIN");
-    // must be this student's booking; lock it while we work
     const booking = await client.query(
       `SELECT id, slot_id, attended FROM lesson_bookings
        WHERE id = $1 AND student_id = $2 FOR UPDATE`,
@@ -37,7 +34,6 @@ router.delete("/bookings/:id", authenticate, async (req, res) => {
       await client.query("ROLLBACK");
       return res.status(404).json({ message: "Booking not found." });
     }
-    // can't cancel a lesson that already happened
     if (booking.rows[0].attended) {
       await client.query("ROLLBACK");
       return res.status(409).json({ message: "This lesson has already been attended and can't be cancelled." });

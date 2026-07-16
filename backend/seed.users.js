@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import pool from "./config/database.js";
 
-const PASSWORD = "test123"; 
+const PASSWORD = "test123";
 
 const users = [
   { firstName: "Ana",    lastName: "Petrovska", email: "ana@test.com",    phone: "070111222", role: "student" },

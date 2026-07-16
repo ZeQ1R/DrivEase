@@ -61,13 +61,13 @@ export class PlatformAdmin implements OnInit{
   openEditForm(school: School){
     this.editingSchool.set(school)
     this.form.patchValue(
-      {name: school.name, 
-        city: school.city, 
-        address: school.address, 
-        description: school.description, 
-        price: String(school.price), 
-        rating: String(school.rating), 
-        phone: school.phone, 
+      {name: school.name,
+        city: school.city,
+        address: school.address,
+        description: school.description,
+        price: String(school.price),
+        rating: String(school.rating),
+        phone: school.phone,
         email: school.email,
       })
     this.formOpen.set(true)
@@ -104,7 +104,7 @@ export class PlatformAdmin implements OnInit{
     if(this.form.invalid){
       this.form.markAllAsTouched()
       this.formError.set('Please fill out all required fields.')
-      return  
+      return
     }
     this.formError.set('')
     this.saving.set(true)

@@ -74,17 +74,14 @@
 .hours-fill.theory { background: #1E4B8C; }
 .hours-card.compact { margin-top: 0; margin-bottom: 20px; padding: 16px; }
 
-/* phase chip */
 .phase-chip { display: inline-block; font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; padding: 4px 10px; margin-bottom: 10px; }
 .phase-chip.theory { background: rgba(30,75,140,0.1); color: #1E4B8C; border: 1px solid rgba(30,75,140,0.3); }
 .phase-chip.practical { background: rgba(47,158,110,0.1); color: #2F9E6E; border: 1px solid rgba(47,158,110,0.3); }
 .phase-chip.await { background: rgba(255,201,60,0.18); color: #B8860B; border: 1px solid rgba(255,201,60,0.4); }
 
-/* awaiting-instructor note */
 .await-note { background: rgba(255,201,60,0.1); border: 1px solid rgba(255,201,60,0.35); padding: 16px; }
 .await-note p { margin: 0; font-size: 14px; color: #8a6d1a; }
 
-/* CONGRATULATIONS — shown when all practical hours are complete */
 .congrats-card {
   position: relative;
   overflow: hidden;
@@ -181,12 +178,10 @@
 @media (prefers-reduced-motion: reduce) {
   .congrats-card, .congrats-emoji, .congrats-glow { animation: none; }
 }
-/* ---- Dashboard skeletons + smooth status (added for UX polish) ---- */
 .skel-pill { width: 76px; height: 22px; border-radius: 2px; }
 .skel-status-body { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
 .skel-status-body .skel-line { height: 14px; }
 .skel-status-body .skel-line.full { width: 100%; }
 .skel-status-body .skel-line.wide { width: 78%; }
 
-/* the status pill eases between states instead of snapping */
 .status-pill.status-transition { transition: background-color var(--motion-normal) var(--ease-standard), color var(--motion-normal) var(--ease-standard), border-color var(--motion-normal) var(--ease-standard); }

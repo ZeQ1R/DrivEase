@@ -36,7 +36,6 @@ export class InstructorPlatform implements OnInit{
   bookings = signal<any[]>([])
   students = signal<any[]>([])
 
-  // students still working toward their hours — once complete they fade out of the list
   visibleStudents = computed(() =>
     this.students().filter(s => Number(s.completed_hours) < Number(s.required_hours ?? 40))
   )

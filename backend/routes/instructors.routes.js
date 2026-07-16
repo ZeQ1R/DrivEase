@@ -52,7 +52,6 @@ router.get("/admin/instructors", authenticate, async (req, res) => {
   } catch (e) { res.status(500).json({ message: "Failed.", error: e.message }); }
 });
 
-// SCHOOL ADMIN: edit one of their instructors
 router.put("/admin/instructors/:id", authenticate, async (req, res) => {
   try {
     const { firstName, lastName, email, phone } = req.body;
@@ -60,7 +59,6 @@ router.put("/admin/instructors/:id", authenticate, async (req, res) => {
       return res.status(400).json({ message: "First name, last name and email are required." });
     }
 
-    // instructor must belong to the admin's school
     const owns = await pool.query(
       `SELECT u.id FROM users u
        JOIN driving_schools s ON s.id = u.school_id
@@ -69,7 +67,6 @@ router.put("/admin/instructors/:id", authenticate, async (req, res) => {
     );
     if (owns.rows.length === 0) return res.status(403).json({ message: "Not your school's instructor." });
 
-    // email must be free (unless it's still theirs)
     const emailTaken = await pool.query(
       `SELECT id FROM users WHERE email = $1 AND id <> $2`, [email, req.params.id]
     );
@@ -84,11 +81,9 @@ router.put("/admin/instructors/:id", authenticate, async (req, res) => {
   } catch (e) { res.status(500).json({ message: "Failed to update instructor.", error: e.message }); }
 });
 
-// SCHOOL ADMIN: delete one of their instructors
 router.delete("/admin/instructors/:id", authenticate, async (req, res) => {
   const client = await pool.connect();
   try {
-    // instructor must belong to the admin's school
     const owns = await client.query(
       `SELECT u.id FROM users u
        JOIN driving_schools s ON s.id = u.school_id
@@ -97,7 +92,6 @@ router.delete("/admin/instructors/:id", authenticate, async (req, res) => {
     );
     if (owns.rows.length === 0) return res.status(403).json({ message: "Not your school's instructor." });
 
-    // can't delete while students are assigned to them
     const assigned = await client.query(
       `SELECT id FROM registrations WHERE instructor_id = $1 AND status = 'approved' LIMIT 1`,
       [req.params.id]
@@ -106,7 +100,6 @@ router.delete("/admin/instructors/:id", authenticate, async (req, res) => {
       return res.status(409).json({ message: "This instructor still has assigned students. Reassign them first." });
     }
 
-    // can't delete while any of their slots have a booking (would lose lesson history)
     const booked = await client.query(
       `SELECT b.id FROM lesson_bookings b
        JOIN lesson_slots s ON s.id = b.slot_id
@@ -118,7 +111,6 @@ router.delete("/admin/instructors/:id", authenticate, async (req, res) => {
     }
 
     await client.query("BEGIN");
-    // free up their (unbooked) slots and detach from any past registrations
     await client.query(`DELETE FROM lesson_slots WHERE instructor_id = $1`, [req.params.id]);
     await client.query(`UPDATE registrations SET instructor_id = NULL WHERE instructor_id = $1`, [req.params.id]);
     await client.query(`DELETE FROM users WHERE id = $1`, [req.params.id]);
@@ -131,7 +123,6 @@ router.delete("/admin/instructors/:id", authenticate, async (req, res) => {
   } finally { client.release(); }
 });
 
-// INSTRUCTOR: create a PRACTICAL lesson slot (tied to this instructor)
 router.post("/instructor/slots", authenticate, requireInstructor, async (req, res) => {
   try {
     const { slotDate, slotTime, note, durationHours } = req.body;

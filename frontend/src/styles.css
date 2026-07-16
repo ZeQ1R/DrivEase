@@ -74,7 +74,6 @@ button {
   white-space: nowrap;
 }
 
-/* global click-press feedback for every button-like element in the app */
 button,
 [class*="-btn"] {
   transition: transform 0.08s ease, opacity 0.08s ease;
@@ -93,7 +92,6 @@ button:not(:disabled):active,
 
 .gradient-text {
   background: linear-gradient(135deg, #60a5fa, #2563eb, #7c3aed);
-  /* -webkit-background-clip: text; */
   -webkit-text-fill-color: transparent;
 }
 
@@ -176,9 +174,6 @@ button:not(:disabled):active,
   }
 }
 
-/* ============================================================
-   MOTION SYSTEM  (shared, opt-in — added for UX polish)
-   ============================================================ */
 :root {
   --motion-fast: 160ms;
   --motion-normal: 300ms;
@@ -203,12 +198,10 @@ button:not(:disabled):active,
   to   { background-position: 180% 0; }
 }
 
-/* Entrance utilities */
 .fade-in  { animation: fadeIn var(--motion-normal) var(--ease-standard) both; }
 .fade-up  { animation: fadeUp var(--motion-normal) var(--ease-standard) both; }
 .scale-in { animation: scaleIn var(--motion-normal) var(--ease-standard) both; }
 
-/* Stagger: set style="--i:0,1,2..." on each item, or use .stagger on a parent */
 .stagger-item { animation: fadeUp var(--motion-normal) var(--ease-standard) both; animation-delay: calc(var(--i, 0) * 70ms); }
 .stagger > * { animation: fadeUp var(--motion-normal) var(--ease-standard) both; }
 .stagger > *:nth-child(1) { animation-delay: 40ms; }
@@ -220,16 +213,13 @@ button:not(:disabled):active,
 .stagger > *:nth-child(7) { animation-delay: 460ms; }
 .stagger > *:nth-child(8) { animation-delay: 530ms; }
 
-/* Interactive button feedback (hover lift + press) — opt-in, brand-neutral */
 .button-interactive { transition: transform var(--motion-fast) var(--ease-standard), box-shadow var(--motion-fast) var(--ease-standard), background-color var(--motion-fast) var(--ease-standard), border-color var(--motion-fast) var(--ease-standard); }
 .button-interactive:not(:disabled):hover { transform: translateY(-2px); }
 .button-interactive:not(:disabled):active { transform: translateY(0) scale(0.97); }
 .button-interactive:disabled { opacity: 0.6; cursor: not-allowed; }
 
-/* Smooth status/label changes */
 .status-transition { transition: background-color var(--motion-normal) var(--ease-standard), color var(--motion-normal) var(--ease-standard), border-color var(--motion-normal) var(--ease-standard); }
 
-/* Skeleton loading placeholder */
 .skeleton {
   position: relative;
   background: linear-gradient(100deg, #e9edf1 30%, #f5f7f9 50%, #e9edf1 70%);
@@ -238,7 +228,6 @@ button:not(:disabled):active,
   border-radius: 4px;
 }
 
-/* Inline spinner for loading buttons */
 @keyframes btnSpin { to { transform: rotate(360deg); } }
 .btn-spinner {
   width: 15px; height: 15px; flex-shrink: 0;
@@ -249,7 +238,6 @@ button:not(:disabled):active,
   vertical-align: -2px;
 }
 
-/* Respect users who prefer reduced motion */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -261,10 +249,8 @@ button:not(:disabled):active,
   }
 }
 
-/* Form validation errors animate in consistently across every form */
 .field-error { animation: fadeUp var(--motion-fast) var(--ease-standard) both; }
 
-/* Reusable password show/hide field */
 .password-wrap { position: relative; }
 .password-wrap input { width: 100%; padding-right: 44px; }
 .password-toggle {

@@ -64,7 +64,6 @@ export class BrowseSchool implements OnInit {
     }
   }
 
-  // a rejected registration doesn't block re-registering — only pending/approved do
   private get hasActiveReg() {
     const status = this.registration()?.status;
     return status === 'pending' || status === 'approved';

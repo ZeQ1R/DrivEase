@@ -13,7 +13,6 @@ export class NavBar {
   private router = inject(Router);
   user: AuthUser | null = null;
 
-  // becomes true once the page is scrolled, to elevate the fixed bar
   scrolled = signal(false);
 
   @HostListener('window:scroll')
@@ -26,7 +25,7 @@ export class NavBar {
     this.router.navigate(['/']);
   }
 
-  get dashboardLink(): string{  
+  get dashboardLink(): string{
     const role = this.user?.role
     if(role === 'school_admin') return '/school-admin-dashboard';
     if(role === 'platform_admin') return '/platform-admin-dashboard'

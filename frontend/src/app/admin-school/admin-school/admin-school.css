@@ -1,6 +1,5 @@
 .sa-page { min-height: 100vh; background: #F3F5F6; }
 
-/* HEADER */
 .sa-header { background: #1C1F26; width: 100%; }
 .sa-header-inner { max-width: 1152px; margin: 0 auto; padding: 40px 24px 32px; }
 .eyebrow { font-family: 'IBM Plex Mono', monospace; color: #FFC93C; font-size: 12px; text-transform: uppercase; letter-spacing: 0.2em; margin: 0 0 8px; }
@@ -9,7 +8,6 @@
 
 .sa-content { max-width: 1152px; margin: 0 auto; padding: 32px 24px 60px; }
 
-/* STATS */
 .sa-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 32px; }
 .stat-box { background: white; border: 1px solid #E2E6E9; padding: 20px; display: flex; flex-direction: column; gap: 4px; }
 .stat-box.total { background: #1C1F26; }
@@ -17,7 +15,6 @@
 .stat-box.total .stat-num { color: #FFC93C; }
 .stat-label { font-family: 'IBM Plex Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: #9CA3AF; }
 
-/* FILTER TABS */
 .sa-toolbar { margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; }
 .filter-tabs { display: inline-flex; gap: 4px; background: white; border: 1px solid #E2E6E9; padding: 4px; }
 
@@ -34,7 +31,6 @@
 
 .status-msg { margin: 0 0 16px; font-size: 13px; color: #D14B3D; }
 
-/* APPLICANT CARDS */
 .applicant-cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
 .applicant-card { background: white; border: 1px solid #E2E6E9; padding: 20px; transition: transform .22s ease, box-shadow .22s ease; }
 .applicant-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(28,31,38,.08); }
@@ -57,7 +53,6 @@
 .doc-link { color: #1E4B8C; text-decoration: none; font-weight: 500; }
 .doc-link:hover { text-decoration: underline; }
 
-/* APPROVE BLOCK */
 .approve-block { margin-top: 16px; padding-top: 16px; border-top: 1px solid #E2E6E9; }
 .instr-select { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
 .instr-select label { font-family: 'IBM Plex Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: .1em; color: #717182; }
@@ -75,7 +70,6 @@
 .empty-state { background: white; border: 1px dashed #CBD5E1; padding: 60px; text-align: center; }
 .empty-state p { margin: 0; font-family: 'Big Shoulders Display', sans-serif; font-weight: 700; font-size: 20px; text-transform: uppercase; color: #9CA3AF; }
 
-/* INSTRUCTORS */
 .instructors-card { background: white; border: 1px solid #E2E6E9; padding: 20px; margin-top: 24px; }
 .instructors-card h2 { font-family: 'Big Shoulders Display', sans-serif; font-weight: 700; font-size: 18px; text-transform: uppercase; color: #1C1F26; margin: 0 0 16px; }
 .instructors-card h3 { font-family: 'IBM Plex Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: .1em; color: #717182; margin: 24px 0 12px; }
@@ -97,7 +91,6 @@
 .add-slot-btn:hover { background: #163A6E; transform: translateY(-1px); }
 .add-slot-btn:active { transform: translateY(0) scale(.98); }
 
-/* ACTION BUTTONS (edit / delete / save / cancel) */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -115,36 +108,28 @@
 .btn:active { transform: translateY(0) scale(.97); }
 .btn-ico { font-size: 13px; line-height: 1; }
 
-/* Edit — outlined navy, fills on hover */
 .btn-edit { background: white; border-color: #E2E6E9; color: #1C1F26; }
 .btn-edit:hover { border-color: #1C1F26; background: #1C1F26; color: white; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(28,31,38,.18); }
 
-/* Delete — outlined red, fills on hover */
 .btn-danger { background: white; border-color: rgba(209,75,61,.4); color: #D14B3D; }
 .btn-danger:hover { background: #D14B3D; border-color: #D14B3D; color: white; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(209,75,61,.24); }
 
-/* Save — solid blue */
 .btn-primary { background: #1E4B8C; border-color: #1E4B8C; color: white; }
 .btn-primary:hover { background: #163A6E; border-color: #163A6E; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(30,75,140,.24); }
 
-/* Cancel — quiet ghost */
 .btn-ghost { background: white; border-color: #E2E6E9; color: #717182; }
 .btn-ghost:hover { border-color: #9CA3AF; color: #1C1F26; }
 
-/* instructor row actions */
 .instr-row-actions { display: flex; gap: 8px; }
 
-/* instructor inline-edit row */
 .instr-row.editing { display: grid; grid-template-columns: repeat(4, 1fr) auto; gap: 10px; align-items: center; padding: 12px 0; border-bottom: 1px solid #E2E6E9; }
 .instr-row.editing input { padding: 8px 10px; border: 1px solid #E2E6E9; font-size: 13px; font-family: 'IBM Plex Sans', sans-serif; transition: border-color .18s ease, box-shadow .18s ease; }
 .instr-row.editing input:focus { outline: none; border-color: #1E4B8C; box-shadow: 0 0 0 3px rgba(30,75,140,.12); }
 
-/* applicant manage bar + inline edit */
 .applicant-manage { display: flex; justify-content: flex-end; gap: 10px; margin-top: 16px; padding-top: 16px; border-top: 1px solid #E2E6E9; }
 .applicant-edit { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 4px 0 8px; }
 .applicant-edit .applicant-actions { grid-column: 1 / -1; justify-content: flex-end; }
 
-/* THEORY / PHASE PROGRESS on approved applicants */
 .theory-hint { font-size: 13px; color: #717182; margin: 0 0 14px; }
 .phase-row { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
 .phase-label { font-family: 'IBM Plex Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: .1em; color: #717182; min-width: 54px; }
@@ -158,7 +143,6 @@
 .assign-block .instr-select { flex-direction: row; align-items: center; gap: 8px; }
 .assign-block .instr-select select { flex: 1; }
 
-/* RESPONSIVE */
 @media (max-width: 900px) {
   .applicant-cards { grid-template-columns: 1fr; }
   .sa-stats { grid-template-columns: repeat(2, 1fr); }

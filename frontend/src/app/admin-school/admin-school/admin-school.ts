@@ -22,7 +22,7 @@ export class AdminSchool implements OnInit {
   searchTerm = signal('');
 
   instructors = signal<Instructor[]>([]);
-  selectedInstructor: { [regId: number]: number } = {};  
+  selectedInstructor: { [regId: number]: number } = {};
   statusMessage = signal('');
 
   newInstrFirst = '';
@@ -31,14 +31,12 @@ export class AdminSchool implements OnInit {
   newInstrPhone = '';
   instrMessage = signal('');
 
-  // theory class slot form
   newTheoryDate = '';
   newTheoryTime = '';
   newTheoryDuration = 1.5;
   newTheoryNote = '';
   theoryMessage = signal('');
 
-  // has this student finished their theory hours?
   theoryDone(reg: AdminRegistration) {
     return Number(reg.theory_completed_hours) >= Number(reg.required_theory_hours);
   }
@@ -114,7 +112,6 @@ export class AdminSchool implements OnInit {
     });
   }
 
-  // approving starts the student's theory phase (no instructor assigned yet)
   approve(reg: AdminRegistration) {
     this.statusMessage.set('');
     this.adminService.updateStatus(reg.id, 'approved').subscribe({
@@ -138,7 +135,6 @@ export class AdminSchool implements OnInit {
     });
   }
 
-  // assign the instructor once theory is complete → opens the practical phase
   assignInstructor(reg: AdminRegistration) {
     const instructorId = this.selectedInstructor[reg.id];
     if (!instructorId) {

@@ -5,7 +5,6 @@
   z-index: 50;
   transition: box-shadow var(--motion-normal) var(--ease-standard), background-color var(--motion-normal) var(--ease-standard);
 }
-/* elevate + slightly deepen the bar once the user scrolls */
 .nav-bar.scrolled {
   background: #16181e;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.28);
@@ -26,7 +25,6 @@
 }
 .nav-links a:hover, .nav-link-btn:hover { color: white; }
 
-/* animated underline for real nav links (not the signup button) */
 .nav-link { position: relative; padding-bottom: 2px; }
 .nav-link::after {
   content: '';
@@ -39,7 +37,6 @@
   transition: transform var(--motion-normal) var(--ease-standard);
 }
 .nav-link:hover::after { transform: scaleX(1); }
-/* active route: keep the underline and brighten the label */
 .nav-link.active { color: white; }
 .nav-link.active::after { transform: scaleX(1); }
 

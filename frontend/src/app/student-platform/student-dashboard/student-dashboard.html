@@ -51,7 +51,6 @@
       @if (registration()?.status === 'approved') {
         <div class="schedule-card">
 
-          <!-- PHASE HEADER + PROGRESS -->
           @if (phase() === 'theory') {
             <span class="phase-chip theory">Phase 1 · Theory</span>
             <h2>Book a Theory Class</h2>
@@ -72,7 +71,6 @@
             <h2>Book a Practical Lesson</h2>
           }
 
-          <!-- BOOKABLE SLOTS (theory or practical) -->
           @if (phase() === 'theory' || phase() === 'practical') {
             @if (slots().length > 0) {
               <div class="slot-list">
@@ -113,7 +111,6 @@
             </div>
           }
 
-          <!-- PRACTICAL HOURS (only once in the practical phase) -->
           @if (phase() === 'practical') {
             <div class="hours-card">
               <h2>Practical Hours</h2>
