@@ -21,6 +21,10 @@ export class AdminSchool implements OnInit {
   schoolName = signal('');
   searchTerm = signal('');
 
+  // which view is showing: the student roster or the classes/instructors management
+  activeTab = signal<'students' | 'management'>('students');
+  setTab(tab: 'students' | 'management') { this.activeTab.set(tab); }
+
   instructors = signal<Instructor[]>([]);
   selectedInstructor: { [regId: number]: number } = {};
   statusMessage = signal('');

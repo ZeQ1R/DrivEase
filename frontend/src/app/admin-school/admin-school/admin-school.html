@@ -12,8 +12,14 @@
 
   <div class="sa-content">
 
+    <div class="sa-tabs">
+      <button [class.active]="activeTab() === 'students'" (click)="setTab('students')">Students</button>
+      <button [class.active]="activeTab() === 'management'" (click)="setTab('management')">Classes &amp; Instructors</button>
+    </div>
+
     @if (statusMessage()) { <p class="status-msg">{{ statusMessage() }}</p> }
 
+    @if (activeTab() === 'management') {
     <div class="instructors-card">
       <h2>Theory Classes</h2>
       <p class="theory-hint">You schedule the theory classes. Once a student completes their theory hours, you can assign an instructor for the practical part.</p>
@@ -74,7 +80,9 @@
       </div>
       @if (instrMessage()) { <p class="instr-msg">{{ instrMessage() }}</p> }
     </div>
+    }
 
+    @if (activeTab() === 'students') {
     <h2 class="students-heading">Registered Students</h2>
 
     <div class="sa-stats">
@@ -202,6 +210,7 @@
           <p>No {{ filter() === 'all' ? '' : filter() }} applications</p>
         }
       </div>
+    }
     }
 
   </div>

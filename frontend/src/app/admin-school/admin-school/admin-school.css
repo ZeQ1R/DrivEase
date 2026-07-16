@@ -153,3 +153,9 @@
 
 
 .students-heading { font-family: 'Big Shoulders Display', sans-serif; font-weight: 900; font-size: 26px; text-transform: uppercase; color: #1C1F26; margin: 12px 0 20px; padding-top: 20px; border-top: 1px solid #E2E6E9; }
+
+.sa-tabs { display: inline-flex; gap: 4px; background: white; border: 1px solid #E2E6E9; padding: 4px; margin-bottom: 24px; }
+.sa-tabs button { background: none; border: none; padding: 10px 22px; font-size: 14px; font-weight: 600; cursor: pointer; color: #717182; font-family: 'IBM Plex Sans', sans-serif; transition: background-color var(--motion-fast) var(--ease-standard), color var(--motion-fast) var(--ease-standard); }
+.sa-tabs button.active { background: #1C1F26; color: white; }
+.sa-tabs button:not(.active):hover { color: #1C1F26; }
+.students-heading { margin-top: 0; padding-top: 0; border-top: none; }
