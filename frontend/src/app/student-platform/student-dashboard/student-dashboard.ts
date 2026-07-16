@@ -124,4 +124,25 @@ private loadSchedule() {
       error: (err) => console.error('Cancel failed', err),
     });
   }
+
+  toggleMedical() {
+    const current = !!this.registration()?.medical_done;
+    this.registrationService.updateChecklist({ medicalDone: !current }).subscribe({
+      next: (res) => this.patchRegistration({ medical_done: res.checklist.medical_done }),
+      error: (err) => console.error('Failed to update medical status', err),
+    });
+  }
+
+  toggleFirstAid() {
+    const current = !!this.registration()?.first_aid_done;
+    this.registrationService.updateChecklist({ firstAidDone: !current }).subscribe({
+      next: (res) => this.patchRegistration({ first_aid_done: res.checklist.first_aid_done }),
+      error: (err) => console.error('Failed to update first-aid status', err),
+    });
+  }
+
+  private patchRegistration(patch: Partial<Registration>) {
+    const reg = this.registration();
+    if (reg) this.registration.set({ ...reg, ...patch });
+  }
 }

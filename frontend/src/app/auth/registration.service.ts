@@ -11,6 +11,8 @@ export interface Registration {
   city: string;
   instructor_first_name: string | null;
   instructor_last_name: string | null;
+  medical_done: boolean;
+  first_aid_done: boolean;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -25,5 +27,11 @@ export class RegistrationService {
 
   getMyRegistration() {
     return this.http.get<{ registration: Registration | null }>(`${API_URL}/registrations/me`);
+  }
+
+  updateChecklist(data: { medicalDone?: boolean; firstAidDone?: boolean }) {
+    return this.http.patch<{ checklist: { id: number; medical_done: boolean; first_aid_done: boolean } }>(
+      `${API_URL}/registrations/me/checklist`, data
+    );
   }
 }

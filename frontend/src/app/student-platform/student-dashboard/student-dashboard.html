@@ -71,6 +71,41 @@
             <h2>Book a Practical Lesson</h2>
           }
 
+          @if (phase() === 'awaiting-instructor' || phase() === 'practical') {
+            <div class="milestones-card">
+              <h3 class="milestones-title">Your Progress</h3>
+
+              <div class="milestone done">
+                <span class="ms-box checked">✓</span>
+                <div><p class="ms-name">Part 1 — Theory classes</p><span class="ms-sub">Completed</span></div>
+              </div>
+
+              <button type="button" class="milestone toggle" [class.done]="registration()?.medical_done" (click)="toggleMedical()">
+                <span class="ms-box" [class.checked]="registration()?.medical_done">{{ registration()?.medical_done ? '✓' : '' }}</span>
+                <div>
+                  <p class="ms-name">Medical health test &amp; doctor control</p>
+                  <span class="ms-sub">{{ registration()?.medical_done ? 'Marked as completed' : 'Tap once you have your medical approval' }}</span>
+                </div>
+              </button>
+
+              <button type="button" class="milestone toggle" [class.done]="registration()?.first_aid_done" (click)="toggleFirstAid()">
+                <span class="ms-box" [class.checked]="registration()?.first_aid_done">{{ registration()?.first_aid_done ? '✓' : '' }}</span>
+                <div>
+                  <p class="ms-name">Red Cross first aid test</p>
+                  <span class="ms-sub">{{ registration()?.first_aid_done ? 'Marked as completed' : 'Tap once you pass the Red Cross first aid course' }}</span>
+                </div>
+              </button>
+
+              <div class="milestone" [class.done]="readyForTest()">
+                <span class="ms-box" [class.checked]="readyForTest()">{{ readyForTest() ? '✓' : '' }}</span>
+                <div>
+                  <p class="ms-name">Part 2 — Practical driving</p>
+                  <span class="ms-sub">{{ readyForTest() ? 'All practical hours completed' : (phase() === 'practical' ? 'In progress' : 'Unlocks once your instructor is assigned') }}</span>
+                </div>
+              </div>
+            </div>
+          }
+
           @if (phase() === 'theory' || phase() === 'practical') {
             @if (slots().length > 0) {
               <div class="slot-list">

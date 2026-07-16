@@ -185,3 +185,23 @@
 .skel-status-body .skel-line.wide { width: 78%; }
 
 .status-pill.status-transition { transition: background-color var(--motion-normal) var(--ease-standard), color var(--motion-normal) var(--ease-standard), border-color var(--motion-normal) var(--ease-standard); }
+
+.milestones-card { border: 1px solid #E2E6E9; padding: 20px; margin-bottom: 20px; background: #fff; }
+.milestones-title { font-family: 'IBM Plex Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: #717182; margin: 0 0 8px; }
+.milestone { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; padding: 12px 0; border-top: 1px solid #F1F3F5; }
+.milestones-title + .milestone { border-top: none; }
+/* toggle rows are buttons — reset their default look */
+.milestone.toggle { background: none; border: none; border-top: 1px solid #F1F3F5; cursor: pointer; font-family: inherit; transition: background-color var(--motion-fast) var(--ease-standard); }
+.milestone.toggle:hover { background: #F8FAFB; }
+/* checkbox indicator */
+.ms-box {
+  flex-shrink: 0; width: 26px; height: 26px;
+  display: flex; align-items: center; justify-content: center;
+  border: 2px solid #CBD5E1; border-radius: 6px;
+  font-size: 14px; font-weight: 700; color: #fff;
+  transition: background-color var(--motion-fast) var(--ease-standard), border-color var(--motion-fast) var(--ease-standard);
+}
+.ms-box.checked { background: #2F9E6E; border-color: #2F9E6E; }
+.ms-name { margin: 0; font-size: 14px; font-weight: 600; color: #1C1F26; }
+.milestone.done .ms-name { color: #2F9E6E; }
+.ms-sub { font-size: 12px; color: #9CA3AF; }

@@ -3,7 +3,7 @@
   <div class="sa-header">
     <div class="sa-header-inner">
       <p class="eyebrow">School Admin</p>
-      <h1>Student Applications</h1>
+      <h1>School Management</h1>
       <p class="sa-sub">{{ schoolName() }}</p>
     </div>
   </div>
@@ -11,6 +11,72 @@
   <app-lane-divider class="flush"></app-lane-divider>
 
   <div class="sa-content">
+
+    @if (statusMessage()) { <p class="status-msg">{{ statusMessage() }}</p> }
+
+    <div class="instructors-card">
+      <h2>Theory Classes</h2>
+      <p class="theory-hint">You schedule the theory classes. Once a student completes their theory hours, you can assign an instructor for the practical part.</p>
+      <div class="instr-form">
+        <div class="slot-field"><label>Date</label><input type="date" [(ngModel)]="newTheoryDate" name="theoryDate" /></div>
+        <div class="slot-field"><label>Time</label><input type="time" [(ngModel)]="newTheoryTime" name="theoryTime" /></div>
+        <div class="slot-field"><label>Duration (h)</label><input type="number" step="0.5" min="0.5" [(ngModel)]="newTheoryDuration" name="theoryDur" /></div>
+        <div class="slot-field"><label>Note (optional)</label><input [(ngModel)]="newTheoryNote" name="theoryNote" placeholder="e.g. Road signs" /></div>
+        <button class="add-slot-btn" (click)="addTheorySlot()">Add Class</button>
+      </div>
+      @if (theoryMessage()) { <p class="instr-msg">{{ theoryMessage() }}</p> }
+    </div>
+
+    <div class="instructors-card">
+      <h2>Instructors</h2>
+
+      @if (instructors().length > 0) {
+        <div class="instr-list">
+          @for (i of instructors(); track i.id) {
+            @if (editingInstructorId() === i.id) {
+              <div class="instr-row editing">
+                <input [(ngModel)]="editInstr.firstName" [name]="'ei-first-' + i.id" placeholder="First name" />
+                <input [(ngModel)]="editInstr.lastName" [name]="'ei-last-' + i.id" placeholder="Last name" />
+                <input type="email" [(ngModel)]="editInstr.email" [name]="'ei-email-' + i.id" placeholder="Email" />
+                <input [(ngModel)]="editInstr.phone" [name]="'ei-phone-' + i.id" placeholder="Phone" />
+                <div class="instr-row-actions">
+                  <button class="btn btn-ghost" (click)="cancelEditInstructor()">Cancel</button>
+                  <button class="btn btn-primary" (click)="askConfirm('Save changes to ' + editInstr.firstName + ' ' + editInstr.lastName + '?', () => saveInstructor(i.id), 'Save')">Save</button>
+                </div>
+              </div>
+            } @else {
+              <div class="instr-row">
+                <span class="instr-name">{{ i.first_name }} {{ i.last_name }}</span>
+                <span class="instr-email mono">{{ i.email }}</span>
+                <div class="instr-row-actions">
+                  <button class="btn btn-edit" (click)="startEditInstructor(i)">
+                    <span class="btn-ico">✎</span> Edit
+                  </button>
+                  <button class="btn btn-danger" (click)="askConfirm('Delete instructor ' + i.first_name + ' ' + i.last_name + '? This cannot be undone.', () => deleteInstructor(i), 'Delete')">
+                    <span class="btn-ico">🗑</span> Delete
+                  </button>
+                </div>
+              </div>
+            }
+          }
+        </div>
+      } @else {
+        <p class="no-instr">No instructors yet. Add one below.</p>
+      }
+
+      <h3>Add an Instructor</h3>
+      <div class="instr-form">
+        <div class="slot-field"><label>First Name</label><input [(ngModel)]="newInstrFirst" name="instrFirst" /></div>
+        <div class="slot-field"><label>Last Name</label><input [(ngModel)]="newInstrLast" name="instrLast" /></div>
+        <div class="slot-field"><label>Email</label><input type="email" [(ngModel)]="newInstrEmail" name="instrEmail" /></div>
+        <div class="slot-field"><label>Phone</label><input [(ngModel)]="newInstrPhone" name="instrPhone" /></div>
+        <button class="add-slot-btn" (click)="createInstructor()">Add Instructor</button>
+      </div>
+      @if (instrMessage()) { <p class="instr-msg">{{ instrMessage() }}</p> }
+    </div>
+
+    <h2 class="students-heading">Registered Students</h2>
+
     <div class="sa-stats">
       <div class="stat-box"><span class="stat-num">{{ pendingCount() }}</span><span class="stat-label">Pending</span></div>
       <div class="stat-box"><span class="stat-num">{{ approvedCount() }}</span><span class="stat-label">Approved</span></div>
@@ -34,8 +100,6 @@
         }
       </div>
     </div>
-
-    @if (statusMessage()) { <p class="status-msg">{{ statusMessage() }}</p> }
 
     @if (filtered().length > 0) {
       <div class="applicant-cards">
@@ -139,67 +203,6 @@
         }
       </div>
     }
-
-    <div class="instructors-card">
-      <h2>Theory Classes</h2>
-      <p class="theory-hint">You schedule the theory classes. Once a student completes their theory hours, you can assign an instructor for the practical part.</p>
-      <div class="instr-form">
-        <div class="slot-field"><label>Date</label><input type="date" [(ngModel)]="newTheoryDate" name="theoryDate" /></div>
-        <div class="slot-field"><label>Time</label><input type="time" [(ngModel)]="newTheoryTime" name="theoryTime" /></div>
-        <div class="slot-field"><label>Duration (h)</label><input type="number" step="0.5" min="0.5" [(ngModel)]="newTheoryDuration" name="theoryDur" /></div>
-        <div class="slot-field"><label>Note (optional)</label><input [(ngModel)]="newTheoryNote" name="theoryNote" placeholder="e.g. Road signs" /></div>
-        <button class="add-slot-btn" (click)="addTheorySlot()">Add Class</button>
-      </div>
-      @if (theoryMessage()) { <p class="instr-msg">{{ theoryMessage() }}</p> }
-    </div>
-
-    <div class="instructors-card">
-      <h2>Instructors</h2>
-
-      @if (instructors().length > 0) {
-        <div class="instr-list">
-          @for (i of instructors(); track i.id) {
-            @if (editingInstructorId() === i.id) {
-              <div class="instr-row editing">
-                <input [(ngModel)]="editInstr.firstName" [name]="'ei-first-' + i.id" placeholder="First name" />
-                <input [(ngModel)]="editInstr.lastName" [name]="'ei-last-' + i.id" placeholder="Last name" />
-                <input type="email" [(ngModel)]="editInstr.email" [name]="'ei-email-' + i.id" placeholder="Email" />
-                <input [(ngModel)]="editInstr.phone" [name]="'ei-phone-' + i.id" placeholder="Phone" />
-                <div class="instr-row-actions">
-                  <button class="btn btn-ghost" (click)="cancelEditInstructor()">Cancel</button>
-                  <button class="btn btn-primary" (click)="askConfirm('Save changes to ' + editInstr.firstName + ' ' + editInstr.lastName + '?', () => saveInstructor(i.id), 'Save')">Save</button>
-                </div>
-              </div>
-            } @else {
-              <div class="instr-row">
-                <span class="instr-name">{{ i.first_name }} {{ i.last_name }}</span>
-                <span class="instr-email mono">{{ i.email }}</span>
-                <div class="instr-row-actions">
-                  <button class="btn btn-edit" (click)="startEditInstructor(i)">
-                    <span class="btn-ico">✎</span> Edit
-                  </button>
-                  <button class="btn btn-danger" (click)="askConfirm('Delete instructor ' + i.first_name + ' ' + i.last_name + '? This cannot be undone.', () => deleteInstructor(i), 'Delete')">
-                    <span class="btn-ico">🗑</span> Delete
-                  </button>
-                </div>
-              </div>
-            }
-          }
-        </div>
-      } @else {
-        <p class="no-instr">No instructors yet. Add one below.</p>
-      }
-
-      <h3>Add an Instructor</h3>
-      <div class="instr-form">
-        <div class="slot-field"><label>First Name</label><input [(ngModel)]="newInstrFirst" name="instrFirst" /></div>
-        <div class="slot-field"><label>Last Name</label><input [(ngModel)]="newInstrLast" name="instrLast" /></div>
-        <div class="slot-field"><label>Email</label><input type="email" [(ngModel)]="newInstrEmail" name="instrEmail" /></div>
-        <div class="slot-field"><label>Phone</label><input [(ngModel)]="newInstrPhone" name="instrPhone" /></div>
-        <button class="add-slot-btn" (click)="createInstructor()">Add Instructor</button>
-      </div>
-      @if (instrMessage()) { <p class="instr-msg">{{ instrMessage() }}</p> }
-    </div>
 
   </div>
 </div>

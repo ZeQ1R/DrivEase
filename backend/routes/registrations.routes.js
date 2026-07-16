@@ -8,7 +8,8 @@ const router = Router();
 router.get("/registrations/me", authenticate, async (req, res) => {
   try {
     const result = await pool.query(
-      `SELECT r.id, r.status, r.registered_at, s.id AS school_id, s.name AS school_name, s.city,
+      `SELECT r.id, r.status, r.registered_at, r.medical_done, r.first_aid_done,
+              s.id AS school_id, s.name AS school_name, s.city,
               i.first_name AS instructor_first_name, i.last_name AS instructor_last_name
        FROM registrations r
        JOIN driving_schools s ON s.id = r.school_id
@@ -21,6 +22,31 @@ router.get("/registrations/me", authenticate, async (req, res) => {
     res.status(200).json({ registration: result.rows[0] || null });
   } catch (error) {
     res.status(500).json({ message: "Failed to fetch registration.", error: error.message });
+  }
+});
+
+// STUDENT: toggle the self-attested checklist items (medical test, first-aid test)
+router.patch("/registrations/me/checklist", authenticate, async (req, res) => {
+  try {
+    const { medicalDone, firstAidDone } = req.body;
+    const result = await pool.query(
+      `UPDATE registrations SET
+         medical_done   = COALESCE($1::boolean, medical_done),
+         first_aid_done = COALESCE($2::boolean, first_aid_done)
+       WHERE id = (
+         SELECT id FROM registrations
+         WHERE student_id = $3 AND status = 'approved'
+         ORDER BY registered_at DESC LIMIT 1
+       )
+       RETURNING id, medical_done, first_aid_done`,
+      [medicalDone ?? null, firstAidDone ?? null, req.user.id]
+    );
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: "No approved registration found." });
+    }
+    res.status(200).json({ checklist: result.rows[0] });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to update checklist.", error: error.message });
   }
 });
 
