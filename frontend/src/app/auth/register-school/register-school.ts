@@ -8,6 +8,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { SchoolsService } from '../../schools/schools.service';
 import { ValidationError } from '@angular/forms/signals';
 import { LoadingScreen } from '../../shared/loading-screen/loading-screen/loading-screen';
+import { ToastService } from '../../shared/toast/toast.service';
 
 @Component({
   selector: 'app-register-school',
@@ -21,6 +22,7 @@ export class RegisterSchool implements OnInit{
   private router = inject(Router)
   private schoolsService = inject(SchoolsService)
   private registrationService = inject(RegistrationService)
+  private toast = inject(ToastService)
 
 
   school = signal<School | null>(null)
@@ -137,10 +139,14 @@ export class RegisterSchool implements OnInit{
     }
 
     this.registrationService.registerToSchool(data).subscribe({
-      next: () => this.router.navigate(['/student-platform-dashboard']),
+      next: () => {
+        this.toast.success('Registration submitted! Track its status on your dashboard.', 6000);
+        this.router.navigate(['/student-platform-dashboard']);
+      },
       error: (err) => {
         this.registering = false;
         this.registerError = err.error?.message || 'Failed to register. Please try again.';
+        this.toast.error(this.registerError);
       },
     });
   }

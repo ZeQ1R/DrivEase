@@ -1,10 +1,10 @@
 import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { debounceTime } from 'rxjs';
 import { AuthService } from '../auth.service';
 import { AuthPanel } from '../../shared/auth-panel/auth-panel';
-import { LoadingScreen } from "../../shared/loading-screen/loading-screen/loading-screen";
+import { ToastService } from '../../shared/toast/toast.service';
 
 let initialValue = '';
 
@@ -17,17 +17,23 @@ if (savedForm) {
 
 @Component({
   selector: 'app-login',
-  imports: [RouterLink, ReactiveFormsModule, AuthPanel, LoadingScreen],
+  imports: [RouterLink, ReactiveFormsModule, AuthPanel],
   templateUrl: './login.html',
   styleUrl: './login.css',
 })
 export class Login implements OnInit {
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
   private authService = inject(AuthService)
+  private toast = inject(ToastService);
   private destroyRef = inject(DestroyRef);
 
   loginError = '';
+  sessionNotice = signal('');
   loading = signal(false)
+  showPassword = signal(false)
+
+  togglePassword() { this.showPassword.update(v => !v); }
 
   form = new FormGroup({
     email: new FormControl(initialValue, {
@@ -55,6 +61,10 @@ export class Login implements OnInit {
   }
 
   ngOnInit() {
+    if (this.route.snapshot.queryParamMap.get('expired')) {
+      this.sessionNotice.set('Your session expired. Please sign in again to continue.');
+    }
+
     const subscription = this.form.valueChanges.pipe(debounceTime(500)).subscribe({
       next: (value) => {
         window.localStorage.setItem(
@@ -80,6 +90,7 @@ export class Login implements OnInit {
       .subscribe({
         next: (res) => {
           this.authService.storeSession(res)
+          this.toast.success(`Welcome back, ${res.user.firstName}!`)
           const role = res.user.role
           if(role === 'school_admin'){
             this.router.navigate(['/school-admin-dashboard'],{queryParams: {checkEmail:true}});

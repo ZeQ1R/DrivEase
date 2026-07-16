@@ -4,9 +4,9 @@
   <app-nav-bar></app-nav-bar>
 
 @if (school(); as school) {
-  <div class="detail-page">
+  <div class="detail-page fade-in">
     <div class="detail-hero">
-      <img [src]="imageUrl" [alt]="school.image.alt" />
+      <img class="hero-img-reveal" [src]="imageUrl" [alt]="school.image.alt" />
       <div class="hero-overlay">
         <div class="hero-content">
           <span class="feature-pill">{{ school.features.feature1 }}</span>
@@ -22,7 +22,7 @@
     <app-lane-divider></app-lane-divider>
 
     <div class="detail-body">
-      <div class="detail-main">
+      <div class="detail-main fade-up">
         <section>
           <h2>About This School</h2>
           <p>{{ school.description }}</p>
@@ -69,11 +69,22 @@
           <a routerLink="/login" class="primary-btn">Sign In to Register</a>
           <p class="sidebar-note center">No account? <a routerLink="/signup">Sign up free</a></p>
         } @else {
-          <button class="primary-btn" [routerLink]="['/register-school', school.id]">Register at This School</button>
+          <button class="primary-btn register-cta button-interactive" (click)="openRegisterConfirm()">Register at This School</button>
         }
       </aside>
     </div>
   </div>
+
+  @if (confirmOpen()) {
+    <app-confirm-box
+      [message]="'Register at ' + school.name + '? You can hold one active registration at a time.'"
+      confirmText="Yes, Register"
+      cancelText="Not yet"
+      tone="primary"
+      (yes)="confirmRegister()"
+      (no)="cancelRegister()">
+    </app-confirm-box>
+  }
 }
 }
 

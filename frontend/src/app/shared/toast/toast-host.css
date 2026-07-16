@@ -1,0 +1,76 @@
+.toast-stack {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 3000;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  pointer-events: none;
+}
+
+.app-toast {
+  pointer-events: auto;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  width: 340px;
+  max-width: calc(100vw - 32px);
+  padding: 14px 14px 14px 16px;
+  background: #fff;
+  border: 1px solid #E2E6E9;
+  border-left: 4px solid #9CA3AF;
+  box-shadow: 0 12px 30px rgba(28, 31, 38, 0.18);
+  animation: toastIn 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28) both;
+}
+.app-toast.success { border-left-color: #2F9E6E; }
+.app-toast.error   { border-left-color: #D14B3D; }
+.app-toast.info    { border-left-color: #1E4B8C; }
+
+.app-toast-icon {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+}
+.app-toast.success .app-toast-icon { background: #2F9E6E; }
+.app-toast.error   .app-toast-icon { background: #D14B3D; }
+.app-toast.info    .app-toast-icon { background: #1E4B8C; }
+
+.app-toast-text {
+  flex: 1;
+  margin: 0;
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 14px;
+  line-height: 1.45;
+  color: #1C1F26;
+}
+
+.app-toast-close {
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  font-size: 20px;
+  line-height: 1;
+  color: #9CA3AF;
+  cursor: pointer;
+  padding: 0 2px;
+  transition: color var(--motion-fast) var(--ease-standard);
+}
+.app-toast-close:hover { color: #1C1F26; }
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translateX(24px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@media (max-width: 480px) {
+  .toast-stack { top: 12px; right: 12px; left: 12px; }
+  .app-toast { width: auto; }
+}

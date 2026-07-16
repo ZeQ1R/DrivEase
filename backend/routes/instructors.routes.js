@@ -131,15 +131,16 @@ router.delete("/admin/instructors/:id", authenticate, async (req, res) => {
   } finally { client.release(); }
 });
 
+// INSTRUCTOR: create a PRACTICAL lesson slot (tied to this instructor)
 router.post("/instructor/slots", authenticate, requireInstructor, async (req, res) => {
   try {
-    const { slotDate, slotTime, note, slotType } = req.body;
+    const { slotDate, slotTime, note, durationHours } = req.body;
     if (!slotDate || !slotTime) return res.status(400).json({ message: "Date and time required." });
 
     const result = await pool.query(
-      `INSERT INTO lesson_slots (school_id, instructor_id, slot_date, slot_time, note, slot_type)
-       VALUES ($1,$2,$3,$4,$5,$6) RETURNING *`,
-      [req.user.school_id, req.user.id, slotDate, slotTime, note || null, slotType || 'practical']
+      `INSERT INTO lesson_slots (school_id, instructor_id, slot_date, slot_time, note, slot_type, duration_hours)
+       VALUES ($1,$2,$3,$4,$5,'practical',$6) RETURNING *`,
+      [req.user.school_id, req.user.id, slotDate, slotTime, note || null, durationHours || 1.5]
     );
     res.status(201).json({ slot: result.rows[0] });
   } catch (e) { res.status(500).json({ message: "Failed to create slot.", error: e.message }); }

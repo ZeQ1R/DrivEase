@@ -1,10 +1,10 @@
-import { Component, inject } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { Component, HostListener, inject, signal } from '@angular/core';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService, AuthUser } from '../../auth/auth.service';
 
 @Component({
   selector: 'app-nav-bar',
-  imports: [RouterLink],
+  imports: [RouterLink, RouterLinkActive],
   templateUrl: './nav-bar.html',
   styleUrl: './nav-bar.css',
 })
@@ -12,6 +12,12 @@ export class NavBar {
   private authService = inject(AuthService);
   private router = inject(Router);
   user: AuthUser | null = null;
+
+  // becomes true once the page is scrolled, to elevate the fixed bar
+  scrolled = signal(false);
+
+  @HostListener('window:scroll')
+  onScroll() { this.scrolled.set(window.scrollY > 8); }
 
   ngOnInit() { this.user = this.authService.getCurrentUser(); }
 

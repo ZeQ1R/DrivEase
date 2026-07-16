@@ -88,12 +88,20 @@ router.get("/admin/registrations", authenticate, async (req, res) => {
     const school = schoolResult.rows[0];   // now has { id, name }
 
     const result = await pool.query(
-      `SELECT r.id, r.status, r.registered_at,
+      `SELECT r.id, r.status, r.registered_at, r.instructor_id, r.required_theory_hours,
               d.first_name, d.last_name, d.email, d.phone,
               d.address, d.postal_code, d.embg, d.date_of_birth,
-              d.id_document_url, d.license_category AS "licenseCategory"
+              d.id_document_url, d.license_category AS "licenseCategory",
+              i.first_name AS instructor_first_name, i.last_name AS instructor_last_name,
+              COALESCE((
+                SELECT SUM(s.duration_hours)
+                FROM lesson_bookings b
+                JOIN lesson_slots s ON s.id = b.slot_id
+                WHERE b.student_id = r.student_id AND s.slot_type = 'theory' AND (s.slot_date + s.slot_time) < NOW()
+              ), 0) AS theory_completed_hours
        FROM registrations r
        JOIN registration_details d ON d.registration_id = r.id
+       LEFT JOIN users i ON i.id = r.instructor_id
        WHERE r.school_id = $1
        ORDER BY r.registered_at DESC`,
       [school.id]
@@ -108,15 +116,13 @@ router.get("/admin/registrations", authenticate, async (req, res) => {
   }
 });
 
+// Approve or reject a registration. Approving does NOT assign an instructor —
+// the student first completes theory; the instructor is assigned later (see below).
 router.patch("/admin/registrations/:id/status", authenticate, async (req, res) => {
   try {
-    const { status, instructorId } = req.body;
+    const { status } = req.body;
     if (!["approved", "rejected"].includes(status)) {
       return res.status(400).json({ message: "Invalid status." });
-    }
-
-    if (status === "approved" && !instructorId) {
-      return res.status(400).json({ message: "Please assign an instructor." });
     }
 
     // verify this registration belongs to the admin's school
@@ -130,29 +136,74 @@ router.patch("/admin/registrations/:id/status", authenticate, async (req, res) =
       return res.status(403).json({ message: "Not your school's registration." });
     }
 
-    if (status === "approved") {
-      const instr = await pool.query(
-        `SELECT u.id FROM users u
-         JOIN driving_schools s ON s.id = u.school_id
-         WHERE u.id = $1 AND u.role = 'instructor' AND s.owner_user_id = $2`,
-        [instructorId, req.user.id]
-      );
-      if (instr.rows.length === 0) {
-        return res.status(400).json({ message: "Invalid instructor for this school." });
-      }
-    }
-
+    // rejecting clears any assigned instructor; approving starts the theory phase (no instructor yet)
     const result = await pool.query(
       `UPDATE registrations
-       SET status = $1, instructor_id = $2
+       SET status = $1, instructor_id = CASE WHEN $2 THEN NULL ELSE instructor_id END
        WHERE id = $3
        RETURNING id, status, instructor_id`,
-      [status, status === "approved" ? instructorId : null, req.params.id]
+      [status, status === "rejected", req.params.id]
     );
 
     res.status(200).json({ registration: result.rows[0] });
   } catch (error) {
     res.status(500).json({ message: "Failed to update status.", error: error.message });
+  }
+});
+
+// Assign an instructor to an approved student — only allowed once their theory hours are complete.
+// This opens the practical phase.
+router.patch("/admin/registrations/:id/instructor", authenticate, async (req, res) => {
+  try {
+    const { instructorId } = req.body;
+    if (!instructorId) return res.status(400).json({ message: "Please choose an instructor." });
+
+    // registration must belong to the admin's school and be approved
+    const reg = await pool.query(
+      `SELECT r.id, r.student_id, r.status, r.required_theory_hours
+       FROM registrations r
+       JOIN driving_schools s ON s.id = r.school_id
+       WHERE r.id = $1 AND s.owner_user_id = $2`,
+      [req.params.id, req.user.id]
+    );
+    if (reg.rows.length === 0) {
+      return res.status(403).json({ message: "Not your school's registration." });
+    }
+    if (reg.rows[0].status !== "approved") {
+      return res.status(400).json({ message: "Student must be approved first." });
+    }
+
+    // theory must be complete before an instructor can be assigned
+    const theory = await pool.query(
+      `SELECT COALESCE(SUM(s.duration_hours), 0) AS hours
+       FROM lesson_bookings b
+       JOIN lesson_slots s ON s.id = b.slot_id
+       WHERE b.student_id = $1 AND s.slot_type = 'theory' AND (s.slot_date + s.slot_time) < NOW()`,
+      [reg.rows[0].student_id]
+    );
+    if (Number(theory.rows[0].hours) < Number(reg.rows[0].required_theory_hours)) {
+      return res.status(409).json({ message: "This student hasn't finished their theory classes yet." });
+    }
+
+    // instructor must belong to this admin's school
+    const instr = await pool.query(
+      `SELECT u.id FROM users u
+       JOIN driving_schools s ON s.id = u.school_id
+       WHERE u.id = $1 AND u.role = 'instructor' AND s.owner_user_id = $2`,
+      [instructorId, req.user.id]
+    );
+    if (instr.rows.length === 0) {
+      return res.status(400).json({ message: "Invalid instructor for this school." });
+    }
+
+    const result = await pool.query(
+      `UPDATE registrations SET instructor_id = $1 WHERE id = $2
+       RETURNING id, status, instructor_id`,
+      [instructorId, req.params.id]
+    );
+    res.status(200).json({ registration: result.rows[0] });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to assign instructor.", error: error.message });
   }
 });
 

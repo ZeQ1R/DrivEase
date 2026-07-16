@@ -40,3 +40,18 @@
 .error-text { color: #D14B3D; font-size: 13px; margin-top: 10px; text-align: center; }
 
 @media (max-width: 800px) { .detail-body { grid-template-columns: 1fr; } }
+/* ---- Detail reveal + prominent register CTA (added for UX polish) ---- */
+@keyframes heroImgReveal {
+  from { opacity: 0; transform: scale(1.06); }
+  to   { opacity: 1; transform: scale(1); }
+}
+.hero-img-reveal { animation: heroImgReveal var(--motion-slow) var(--ease-standard) both; }
+
+.register-cta {
+  width: 100%;
+  font-size: 15px;
+  box-shadow: 0 12px 28px rgba(30, 75, 140, 0.28);
+}
+.register-cta:hover {
+  box-shadow: 0 16px 36px rgba(30, 75, 140, 0.38);
+}

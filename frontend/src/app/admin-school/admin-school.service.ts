@@ -19,6 +19,11 @@ export interface AdminRegistration {
   date_of_birth: string;
   id_document_url: string | null;
   licenseCategory: string;
+  instructor_id: number | null;
+  required_theory_hours: number;
+  theory_completed_hours: number;
+  instructor_first_name: string | null;
+  instructor_last_name: string | null;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -35,10 +40,26 @@ export class AdminSchoolService {
     return this.http.get<{ instructors: Instructor[] }>(`${API_URL}/admin/instructors`);
   }
 
-  updateStatus(id: number, status: 'approved' | 'rejected', instructorId?: number) {
+  updateStatus(id: number, status: 'approved' | 'rejected') {
     return this.http.patch<{ registration: any }>(
       `${API_URL}/admin/registrations/${id}/status`,
-      { status, instructorId }
+      { status }
+    );
+  }
+
+  // assign an instructor once the student has finished their theory hours (opens the practical phase)
+  assignInstructor(id: number, instructorId: number) {
+    return this.http.patch<{ registration: any }>(
+      `${API_URL}/admin/registrations/${id}/instructor`,
+      { instructorId }
+    );
+  }
+
+  // school admin creates a THEORY class slot
+  createTheorySlot(slotDate: string, slotTime: string, note: string, durationHours: number) {
+    return this.http.post<{ slot: any }>(
+      `${API_URL}/admin/slots`,
+      { slotDate, slotTime, note, durationHours }
     );
   }
 

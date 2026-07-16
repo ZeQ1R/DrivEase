@@ -107,17 +107,6 @@
       </div>
     </div>
   }
-  @if (toast(); as t) {
-    <div class="toast" [class.success]="t.type === 'success'" [class.error]="t.type === 'error'">
-      <span class="toast-icon">{{ t.type === 'success' ? '✓' : '⚠' }}</span>
-      <div class="toast-body">
-        <p class="toast-title">{{ t.type === 'success' ? 'School deleted' : "Couldn't delete school" }}</p>
-        <p class="toast-text">{{ t.text }}</p>
-      </div>
-      <button class="toast-close" (click)="dismissToast()" aria-label="Dismiss">×</button>
-    </div>
-  }
-
       @if (confirmMessage()) {
         <app-confirm-box
           [message]="confirmMessage()"

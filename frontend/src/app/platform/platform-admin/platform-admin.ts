@@ -5,6 +5,7 @@ import { NavBar } from "../../shared/nav-bar/nav-bar";
 import { LaneDivider } from "../../shared/lane-divider/lane-divider";
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ConfirmBox } from '../../shared/confirm-box/confirm-box';
+import { ToastService } from '../../shared/toast/toast.service';
 
 
 @Component({
@@ -16,6 +17,7 @@ import { ConfirmBox } from '../../shared/confirm-box/confirm-box';
 export class PlatformAdmin implements OnInit{
 
   private schoolsService = inject(SchoolsService)
+  private toast = inject(ToastService)
   schools = signal<School[]>([])
   formOpen = signal(false)
   editingSchool = signal<School | null>(null)
@@ -26,21 +28,6 @@ export class PlatformAdmin implements OnInit{
 
   confirmMessage = signal('')
   pendingAction: (() => void) | null = null
-
-  // toast notification (success / error feedback)
-  toast = signal<{ text: string; type: 'success' | 'error' } | null>(null)
-  private toastTimer: ReturnType<typeof setTimeout> | null = null
-
-  showToast(text: string, type: 'success' | 'error') {
-    this.toast.set({ text, type })
-    if (this.toastTimer) clearTimeout(this.toastTimer)
-    this.toastTimer = setTimeout(() => this.toast.set(null), 5000)
-  }
-
-  dismissToast() {
-    if (this.toastTimer) clearTimeout(this.toastTimer)
-    this.toast.set(null)
-  }
 
   form = new FormGroup({
   name: new FormControl('', { validators: [Validators.required] }),
@@ -165,13 +152,10 @@ export class PlatformAdmin implements OnInit{
     this.schoolsService.deleteSchool(school.id).subscribe({
       next: () => {
         this.schools.set(this.schools().filter((s) => s.id !== school.id))
-        this.showToast(`“${school.name}” has been deleted.`, 'success')
+        this.toast.success(`“${school.name}” has been deleted.`)
       },
       error: (err) => {
-        this.showToast(
-          err.error?.message || 'Failed to delete the school. Please try again.',
-          'error'
-        )
+        this.toast.error(err.error?.message || 'Failed to delete the school. Please try again.')
       }
     })
   }

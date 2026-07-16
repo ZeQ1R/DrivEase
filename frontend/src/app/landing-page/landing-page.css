@@ -87,3 +87,14 @@
 }
 
 @media (max-width: 900px) { .steps-grid, .featured-grid { grid-template-columns: 1fr; } .step { border-right: none; border-bottom: 1px solid #E2E6E9; } }
+
+/* ---- Entrance animations (added for UX polish) ---- */
+/* Hero: staggered reveal — eyebrow → heading → paragraph → buttons */
+.hero-eyebrow  { animation: fadeUp var(--motion-normal) var(--ease-standard) both; animation-delay: 60ms; }
+.hero-content h1 { animation: fadeUp var(--motion-slow) var(--ease-standard) both; animation-delay: 150ms; }
+.hero-divider  { animation: fadeIn var(--motion-slow) var(--ease-standard) both; animation-delay: 260ms; }
+.hero-sub      { animation: fadeUp var(--motion-normal) var(--ease-standard) both; animation-delay: 340ms; }
+.hero-actions  { animation: fadeUp var(--motion-normal) var(--ease-standard) both; animation-delay: 440ms; }
+
+/* Hero CTAs: hover lift is handled by .button-interactive; add shadow depth */
+.hero-cta-primary:hover { box-shadow: 0 10px 24px rgba(30, 75, 140, 0.28); }

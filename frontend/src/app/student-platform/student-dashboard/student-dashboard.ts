@@ -27,13 +27,20 @@ export class StudentDashboard implements OnInit {
 
 
   hours = signal<{completed: number; required:number}>({completed: 0, required: 40})
+  theory = signal<{completed: number; required:number}>({completed: 0, required: 20})
+  phase = signal<'none' | 'theory' | 'awaiting-instructor' | 'practical'>('none')
+
   hoursPercent = computed(() => {
     const h = this.hours()
     return h.required > 0 ? Math.min(100, (h.completed / h.required) * 100) : 0
   })
+  theoryPercent = computed(() => {
+    const t = this.theory()
+    return t.required > 0 ? Math.min(100, (t.completed / t.required) * 100) : 0
+  })
   readyForTest = computed(() => {
     const h = this.hours()
-    return h.required > 0 && h.completed >= h.required
+    return this.phase() === 'practical' && h.required > 0 && h.completed >= h.required
   })
 
   user: AuthUser | null = null;
@@ -67,18 +74,24 @@ export class StudentDashboard implements OnInit {
     this.pendingAction = null;
   }
 
+  loadingReg = signal(true);
+
   ngOnInit() {
     this.user = this.authService.getCurrentUser();
 
     this.registrationService.getMyRegistration().subscribe({
       next: (res) => {
         this.registration.set(res.registration);
+        this.loadingReg.set(false);
           if (res.registration?.status === 'approved') {
           this.loadSchedule();
         }
-  
+
       },
-      error: (err) => console.error('Failed to load registration', err),
+      error: (err) => {
+        this.loadingReg.set(false);
+        console.error('Failed to load registration', err);
+      },
     });
 }
 
@@ -92,7 +105,11 @@ private loadSchedule() {
     error: (err) => console.error('Failed to load bookings', err),
   });
   this.scheduleService.getMyHours().subscribe({
-    next: (res) => this.hours.set(res)
+    next: (res) => {
+      this.hours.set({ completed: res.completed, required: res.required });
+      this.theory.set(res.theory);
+      this.phase.set(res.phase);
+    }
   })
 }
 

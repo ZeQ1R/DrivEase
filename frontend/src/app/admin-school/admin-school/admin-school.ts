@@ -31,6 +31,23 @@ export class AdminSchool implements OnInit {
   newInstrPhone = '';
   instrMessage = signal('');
 
+  // theory class slot form
+  newTheoryDate = '';
+  newTheoryTime = '';
+  newTheoryDuration = 1.5;
+  newTheoryNote = '';
+  theoryMessage = signal('');
+
+  // has this student finished their theory hours?
+  theoryDone(reg: AdminRegistration) {
+    return Number(reg.theory_completed_hours) >= Number(reg.required_theory_hours);
+  }
+
+  theoryPercent(reg: AdminRegistration) {
+    const req = Number(reg.required_theory_hours) || 1;
+    return Math.min(100, (Number(reg.theory_completed_hours) / req) * 100);
+  }
+
   editingInstructorId = signal<number | null>(null);
   editInstr = { firstName: '', lastName: '', email: '', phone: '' };
 
@@ -97,14 +114,10 @@ export class AdminSchool implements OnInit {
     });
   }
 
+  // approving starts the student's theory phase (no instructor assigned yet)
   approve(reg: AdminRegistration) {
-    const instructorId = this.selectedInstructor[reg.id];
-    if (!instructorId) {
-      this.statusMessage.set('Please assign an instructor before accepting.');
-      return;
-    }
     this.statusMessage.set('');
-    this.adminService.updateStatus(reg.id, 'approved', instructorId).subscribe({
+    this.adminService.updateStatus(reg.id, 'approved').subscribe({
       next: () => {
         this.registrations.set(
           this.registrations().map(r => r.id === reg.id ? { ...r, status: 'approved' } : r)
@@ -118,10 +131,50 @@ export class AdminSchool implements OnInit {
     this.adminService.updateStatus(reg.id, 'rejected').subscribe({
       next: () => {
         this.registrations.set(
-          this.registrations().map(r => r.id === reg.id ? { ...r, status: 'rejected' } : r)
+          this.registrations().map(r => r.id === reg.id ? { ...r, status: 'rejected', instructor_id: null } : r)
         );
       },
       error: (err) => this.statusMessage.set(err.error?.message || 'Failed to reject.'),
+    });
+  }
+
+  // assign the instructor once theory is complete → opens the practical phase
+  assignInstructor(reg: AdminRegistration) {
+    const instructorId = this.selectedInstructor[reg.id];
+    if (!instructorId) {
+      this.statusMessage.set('Please choose an instructor to assign.');
+      return;
+    }
+    this.statusMessage.set('');
+    this.adminService.assignInstructor(reg.id, instructorId).subscribe({
+      next: () => {
+        const instr = this.instructors().find(i => i.id === instructorId);
+        this.registrations.set(
+          this.registrations().map(r => r.id === reg.id ? {
+            ...r,
+            instructor_id: instructorId,
+            instructor_first_name: instr?.first_name ?? null,
+            instructor_last_name: instr?.last_name ?? null,
+          } : r)
+        );
+      },
+      error: (err) => this.statusMessage.set(err.error?.message || 'Failed to assign instructor.'),
+    });
+  }
+
+  addTheorySlot() {
+    if (!this.newTheoryDate || !this.newTheoryTime) {
+      this.theoryMessage.set('Please add a date and time.');
+      return;
+    }
+    this.adminService.createTheorySlot(
+      this.newTheoryDate, this.newTheoryTime, this.newTheoryNote, Number(this.newTheoryDuration)
+    ).subscribe({
+      next: () => {
+        this.theoryMessage.set('Theory class added. Students can now book it.');
+        this.newTheoryDate = ''; this.newTheoryTime = ''; this.newTheoryNote = '';
+      },
+      error: (err) => this.theoryMessage.set(err.error?.message || 'Failed to add theory class.'),
     });
   }
 

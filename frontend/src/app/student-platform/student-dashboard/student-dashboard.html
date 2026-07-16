@@ -2,7 +2,7 @@
 
 <div class="dashboard-page">
   <div class="dashboard-header">
-  <div class="dashboard-header-inner">
+  <div class="dashboard-header-inner fade-up">
     <p class="eyebrow">Student Dashboard</p>
     <h1>Hello, {{ user?.firstName }}</h1>
     @if (registration(); as registration) { <p class="reg-id">Registration #<span>{{ registration.id }}</span></p> }
@@ -11,14 +11,23 @@
   <app-lane-divider></app-lane-divider>
 
   <div class="dashboard-content">
-    <div class="dashboard-main">
+    <div class="dashboard-main stagger">
       <div class="status-card">
         <div class="status-card-header">
           <h2>Application Status</h2>
-          @if (registration(); as registration) { <span class="status-pill" [class]="displayStatus()">{{ displayStatus() }}</span> }
+          @if (loadingReg()) {
+            <span class="skeleton skel-pill"></span>
+          } @else if (registration(); as registration) {
+            <span class="status-pill status-transition" [class]="displayStatus()">{{ displayStatus() }}</span>
+          }
         </div>
 
-        @if (registration(); as registration) {
+        @if (loadingReg()) {
+          <div class="skel-status-body">
+            <div class="skeleton skel-line full"></div>
+            <div class="skeleton skel-line wide"></div>
+          </div>
+        } @else if (registration(); as registration) {
           @if (registration.status !== 'rejected') {
             <app-progress-track [status]="displayStatus()"></app-progress-track>
             <div class="status-note">
@@ -41,23 +50,51 @@
 
       @if (registration()?.status === 'approved') {
         <div class="schedule-card">
-          <h2>Book a Lesson</h2>
-          @if (slots().length > 0) {
-            <div class="slot-list">
-              @for (slot of slots(); track slot.id) {
-                <div class="slot">
-                  <div class="slot-info">
-                    <span class="slot-date">{{ slot.slot_date | date:'mediumDate' }}</span>
-                    <span class="slot-time">{{ slot.slot_time }}</span>
-                    <span class="slot-badge">{{slot.slot_type}}</span>
-                    @if (slot.note) { <span class="slot-note">{{ slot.note }}</span> }
-                  </div>
-                  <button class="book-btn" (click)="bookSlot(slot)">Book</button>
-                </div>
-              }
+
+          <!-- PHASE HEADER + PROGRESS -->
+          @if (phase() === 'theory') {
+            <span class="phase-chip theory">Phase 1 · Theory</span>
+            <h2>Book a Theory Class</h2>
+            <div class="hours-card compact">
+              <div class="hours-stat">
+                <span class="hours-done">{{ theory().completed }}</span>
+                <span class="hours-sep">/</span>
+                <span class="hours-total">{{ theory().required }} theory hrs</span>
+              </div>
+              <div class="hours-bar"><div class="hours-fill theory" [style.width.%]="theoryPercent()"></div></div>
+              <p class="hours-note">{{ theory().required - theory().completed }} theory hours left before you can start practical driving.</p>
             </div>
+          } @else if (phase() === 'awaiting-instructor') {
+            <span class="phase-chip await">Theory complete</span>
+            <h2>You're through theory! 🎓</h2>
           } @else {
-            <p class="no-slots">No available time slots right now. Check back soon.</p>
+            <span class="phase-chip practical">Phase 2 · Practical</span>
+            <h2>Book a Practical Lesson</h2>
+          }
+
+          <!-- BOOKABLE SLOTS (theory or practical) -->
+          @if (phase() === 'theory' || phase() === 'practical') {
+            @if (slots().length > 0) {
+              <div class="slot-list">
+                @for (slot of slots(); track slot.id) {
+                  <div class="slot">
+                    <div class="slot-info">
+                      <span class="slot-date">{{ slot.slot_date | date:'mediumDate' }}</span>
+                      <span class="slot-time">{{ slot.slot_time }}</span>
+                      <span class="slot-badge">{{slot.slot_type}}</span>
+                      @if (slot.note) { <span class="slot-note">{{ slot.note }}</span> }
+                    </div>
+                    <button class="book-btn" (click)="bookSlot(slot)">Book</button>
+                  </div>
+                }
+              </div>
+            } @else {
+              <p class="no-slots">No {{ phase() === 'theory' ? 'theory classes' : 'practical slots' }} available right now. Check back soon.</p>
+            }
+          } @else {
+            <div class="await-note">
+              <p>You've finished all your theory classes. Your school is assigning your instructor — practical booking unlocks as soon as they do.</p>
+            </div>
           }
 
           @if (bookings().length > 0) {
@@ -76,24 +113,27 @@
             </div>
           }
 
-          <div class="hours-card">
-            <h2>Practical Hours</h2>
-            <div class="hours-stat">
-              <span class="hours-done">{{ hours().completed }}</span>
-              <span class="hours-sep">/</span>
-              <span class="hours-total">{{ hours().required }} hrs</span>
+          <!-- PRACTICAL HOURS (only once in the practical phase) -->
+          @if (phase() === 'practical') {
+            <div class="hours-card">
+              <h2>Practical Hours</h2>
+              <div class="hours-stat">
+                <span class="hours-done">{{ hours().completed }}</span>
+                <span class="hours-sep">/</span>
+                <span class="hours-total">{{ hours().required }} hrs</span>
+              </div>
+              <div class="hours-bar">
+                <div class="hours-fill" [style.width.%]="hoursPercent()"></div>
+              </div>
+              <p class="hours-note">
+                @if (hours().completed >= hours().required) {
+                  ✓ You've completed all required practical hours!
+                } @else {
+                  {{ hours().required - hours().completed }} hours remaining
+                }
+              </p>
             </div>
-            <div class="hours-bar">
-              <div class="hours-fill" [style.width.%]="hoursPercent()"></div>
-            </div>
-            <p class="hours-note">
-              @if (hours().completed >= hours().required) {
-                ✓ You've completed all required practical hours!
-              } @else {
-                {{ hours().required - hours().completed }} hours remaining
-              }
-            </p>
-          </div>
+          }
 
           @if (readyForTest()) {
             <div class="congrats-card">

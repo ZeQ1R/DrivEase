@@ -144,6 +144,20 @@
 .applicant-edit { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 4px 0 8px; }
 .applicant-edit .applicant-actions { grid-column: 1 / -1; justify-content: flex-end; }
 
+/* THEORY / PHASE PROGRESS on approved applicants */
+.theory-hint { font-size: 13px; color: #717182; margin: 0 0 14px; }
+.phase-row { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+.phase-label { font-family: 'IBM Plex Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: .1em; color: #717182; min-width: 54px; }
+.phase-bar { flex: 1; height: 8px; background: #E2E6E9; overflow: hidden; }
+.phase-fill { height: 100%; background: #1E4B8C; transition: width .4s ease; }
+.phase-hours { font-size: 13px; color: #1C1F26; white-space: nowrap; }
+.phase-note { font-size: 13px; color: #717182; margin: 0; }
+.phase-note.done { color: #2F9E6E; font-weight: 600; }
+.assign-block { display: flex; flex-direction: column; gap: 8px; padding-top: 4px; }
+.assign-tag { font-family: 'IBM Plex Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: .1em; color: #2F9E6E; }
+.assign-block .instr-select { flex-direction: row; align-items: center; gap: 8px; }
+.assign-block .instr-select select { flex: 1; }
+
 /* RESPONSIVE */
 @media (max-width: 900px) {
   .applicant-cards { grid-template-columns: 1fr; }

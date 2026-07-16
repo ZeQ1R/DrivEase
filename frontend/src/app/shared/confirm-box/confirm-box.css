@@ -7,6 +7,7 @@
       justify-content: center;
       z-index: 2000;
       padding: 24px;
+      animation: fadeIn var(--motion-fast) var(--ease-standard) both;
     }
     .cb-box {
       background: white;
@@ -14,6 +15,7 @@
       width: 100%;
       padding: 28px 24px;
       text-align: center;
+      animation: scaleIn var(--motion-normal) var(--ease-standard) both;
     }
     .cb-message {
       font-size: 15px;
@@ -48,4 +50,10 @@
     }
     .cb-yes:hover {
       background: #b03c30;
+    }
+    .cb-yes.primary {
+      background: #1E4B8C;
+    }
+    .cb-yes.primary:hover {
+      background: #163a6e;
     }

@@ -22,17 +22,20 @@ export class BrowsingSchools implements OnInit {
   search = '';
   cityFilter = 'All';
   maxPrice = 1000;
+  loading = signal(true);
 
 
   ngOnInit() {
-
-
+    this.loading.set(true);
     this.schoolsService.getSchools().subscribe({
       next: (res) => {
-        (this.schools = res.schools)
-        
+        this.schools = res.schools;
+        this.loading.set(false);
       },
-      error: (err) => console.error('Failed to load schools', err)
+      error: (err) => {
+        console.error('Failed to load schools', err);
+        this.loading.set(false);
+      }
     });
   }
 

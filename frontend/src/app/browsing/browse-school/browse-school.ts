@@ -10,11 +10,12 @@ import { SchoolsService } from '../../schools/schools.service';
 import { Registration, RegistrationService } from '../../auth/registration.service';
 import { School } from '../../schools/school.model';
 import { LoadingScreen } from '../../shared/loading-screen/loading-screen/loading-screen';
+import { ConfirmBox } from '../../shared/confirm-box/confirm-box';
 
 @Component({
   selector: 'app-browse-school',
   standalone: true,
-  imports: [CommonModule, RouterLink, NavBar, StarRating, LaneDivider,LoadingScreen],
+  imports: [CommonModule, RouterLink, NavBar, StarRating, LaneDivider, LoadingScreen, ConfirmBox],
   templateUrl: './browse-school.html',
   styleUrl: './browse-school.css',
 })
@@ -27,8 +28,17 @@ export class BrowseSchool implements OnInit {
 
   school = signal<School | null>(null);
   registration = signal<Registration | null>(null);
-  user: AuthUser | null = null; 
+  user: AuthUser | null = null;
   submitting = signal(false)
+  confirmOpen = signal(false)
+
+  openRegisterConfirm() { this.confirmOpen.set(true); }
+  cancelRegister() { this.confirmOpen.set(false); }
+  confirmRegister() {
+    this.confirmOpen.set(false);
+    const id = this.school()?.id;
+    if (id != null) this.router.navigate(['/register-school', id]);
+  }
 
   ngOnInit() {
     this.user = this.authService.getCurrentUser();

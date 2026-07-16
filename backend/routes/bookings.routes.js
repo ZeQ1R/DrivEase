@@ -1,6 +1,7 @@
 import { Router } from "express";
 import pool from "../config/database.js";
 import { authenticate } from "../middleware/auth.js";
+import { getStudentPhase } from "../lib/phase.js";
 
 const router = Router();
 
@@ -66,9 +67,15 @@ router.get("/hours/me", authenticate, async (req, res) => {
        WHERE student_id = $1 AND status = 'approved' LIMIT 1`,
       [req.user.id]
     );
+    const p = await getStudentPhase(pool, req.user.id);
     res.status(200).json({
       completed: Number(completed.rows[0].hours),
       required: required.rows[0] ? Number(required.rows[0].required_hours) : 40,
+      theory: {
+        completed: p ? p.theoryCompleted : 0,
+        required: p ? p.theoryRequired : 20,
+      },
+      phase: p ? p.phase : "none",
     });
   } catch (e) {
     res.status(500).json({ message: "Failed to load hours.", error: e.message });

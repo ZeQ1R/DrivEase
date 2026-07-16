@@ -38,6 +38,11 @@ export class ScheduleService {
   }
 
   getMyHours() {
-    return this.http.get<{ completed: number; required: number }>(`${API_URL}/hours/me`);
+    return this.http.get<{
+      completed: number;
+      required: number;
+      theory: { completed: number; required: number };
+      phase: 'none' | 'theory' | 'awaiting-instructor' | 'practical';
+    }>(`${API_URL}/hours/me`);
   }
 }
