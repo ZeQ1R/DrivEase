@@ -43,16 +43,6 @@
 .nav-signup-btn { padding: 6px 16px; background: #1E4B8C; color: white !important; }
 .nav-signup-btn:hover { background: #163a6e !important; color: white !important; }
 
-/* ---- Notification bell ---- */
-.notif { position: relative; display: flex; align-items: center; }
-.notif-bell { position: relative; background: none; border: none; cursor: pointer; font-size: 17px; line-height: 1; padding: 4px; filter: grayscale(0.2); }
-.notif-badge {
-  position: absolute; top: -4px; right: -4px;
-  background: #D14B3D; color: #fff;
-  font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 700;
-  min-width: 16px; height: 16px; padding: 0 4px;
-  border-radius: 999px; display: flex; align-items: center; justify-content: center;
-}
 .notif-backdrop { position: fixed; inset: 0; z-index: 60; }
 .notif-panel {
   position: absolute; top: calc(100% + 12px); right: 0; z-index: 61;
