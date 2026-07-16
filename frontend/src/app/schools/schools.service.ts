@@ -30,4 +30,30 @@ export class SchoolsService {
   deleteSchool(id: number) {
     return this.http.delete(`${API_URL}/admin/schools/${id}`);
   }
+
+  getReviews(schoolId: number | string) {
+    return this.http.get<{
+      reviews: SchoolReview[];
+      average: number;
+      count: number;
+      myReview: { id: number; rating: number; comment: string | null } | null;
+      canReview: boolean;
+    }>(`${API_URL}/schools/${schoolId}/reviews`);
+  }
+
+  submitReview(schoolId: number | string, rating: number, comment: string) {
+    return this.http.post<{ review: SchoolReview }>(
+      `${API_URL}/schools/${schoolId}/reviews`,
+      { rating, comment }
+    );
+  }
+}
+
+export interface SchoolReview {
+  id: number;
+  rating: number;
+  comment: string | null;
+  created_at: string;
+  first_name: string;
+  last_name: string;
 }

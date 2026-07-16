@@ -2,6 +2,8 @@ import { Router } from "express";
 import pool from "../config/database.js";
 import { authenticate } from "../middleware/auth.js";
 import { uploadId } from "../middleware/upload.js";
+import { notify } from "../lib/notify.js";
+import { sendMail } from "../config/mailer.js";
 
 const router = Router();
 
@@ -150,8 +152,10 @@ router.patch("/admin/registrations/:id/status", authenticate, async (req, res) =
     }
 
     const check = await pool.query(
-      `SELECT r.id FROM registrations r
+      `SELECT r.id, r.student_id, s.name AS school_name, u.email AS student_email, u.first_name
+       FROM registrations r
        JOIN driving_schools s ON s.id = r.school_id
+       JOIN users u ON u.id = r.student_id
        WHERE r.id = $1 AND s.owner_user_id = $2`,
       [req.params.id, req.user.id]
     );
@@ -166,6 +170,19 @@ router.patch("/admin/registrations/:id/status", authenticate, async (req, res) =
        RETURNING id, status, instructor_id`,
       [status, status === "rejected", req.params.id]
     );
+
+    // notify the student (in-app always; email best-effort on approval)
+    const info = check.rows[0];
+    if (status === "approved") {
+      notify(info.student_id, `Your registration at ${info.school_name} was approved! You can start booking theory classes.`, "success", "/student-platform-dashboard");
+      sendMail({
+        to: info.student_email,
+        subject: `You're enrolled at ${info.school_name}!`,
+        html: `<h2>Welcome aboard, ${info.first_name}!</h2><p>Your registration at <strong>${info.school_name}</strong> has been approved. Log in to book your theory classes.</p>`,
+      }).catch(err => console.error("Approval email failed:", err.message));
+    } else {
+      notify(info.student_id, `Your registration at ${info.school_name} was not approved. You can apply to another school.`, "error", "/browse");
+    }
 
     res.status(200).json({ registration: result.rows[0] });
   } catch (error) {
@@ -204,7 +221,7 @@ router.patch("/admin/registrations/:id/instructor", authenticate, async (req, re
     }
 
     const instr = await pool.query(
-      `SELECT u.id FROM users u
+      `SELECT u.id, u.first_name, u.last_name FROM users u
        JOIN driving_schools s ON s.id = u.school_id
        WHERE u.id = $1 AND u.role = 'instructor' AND s.owner_user_id = $2`,
       [instructorId, req.user.id]
@@ -218,6 +235,10 @@ router.patch("/admin/registrations/:id/instructor", authenticate, async (req, re
        RETURNING id, status, instructor_id`,
       [instructorId, req.params.id]
     );
+
+    const i = instr.rows[0];
+    notify(reg.rows[0].student_id, `Instructor ${i.first_name} ${i.last_name} has been assigned to you. You can now book practical lessons!`, "success", "/student-platform-dashboard");
+
     res.status(200).json({ registration: result.rows[0] });
   } catch (error) {
     res.status(500).json({ message: "Failed to assign instructor.", error: error.message });

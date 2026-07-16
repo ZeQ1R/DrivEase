@@ -11,6 +11,8 @@ import { authGuard } from './auth/auth.guard';
 import { roleGuard } from './auth/role.guard';
 import { PlatformAdmin } from './platform/platform-admin/platform-admin';
 import { InstructorPlatform } from './instructor-platform/instructor-platform';
+import { ForgotPassword } from './auth/forgot-password/forgot-password';
+import { ResetPassword } from './auth/reset-password/reset-password';
 
 export const routes: Routes = [
 	{
@@ -36,6 +38,16 @@ export const routes: Routes = [
 		path: 'signup',
 		component: Signup,
 		title: 'DrivEase - SignUp'
+	},
+	{
+		path: 'forgot-password',
+		component: ForgotPassword,
+		title: 'DrivEase - Forgot Password'
+	},
+	{
+		path: 'reset-password',
+		component: ResetPassword,
+		title: 'DrivEase - Reset Password'
 	},
 	{
 		path: 'student-platform-dashboard',

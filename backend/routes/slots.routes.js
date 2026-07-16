@@ -2,6 +2,7 @@ import { Router } from "express";
 import pool from "../config/database.js";
 import { authenticate } from "../middleware/auth.js";
 import { getStudentPhase } from "../lib/phase.js";
+import { notify } from "../lib/notify.js";
 
 const router = Router();
 
@@ -58,7 +59,7 @@ router.post("/slots/:id/book", authenticate, async (req, res) => {
   try {
     await client.query("BEGIN");
     const slot = await client.query(
-      `SELECT id, is_booked, school_id, instructor_id, slot_type FROM lesson_slots WHERE id = $1 FOR UPDATE`,
+      `SELECT id, is_booked, school_id, instructor_id, slot_type, slot_date FROM lesson_slots WHERE id = $1 FOR UPDATE`,
       [req.params.id]
     );
     if (slot.rows.length === 0 || slot.rows[0].is_booked) {
@@ -94,6 +95,14 @@ router.post("/slots/:id/book", authenticate, async (req, res) => {
       [req.params.id, req.user.id]
     );
     await client.query("COMMIT");
+
+    // let the instructor know a practical lesson was booked
+    if (s.slot_type === "practical" && s.instructor_id) {
+      const who = await pool.query(`SELECT first_name, last_name FROM users WHERE id = $1`, [req.user.id]);
+      const name = who.rows[0] ? `${who.rows[0].first_name} ${who.rows[0].last_name}` : "A student";
+      notify(s.instructor_id, `${name} booked a practical lesson on ${s.slot_date?.toISOString?.().slice(0, 10) ?? s.slot_date}.`, "info", "/instructor");
+    }
+
     res.status(201).json({ message: "Lesson booked." });
   } catch (e) {
     await client.query("ROLLBACK");

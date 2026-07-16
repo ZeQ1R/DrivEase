@@ -38,6 +38,14 @@ export class AuthService {
     return this.http.post<AuthResponse>(`${this.apiUrl}/login`, { email, password });
   }
 
+  forgotPassword(email: string) {
+    return this.http.post<{ message: string }>(`${this.apiUrl}/forgot-password`, { email });
+  }
+
+  resetPassword(token: string, password: string) {
+    return this.http.post<{ message: string }>(`${this.apiUrl}/reset-password`, { token, password });
+  }
+
   storeSession(response: AuthResponse) {
     localStorage.setItem('token', response.token);
     localStorage.setItem('user', JSON.stringify(response.user));
