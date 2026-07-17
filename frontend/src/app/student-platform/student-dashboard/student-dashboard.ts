@@ -8,13 +8,15 @@ import { NavBar } from '../../shared/nav-bar/nav-bar';
 import { Booking, ScheduleService, Slot } from './schedule.service';
 import { DatePipe } from '@angular/common';
 import { ConfirmBox } from '../../shared/confirm-box/confirm-box';
+import { ReviewBox } from '../../shared/review-box/review-box';
+import { ToastService } from '../../shared/toast/toast.service';
 import { trigger, transition, style, animate } from '@angular/animations';
 
 
 @Component({
   selector: 'app-student-dashboard',
   standalone: true,
-  imports: [RouterLink, LaneDivider, ProgressTrack, NavBar, DatePipe, ConfirmBox],
+  imports: [RouterLink, LaneDivider, ProgressTrack, NavBar, DatePipe, ConfirmBox, ReviewBox],
   templateUrl: './student-dashboard.html',
   styleUrl: './student-dashboard.css',
   animations: [
@@ -29,6 +31,7 @@ export class StudentDashboard implements OnInit {
   private authService = inject(AuthService);
   private registrationService = inject(RegistrationService);
   private scheduleService = inject(ScheduleService)
+  private toast = inject(ToastService);
 
   slots = signal<Slot[]>([])
   bookings = signal<Booking[]>([])
@@ -120,8 +123,15 @@ private loadSchedule() {
 
   bookSlot(slot: Slot){
     this.scheduleService.bookSlot(slot.id).subscribe({
-    next: () => this.loadSchedule(),
-    error: (err) => console.error('Booking failed', err),
+    next: () => {
+      this.toast.success('Lesson booked!');
+      this.loadSchedule();
+    },
+    error: (err) => {
+      // 409 = someone grabbed this slot first; show why and refresh the list
+      this.toast.error(err.error?.message || 'Booking failed. Please try again.');
+      this.loadSchedule();
+    },
   });
 }
 

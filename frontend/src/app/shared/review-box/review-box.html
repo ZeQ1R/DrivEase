@@ -1,0 +1,14 @@
+@if (canReview()) {
+  <div class="rb-card">
+    <p class="rb-title">{{ hasReviewed() ? 'Update your review' : 'Rate your driving school' }}</p>
+    <div class="rb-stars">
+      @for (n of [1,2,3,4,5]; track n) {
+        <button type="button" class="rb-star" [class.on]="n <= rating" (click)="setRating(n)" [attr.aria-label]="n + ' star'">★</button>
+      }
+    </div>
+    <textarea class="rb-comment" [(ngModel)]="comment" name="rbComment" rows="2" placeholder="Share your experience (optional)"></textarea>
+    <button class="rb-submit button-interactive" [disabled]="saving()" (click)="submit()">
+      @if (saving()) { <span class="btn-spinner"></span> Saving… } @else { {{ hasReviewed() ? 'Update Review' : 'Submit Review' }} }
+    </button>
+  </div>
+}

@@ -11,6 +11,9 @@ router.post("/admin/slots", authenticate, async (req, res) => {
   try {
     const { slotDate, slotTime, note, durationHours } = req.body;
     if (!slotDate || !slotTime) return res.status(400).json({ message: "Date and time required." });
+    if (slotDate < new Date().toISOString().split("T")[0]) {
+      return res.status(400).json({ message: "You can't create a class in the past." });
+    }
 
     const schoolRes = await pool.query(
       `SELECT id FROM driving_schools WHERE owner_user_id = $1`, [req.user.id]

@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, HostListener, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { NavBar } from '../shared/nav-bar/nav-bar';
 import { LaneDivider } from '../shared/lane-divider/lane-divider';
 import { InstructorService } from './instructor.service';
@@ -20,10 +20,12 @@ import { trigger, transition, style, animate } from '@angular/animations';
     ])
   ]
 })
-export class InstructorPlatform implements OnInit{
+export class InstructorPlatform implements OnInit, OnDestroy {
 
   private instructorService = inject(InstructorService)
   private authService = inject(AuthService)
+
+  private pollId: ReturnType<typeof setInterval> | null = null
 
   user: AuthUser | null = null
 
@@ -32,6 +34,9 @@ export class InstructorPlatform implements OnInit{
   newSlotTime = ''
   newSlotNote = ''
   newSlotMessage = signal('')
+
+  // earliest selectable date = today (no past dates)
+  today = new Date().toISOString().split('T')[0]
 
   bookings = signal<any[]>([])
   students = signal<any[]>([])
@@ -46,6 +51,18 @@ export class InstructorPlatform implements OnInit{
 
   ngOnInit() {
     this.user = this.authService.getCurrentUser()
+    this.refresh()
+    // auto-refresh so newly-booked students appear without any manual action
+    this.pollId = setInterval(() => this.refresh(), 10000)
+  }
+
+  ngOnDestroy() {
+    if (this.pollId) clearInterval(this.pollId)
+  }
+
+  // reload the moment the instructor returns to this tab
+  @HostListener('window:focus')
+  refresh() {
     this.loadBookings()
     this.loadStudents()
   }

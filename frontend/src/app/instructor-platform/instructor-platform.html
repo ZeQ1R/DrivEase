@@ -38,7 +38,7 @@
         <div class="slot-form">
           <div class="slot-field">
             <label>Date</label>
-            <input type="date" [(ngModel)]="newSlotDate" name="slotDate" />
+            <input type="date" [(ngModel)]="newSlotDate" name="slotDate" [min]="today" />
           </div>
           <div class="slot-field">
             <label>Time</label>

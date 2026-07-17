@@ -1,0 +1,11 @@
+.rb-card { background: white; border: 1px solid #E2E6E9; padding: 20px; }
+.rb-title { font-family: 'IBM Plex Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: #717182; margin: 0 0 10px; }
+.rb-stars { display: flex; gap: 4px; margin-bottom: 12px; }
+.rb-star { background: none; border: none; font-size: 26px; line-height: 1; color: #D6DBDF; cursor: pointer; padding: 0; transition: color var(--motion-fast) var(--ease-standard), transform var(--motion-fast) var(--ease-standard); }
+.rb-star.on { color: #FFC93C; }
+.rb-star:hover { transform: scale(1.15); }
+.rb-comment { width: 100%; padding: 10px 12px; border: 1px solid #E2E6E9; font-family: 'IBM Plex Sans', sans-serif; font-size: 14px; resize: vertical; box-sizing: border-box; transition: border-color var(--motion-fast) var(--ease-standard); }
+.rb-comment:focus { outline: none; border-color: #1E4B8C; }
+.rb-submit { margin-top: 12px; width: 100%; padding: 11px; background: #1E4B8C; color: #fff; border: none; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+.rb-submit:hover:not(:disabled) { background: #163a6e; }
+.rb-submit:disabled { opacity: 0.6; cursor: not-allowed; }

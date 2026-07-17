@@ -207,6 +207,10 @@
             <app-lane-divider class="mini-divider"></app-lane-divider>
             <p class="active-reg-note">You have 1 active registration.</p>
           </div>
+
+          @if (registration.status === 'approved') {
+            <app-review-box [schoolId]="registration.school_id"></app-review-box>
+          }
         } @else {
           <div class="cta-card">
             <h3>Try Another School?</h3>

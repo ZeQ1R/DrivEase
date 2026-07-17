@@ -41,6 +41,9 @@ export class AdminSchool implements OnInit {
   newTheoryNote = '';
   theoryMessage = signal('');
 
+  // earliest selectable date = today (no past dates)
+  today = new Date().toISOString().split('T')[0];
+
   theoryDone(reg: AdminRegistration) {
     return Number(reg.theory_completed_hours) >= Number(reg.required_theory_hours);
   }
