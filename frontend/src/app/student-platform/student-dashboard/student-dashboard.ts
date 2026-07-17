@@ -38,7 +38,7 @@ export class StudentDashboard implements OnInit {
   })
   readyForTest = computed(() => {
     const h = this.hours()
-    return this.phase() === 'practical' && h.required > 0 && h.completed >= h.required
+    return this.phase() === 'practical'  && h.completed >= h.required
   })
 
   user: AuthUser | null = null;

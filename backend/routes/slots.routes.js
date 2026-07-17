@@ -41,6 +41,10 @@ router.get("/slots/available", authenticate, async (req, res) => {
         [p.schoolId]
       );
     } else if (p.phase === "practical") {
+      // once all required practical hours are done, there's nothing left to book
+      if (p.practicalDone) {
+        return res.status(200).json({ slots: [], phase: p.phase, done: true });
+      }
       result = await pool.query(
         `SELECT id, slot_date, slot_time, slot_type, note, duration_hours FROM lesson_slots
          WHERE school_id = $1 AND is_booked = false AND slot_type = 'practical' AND instructor_id = $2
@@ -80,7 +84,12 @@ router.post("/slots/:id/book", authenticate, async (req, res) => {
       ok = s.slot_type === "theory" && s.school_id === p.schoolId;
       if (s.slot_type === "practical") reason = "Finish your theory classes before booking practical lessons.";
     } else if (p.phase === "practical") {
-      ok = s.slot_type === "practical" && s.instructor_id === p.instructorId;
+      if (p.practicalDone) {
+        ok = false;
+        reason = "You've completed all your required practical hours.";
+      } else {
+        ok = s.slot_type === "practical" && s.instructor_id === p.instructorId;
+      }
     } else {
       reason = "Your theory is complete — waiting for the school to assign your instructor.";
     }
