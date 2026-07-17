@@ -81,3 +81,16 @@
 .review-text { margin: 6px 0 4px; font-size: 14px; color: #40454F; line-height: 1.5; }
 .review-date { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #9CA3AF; }
 .no-reviews { color: #9CA3AF; font-size: 14px; }
+
+/* ---- Responsive ---- */
+@media (max-width: 800px) {
+  .detail-sidebar { position: static; top: auto; }
+}
+@media (max-width: 560px) {
+  .detail-hero { height: 200px; }
+  .hero-content { padding: 0 16px 20px; }
+  .hero-content h1 { font-size: 28px; }
+  .detail-body { padding: 28px 16px; gap: 24px; }
+  .stats-grid { grid-template-columns: 1fr; }
+  .detail-main h2 { font-size: 20px; }
+}

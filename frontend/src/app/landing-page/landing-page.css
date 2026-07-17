@@ -94,3 +94,22 @@
 .hero-actions  { animation: fadeUp var(--motion-normal) var(--ease-standard) both; animation-delay: 440ms; }
 
 .hero-cta-primary:hover { box-shadow: 0 10px 24px rgba(30, 75, 140, 0.28); }
+
+/* ---- Responsive ---- */
+@media (max-width: 768px) {
+  .hero { padding-left: 0; }
+  .hero-content { padding: 90px 20px 70px; }
+  .hero h1 { font-size: 48px; }
+  .how-it-works, .featured { padding: 48px 20px; }
+  .section-title { font-size: 30px; margin-bottom: 28px; }
+  .step { padding: 24px; }
+  .step-num { font-size: 40px; margin-bottom: 14px; }
+  .cta-content { padding: 40px 20px; }
+  .featured-header { flex-wrap: wrap; gap: 12px; }
+}
+@media (max-width: 420px) {
+  .hero h1 { font-size: 38px; }
+  .hero-actions { flex-direction: column; }
+  .hero-cta-primary, .hero-cta-secondary { width: 100%; justify-content: center; }
+  .cta-button { width: 100%; text-align: center; }
+}

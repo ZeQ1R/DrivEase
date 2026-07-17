@@ -42,3 +42,10 @@
 
 .empty-icon { font-size: 40px; margin-bottom: 8px; }
 .empty-sub { display: block; color: #9CA3AF; font-size: 14px; margin: 6px 0 4px; }
+
+/* ---- Responsive ---- */
+@media (max-width: 600px) {
+  .browse-header-inner { padding: 28px 16px 24px; }
+  .browse-content { padding: 24px 16px; }
+  .filter-bar { padding: 16px; }
+}

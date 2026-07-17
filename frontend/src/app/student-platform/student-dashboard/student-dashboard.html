@@ -71,7 +71,7 @@
             <h2>Book a Practical Lesson</h2>
           }
 
-          @if (phase() === 'awaiting-instructor' || phase() === 'practical') {
+          @if (phase() === 'practical') {
             <div class="milestones-card">
               <h3 class="milestones-title">Your Progress</h3>
 
@@ -114,7 +114,7 @@
             @if (slots().length > 0) {
               <div class="slot-list">
                 @for (slot of slots(); track slot.id) {
-                  <div class="slot">
+                  <div class="slot" @fadeOut>
                     <div class="slot-info">
                       <span class="slot-date">{{ slot.slot_date | date:'mediumDate' }}</span>
                       <span class="slot-time">{{ slot.slot_time }}</span>

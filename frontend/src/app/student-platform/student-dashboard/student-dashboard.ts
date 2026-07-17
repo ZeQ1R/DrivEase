@@ -8,6 +8,8 @@ import { NavBar } from '../../shared/nav-bar/nav-bar';
 import { Booking, ScheduleService, Slot } from './schedule.service';
 import { DatePipe } from '@angular/common';
 import { ConfirmBox } from '../../shared/confirm-box/confirm-box';
+import { trigger, transition, style, animate } from '@angular/animations';
+
 
 @Component({
   selector: 'app-student-dashboard',
@@ -15,6 +17,13 @@ import { ConfirmBox } from '../../shared/confirm-box/confirm-box';
   imports: [RouterLink, LaneDivider, ProgressTrack, NavBar, DatePipe, ConfirmBox],
   templateUrl: './student-dashboard.html',
   styleUrl: './student-dashboard.css',
+  animations: [
+    trigger('fadeOut', [
+      transition(':leave', [
+        animate('600ms ease', style({ opacity: 0, transform: 'translateX(20px)' }))
+      ])
+    ])
+  ]
 })
 export class StudentDashboard implements OnInit {
   private authService = inject(AuthService);

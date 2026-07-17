@@ -205,3 +205,13 @@
 .ms-name { margin: 0; font-size: 14px; font-weight: 600; color: #1C1F26; }
 .milestone.done .ms-name { color: #2F9E6E; }
 .ms-sub { font-size: 12px; color: #9CA3AF; }
+
+/* ---- Responsive ---- */
+@media (max-width: 600px) {
+  .dashboard-header-inner { padding: 28px 16px 24px; }
+  .dashboard-header h1 { font-size: 34px; }
+  .dashboard-content { padding: 28px 16px; gap: 20px; }
+  .status-card, .info-card, .schedule-card, .hours-card, .milestones-card { padding: 18px; }
+  .slot { flex-wrap: wrap; gap: 10px; }
+  .book-btn { width: 100%; }
+}
