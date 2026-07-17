@@ -24,8 +24,6 @@ export class StudentDashboard implements OnInit {
   slots = signal<Slot[]>([])
   bookings = signal<Booking[]>([])
 
-
-
   hours = signal<{completed: number; required:number}>({completed: 0, required: 40})
   theory = signal<{completed: number; required:number}>({completed: 0, required: 20})
   phase = signal<'none' | 'theory' | 'awaiting-instructor' | 'practical'>('none')

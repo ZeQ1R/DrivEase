@@ -3,7 +3,6 @@ import { provideRouter, withComponentInputBinding, withRouterConfig } from '@ang
 import { provideHttpClient,withInterceptors } from '@angular/common/http';
 import { routes } from './app.routes';
 import {authInterceptor} from '../app/auth/auth.interceptor'
-import { provideAnimations } from '@angular/platform-browser/animations';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -13,8 +12,6 @@ export const appConfig: ApplicationConfig = {
         paramsInheritanceStrategy: 'always',
       })
     ),
-    provideHttpClient(withInterceptors([authInterceptor])),
-    provideAnimations(),
-
+    provideHttpClient(withInterceptors([authInterceptor]))
   ]
 };

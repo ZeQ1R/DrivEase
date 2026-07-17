@@ -4,6 +4,16 @@ import { catchError, map, throwError } from 'rxjs';
 import { School } from './school.model';
 import { API_URL } from '../shared/api.config';
 
+
+export interface SchoolReview {
+  id: number;
+  rating: number;
+  comment: string | null;
+  created_at: string;
+  first_name: string;
+  last_name: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class SchoolsService {
   private http = inject(HttpClient);
@@ -49,11 +59,3 @@ export class SchoolsService {
   }
 }
 
-export interface SchoolReview {
-  id: number;
-  rating: number;
-  comment: string | null;
-  created_at: string;
-  first_name: string;
-  last_name: string;
-}

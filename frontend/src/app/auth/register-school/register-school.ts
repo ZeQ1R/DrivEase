@@ -6,7 +6,6 @@ import { School } from '../../schools/school.model';
 import { RegistrationService } from '../registration.service';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { SchoolsService } from '../../schools/schools.service';
-import { ValidationError } from '@angular/forms/signals';
 import { LoadingScreen } from '../../shared/loading-screen/loading-screen/loading-screen';
 import { ToastService } from '../../shared/toast/toast.service';
 
