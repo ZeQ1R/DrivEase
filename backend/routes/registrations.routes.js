@@ -23,7 +23,8 @@ router.get("/registrations/me", authenticate, async (req, res) => {
     );
     res.status(200).json({ registration: result.rows[0] || null });
   } catch (error) {
-    res.status(500).json({ message: "Failed to fetch registration.", error: error.message });
+    console.error("Failed to fetch registration.", error);
+    res.status(500).json({ message: "Failed to fetch registration." });
   }
 });
 
@@ -47,7 +48,8 @@ router.patch("/registrations/me/checklist", authenticate, async (req, res) => {
     }
     res.status(200).json({ checklist: result.rows[0] });
   } catch (error) {
-    res.status(500).json({ message: "Failed to update checklist.", error: error.message });
+    console.error("Failed to update checklist.", error);
+    res.status(500).json({ message: "Failed to update checklist." });
   }
 });
 
@@ -97,7 +99,8 @@ router.post("/register-school", authenticate, uploadId.single("idDocument"), asy
     res.status(201).json({ message: "Registration submitted.", registrationId });
   } catch (error) {
     await client.query("ROLLBACK");
-    res.status(500).json({ message: "Failed to submit registration.", error: error.message });
+    console.error("Failed to submit registration.", error);
+    res.status(500).json({ message: "Failed to submit registration." });
   } finally {
     client.release();
   }
@@ -139,7 +142,8 @@ router.get("/admin/registrations", authenticate, async (req, res) => {
       registrations: result.rows,
     });
   } catch (error) {
-    res.status(500).json({ message: "Failed to fetch registrations.", error: error.message });
+    console.error("Failed to fetch registrations.", error);
+    res.status(500).json({ message: "Failed to fetch registrations." });
   }
 });
 
@@ -184,7 +188,8 @@ router.patch("/admin/registrations/:id/status", authenticate, async (req, res) =
 
     res.status(200).json({ registration: result.rows[0] });
   } catch (error) {
-    res.status(500).json({ message: "Failed to update status.", error: error.message });
+    console.error("Failed to update status.", error);
+    res.status(500).json({ message: "Failed to update status." });
   }
 });
 
@@ -239,7 +244,8 @@ router.patch("/admin/registrations/:id/instructor", authenticate, async (req, re
 
     res.status(200).json({ registration: result.rows[0] });
   } catch (error) {
-    res.status(500).json({ message: "Failed to assign instructor.", error: error.message });
+    console.error("Failed to assign instructor.", error);
+    res.status(500).json({ message: "Failed to assign instructor." });
   }
 });
 
@@ -270,7 +276,8 @@ router.put("/admin/registrations/:id", authenticate, async (req, res) => {
     );
     res.status(200).json({ details: result.rows[0] });
   } catch (error) {
-    res.status(500).json({ message: "Failed to update registration.", error: error.message });
+    console.error("Failed to update registration.", error);
+    res.status(500).json({ message: "Failed to update registration." });
   }
 });
 
@@ -289,7 +296,8 @@ router.delete("/admin/registrations/:id", authenticate, async (req, res) => {
     await pool.query(`DELETE FROM registrations WHERE id = $1`, [req.params.id]);
     res.status(200).json({ message: "Registration deleted." });
   } catch (error) {
-    res.status(500).json({ message: "Failed to delete registration.", error: error.message });
+    console.error("Failed to delete registration.", error);
+    res.status(500).json({ message: "Failed to delete registration." });
   }
 });
 

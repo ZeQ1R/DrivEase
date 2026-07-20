@@ -38,6 +38,11 @@ export class AdminSchoolService {
     );
   }
 
+  getDocument(documentUrl: string) {
+    const file = documentUrl.split('/').pop();
+    return this.http.get(`${API_URL}/documents/${file}`, { responseType: 'blob' });
+  }
+
   getInstructors() {
     return this.http.get<{ instructors: Instructor[] }>(`${API_URL}/admin/instructors`);
   }

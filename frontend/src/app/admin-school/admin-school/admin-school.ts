@@ -5,6 +5,7 @@ import { AdminRegistration, AdminSchoolService, Instructor } from '../admin-scho
 import { NavBar } from '../../shared/nav-bar/nav-bar';
 import { LaneDivider } from '../../shared/lane-divider/lane-divider';
 import { ConfirmBox } from '../../shared/confirm-box/confirm-box';
+import { RegistrationService } from '../../auth/registration.service';
 
 @Component({
   selector: 'app-admin-school',
@@ -17,6 +18,7 @@ export class AdminSchool implements OnInit {
   private adminService = inject(AdminSchoolService);
 
   registrations = signal<AdminRegistration[]>([]);
+  registration = signal<RegistrationService>
   filter = signal<'all' | 'pending' | 'approved' | 'rejected'>('all');
   schoolName = signal('');
   searchTerm = signal('');
@@ -41,7 +43,7 @@ export class AdminSchool implements OnInit {
   theoryMessage = signal('');
 
   today = new Date().toISOString().split('T')[0];
-  
+
   theoryDone(reg: AdminRegistration) {
     return Number(reg.theory_completed_hours) >= Number(reg.required_theory_hours);
   }
@@ -228,6 +230,18 @@ export class AdminSchool implements OnInit {
         this.instrMessage.set('Instructor deleted.');
       },
       error: (err) => this.instrMessage.set(err.error?.message || 'Failed to delete instructor.'),
+    });
+  }
+
+  openDocument(reg: AdminRegistration) {
+    if (!reg.id_document_url) return;
+    this.adminService.getDocument(reg.id_document_url).subscribe({
+      next: (blob) => {
+        const url = URL.createObjectURL(blob);
+        window.open(url, '_blank');
+        setTimeout(() => URL.revokeObjectURL(url), 60000);
+      },
+      error: () => this.statusMessage.set('Could not open that document.'),
     });
   }
 

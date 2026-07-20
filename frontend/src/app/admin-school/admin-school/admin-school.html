@@ -131,7 +131,6 @@
                 <div class="slot-field"><label>Postal Code</label><input [(ngModel)]="editReg.postalCode" [name]="'er-postal-' + reg.id" /></div>
                 <div class="slot-field"><label>EMBG</label><input [(ngModel)]="editReg.embg" [name]="'er-embg-' + reg.id" maxlength="13"/></div>
                 <div class="slot-field"><label>Category</label><input [(ngModel)]="editReg.licenseCategory" [name]="'er-cat-' + reg.id" /></div>
-                <div class="slot-field"><label>Medical</label><input [(ngModel)]="editReg" /></div>
                 <div class="applicant-actions">
                   <button class="btn btn-ghost" (click)="cancelEditReg()">Cancel</button>
                   <button class="btn btn-primary" (click)="askConfirm('Save changes to ' + editReg.firstName + ' ' + editReg.lastName + '?', () => saveReg(reg.id), 'Save')">Save</button>
@@ -148,7 +147,7 @@
               <div class="af full">
                 <span class="af-label">ID Document</span>
                 @if (reg.id_document_url) {
-                  <a class="af-value doc-link" [href]="'http://localhost:3000/' + reg.id_document_url" target="_blank">View ID ↗</a>
+                  <button type="button" class="af-value doc-link" (click)="openDocument(reg)">View ID ↗</button>
                 } @else {
                   <span class="af-value muted">Not uploaded</span>
                 }

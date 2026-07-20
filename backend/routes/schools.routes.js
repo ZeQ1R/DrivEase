@@ -31,7 +31,8 @@ router.get("/schools", async (req, res) => {
     const result = await pool.query("SELECT * FROM driving_schools ORDER BY id ASC");
     res.status(200).json({ schools: result.rows.map(mapSchool) });
   } catch (error) {
-    res.status(500).json({ message: "Failed to fetch schools", error: error.message });
+    console.error("Failed to fetch schools", error);
+    res.status(500).json({ message: "Failed to fetch schools" });
   }
 });
 
@@ -43,7 +44,8 @@ router.get("/schools/:id", async (req, res) => {
     }
     res.status(200).json({ school: mapSchool(result.rows[0]) });
   } catch (error) {
-    res.status(500).json({ message: "Failed to fetch school", error: error.message });
+    console.error("Failed to fetch school", error);
+    res.status(500).json({ message: "Failed to fetch school" });
   }
 });
 
