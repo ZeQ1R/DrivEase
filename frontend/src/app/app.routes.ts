@@ -10,6 +10,7 @@ import { AdminSchool } from './admin-school/admin-school/admin-school';
 import { authGuard } from './auth/auth.guard';
 import { roleGuard } from './auth/role.guard';
 import { PlatformAdmin } from './platform/platform-admin/platform-admin';
+import { InstructorPlatform } from './instructor-platform/instructor-platform';
 
 export const routes: Routes = [
 	{
@@ -26,7 +27,6 @@ export const routes: Routes = [
 		path: 'browse/:id',
 		component: BrowseSchool
 	},
-	
 	{
 		path: 'login',
 		component: Login,
@@ -60,7 +60,11 @@ export const routes: Routes = [
 		component: PlatformAdmin,
 		canActivate: [authGuard, roleGuard('platform_admin')],
 		title: 'DrivEase - Platform Admin'
+	},
+	{
+		path: 'instructor',
+		component: InstructorPlatform,
+		canActivate: [authGuard, roleGuard('instructor')],
+		title: 'DrivEase - Instructor Platform'
 	}
-
-	
 ];

@@ -90,6 +90,10 @@
   font-size: 14px;
   border: none;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 }
 
 .auth-submit:hover {
@@ -119,4 +123,14 @@
   .auth-form-side {
     padding: 24px;
   }
+}
+
+.session-notice {
+  margin: 0 0 18px;
+  padding: 12px 14px;
+  font-size: 13px;
+  color: #8a6d1a;
+  background: rgba(255, 201, 60, 0.15);
+  border: 1px solid rgba(255, 201, 60, 0.45);
+  border-left: 3px solid #FFC93C;
 }

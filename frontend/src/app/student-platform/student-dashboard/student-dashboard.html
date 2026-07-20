@@ -1,11 +1,8 @@
-@if(submitting()){
-  <app-loading-screen message="Submitting Your Application..."/>
-}@else {
-  <app-nav-bar></app-nav-bar>
+<app-nav-bar></app-nav-bar>
 
 <div class="dashboard-page">
   <div class="dashboard-header">
-  <div class="dashboard-header-inner">
+  <div class="dashboard-header-inner fade-up">
     <p class="eyebrow">Student Dashboard</p>
     <h1>Hello, {{ user?.firstName }}</h1>
     @if (registration(); as registration) { <p class="reg-id">Registration #<span>{{ registration.id }}</span></p> }
@@ -14,21 +11,33 @@
   <app-lane-divider></app-lane-divider>
 
   <div class="dashboard-content">
-    <div class="dashboard-main">
+    <div class="dashboard-main stagger">
       <div class="status-card">
         <div class="status-card-header">
           <h2>Application Status</h2>
-          @if (registration(); as registration) { <span class="status-pill" [class]="registration.status">{{ registration.status }}</span> }
+          @if (loadingReg()) {
+            <span class="skeleton skel-pill"></span>
+          } @else if (registration(); as registration) {
+            <span class="status-pill status-transition" [class]="displayStatus()">{{ displayStatus() }}</span>
+          }
         </div>
 
-        @if (registration(); as registration) {
+        @if (loadingReg()) {
+          <div class="skel-status-body">
+            <div class="skeleton skel-line full"></div>
+            <div class="skeleton skel-line wide"></div>
+          </div>
+        } @else if (registration(); as registration) {
           @if (registration.status !== 'rejected') {
-            <app-progress-track [status]="registration.status"></app-progress-track>
+            <app-progress-track [status]="displayStatus()"></app-progress-track>
             <div class="status-note">
               @if (registration.status === 'pending') {
                 <p>Your application is being reviewed by <strong>{{ registration.school_name }}</strong>. You'll be notified once it's processed.</p>
               } @else if (registration.status === 'approved') {
-                <p class="success">✓ Your application has been approved. Welcome aboard!</p>
+                <p class="success">✓ You're now enrolled at <strong>{{ registration.school_name }}</strong>. Welcome aboard!</p>
+                @if (registration.instructor_first_name) {
+                  <p class="instructor-note">Your instructor for practical hours is <strong>{{ registration.instructor_first_name }} {{ registration.instructor_last_name }}</strong>.</p>
+                }
               }
             </div>
           } @else {
@@ -41,23 +50,84 @@
 
       @if (registration()?.status === 'approved') {
         <div class="schedule-card">
-          <h2>Book a Lesson</h2>
-          @if (slots().length > 0) {
-            <div class="slot-list">
-              @for (slot of slots(); track slot.id) {
-                <div class="slot">
-                  <div class="slot-info">
-                    <span class="slot-date">{{ slot.slot_date | date:'mediumDate' }}</span>
-                    <span class="slot-time">{{ slot.slot_time }}</span>
-                    <span class="slot-badge">{{slot.slot_type}}</span>
-                    @if (slot.note) { <span class="slot-note">{{ slot.note }}</span> }
-                  </div>
-                  <button class="book-btn" (click)="bookSlot(slot)">Book</button>
-                </div>
-              }
+
+          @if (phase() === 'theory') {
+            <span class="phase-chip theory">Phase 1 · Theory</span>
+            <h2>Book a Theory Class</h2>
+            <div class="hours-card compact">
+              <div class="hours-stat">
+                <span class="hours-done">{{ theory().completed }}</span>
+                <span class="hours-sep">/</span>
+                <span class="hours-total">{{ theory().required }} theory hrs</span>
+              </div>
+              <div class="hours-bar"><div class="hours-fill theory" [style.width.%]="theoryPercent()"></div></div>
+              <p class="hours-note">{{ theory().required - theory().completed }} theory hours left before you can start practical driving.</p>
             </div>
+          } @else if (phase() === 'awaiting-instructor') {
+            <span class="phase-chip await">Theory complete</span>
+            <h2>You're through theory! 🎓</h2>
           } @else {
-            <p class="no-slots">No available time slots right now. Check back soon.</p>
+            <span class="phase-chip practical">Phase 2 · Practical</span>
+            <h2>Book a Practical Lesson</h2>
+          }
+
+          @if (phase() === 'awaiting-instructor' || phase() === 'practical') {
+            <div class="milestones-card">
+              <h3 class="milestones-title">Your Progress</h3>
+
+              <div class="milestone done">
+                <span class="ms-box checked">✓</span>
+                <div><p class="ms-name">Part 1 — Theory classes</p><span class="ms-sub">Completed</span></div>
+              </div>
+
+              <button type="button" class="milestone toggle" [class.done]="registration()?.medical_done" (click)="toggleMedical()">
+                <span class="ms-box" [class.checked]="registration()?.medical_done">{{ registration()?.medical_done ? '✓' : '' }}</span>
+                <div>
+                  <p class="ms-name">Medical health test &amp; doctor control</p>
+                  <span class="ms-sub">{{ registration()?.medical_done ? 'Marked as completed' : 'Tap once you have your medical approval' }}</span>
+                </div>
+              </button>
+
+              <button type="button" class="milestone toggle" [class.done]="registration()?.first_aid_done" (click)="toggleFirstAid()">
+                <span class="ms-box" [class.checked]="registration()?.first_aid_done">{{ registration()?.first_aid_done ? '✓' : '' }}</span>
+                <div>
+                  <p class="ms-name">Red Cross first aid test</p>
+                  <span class="ms-sub">{{ registration()?.first_aid_done ? 'Marked as completed' : 'Tap once you pass the Red Cross first aid course' }}</span>
+                </div>
+              </button>
+
+              <div class="milestone" [class.done]="readyForTest()">
+                <span class="ms-box" [class.checked]="readyForTest()">{{ readyForTest() ? '✓' : '' }}</span>
+                <div>
+                  <p class="ms-name">Part 2 — Practical driving</p>
+                  <span class="ms-sub">{{ readyForTest() ? 'All practical hours completed' : (phase() === 'practical' ? 'In progress' : 'Unlocks once your instructor is assigned') }}</span>
+                </div>
+              </div>
+            </div>
+          }
+
+          @if (phase() === 'theory' || phase() === 'practical') {
+            @if (slots().length > 0) {
+              <div class="slot-list">
+                @for (slot of slots(); track slot.id) {
+                  <div class="slot">
+                    <div class="slot-info">
+                      <span class="slot-date">{{ slot.slot_date | date:'mediumDate' }}</span>
+                      <span class="slot-time">{{ slot.slot_time }}</span>
+                      <span class="slot-badge">{{slot.slot_type}}</span>
+                      @if (slot.note) { <span class="slot-note">{{ slot.note }}</span> }
+                    </div>
+                    <button class="book-btn" (click)="bookSlot(slot)">Book</button>
+                  </div>
+                }
+              </div>
+            } @else {
+              <p class="no-slots">No {{ phase() === 'theory' ? 'theory classes' : 'practical slots' }} available right now. Check back soon.</p>
+            }
+          } @else {
+            <div class="await-note">
+              <p>You've finished all your theory classes. Your school is assigning your instructor — practical booking unlocks as soon as they do.</p>
+            </div>
           }
 
           @if (bookings().length > 0) {
@@ -67,29 +137,53 @@
                 <div class="booking">
                   <span>{{ b.slot_date | date:'mediumDate' }} · {{ b.slot_time }}</span>
                   @if (b.note) { <span class="booking-note">{{ b.note }}</span> }
+                  <button class="cancel-booking-btn"
+                    (click)="askConfirm('Cancel your lesson at ' + b.slot_time + '? This will free the slot for others.', () => cancelBooking(b))">
+                    Cancel
+                  </button>
                 </div>
               }
             </div>
           }
 
-          <div class="hours-card">
-            <h2>Practical Hours</h2>
-            <div class="hours-stat">
-              <span class="hours-done">{{ hours().completed }}</span>
-              <span class="hours-sep">/</span>
-              <span class="hours-total">{{ hours().required }} hrs</span>
+          @if (phase() === 'practical') {
+            <div class="hours-card">
+              <h2>Practical Hours</h2>
+              <div class="hours-stat">
+                <span class="hours-done">{{ hours().completed }}</span>
+                <span class="hours-sep">/</span>
+                <span class="hours-total">{{ hours().required }} hrs</span>
+              </div>
+              <div class="hours-bar">
+                <div class="hours-fill" [style.width.%]="hoursPercent()"></div>
+              </div>
+              <p class="hours-note">
+                @if (hours().completed >= hours().required) {
+                  ✓ You've completed all required practical hours!
+                } @else {
+                  {{ hours().required - hours().completed }} hours remaining
+                }
+              </p>
             </div>
-            <div class="hours-bar">
-              <div class="hours-fill" [style.width.%]="hoursPercent()"></div>
+          }
+
+          @if (readyForTest()) {
+            <div class="congrats-card">
+              <div class="congrats-glow"></div>
+              <div class="congrats-emoji">🏆</div>
+              <p class="congrats-eyebrow">All hours complete</p>
+              <h2>Congratulations, {{ user?.firstName }}!</h2>
+              <p class="congrats-text">
+                You've completed all {{ hours().required }} required practical hours.
+              </p>
+              <div class="congrats-actions">
+                <p class="congrats-cta">🎉 You're ready to register for your driving test!</p>
+                <a class="congrats-link" href="https://www.autoshkollaonline.com/" target="_blank" rel="noopener">
+                  Practice the tests online ↗
+                </a>
+              </div>
             </div>
-            <p class="hours-note">
-              @if (hours().completed >= hours().required) {
-                ✓ You've completed all required practical hours!
-              } @else {
-                {{ hours().required - hours().completed }} hours remaining
-              }
-            </p>
-          </div>
+          }
         </div>
       }
 
@@ -104,14 +198,22 @@
     </div>
 
     <div class="dashboard-sidebar">
-      @if (registration(); as registration) {
-        <div class="school-card-mini">
-          <p class="info-label">Your School</p>
-          <h3>{{ registration.school_name }}</h3>
-          <div class="school-city">📍 {{ registration.city }}</div>
-          <app-lane-divider class="mini-divider"></app-lane-divider>
-          <p class="active-reg-note">You have 1 active registration.</p>
-        </div>
+      @if (registration(); as registration; ) {
+        @if (registration.status !== 'rejected') {
+          <div class="school-card-mini">
+            <p class="info-label">Your School</p>
+            <h3>{{ registration.school_name }}</h3>
+            <div class="school-city">📍 {{ registration.city }}</div>
+            <app-lane-divider class="mini-divider"></app-lane-divider>
+            <p class="active-reg-note">You have 1 active registration.</p>
+          </div>
+        } @else {
+          <div class="cta-card">
+            <h3>Try Another School?</h3>
+            <p>Your last application wasn't approved. You're free to register at another driving school.</p>
+            <a routerLink="/browse" class="cta-btn">Browse Schools →</a>
+          </div>
+        }
       } @else {
         <div class="cta-card">
           <h3>Ready to Start?</h3>
@@ -130,6 +232,13 @@
   </div>
 </div>
 
-
-
+@if (confirmMessage()) {
+  <app-confirm-box
+    [message]="confirmMessage()"
+    confirmText="Cancel Lesson"
+    cancelText="Keep It"
+    (yes)="onConfirmYes()"
+    (no)="onConfirmNo()">
+  </app-confirm-box>
 }
+

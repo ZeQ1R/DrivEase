@@ -7,12 +7,12 @@ import { ProgressTrack } from '../../shared/progress-track/progress-track';
 import { NavBar } from '../../shared/nav-bar/nav-bar';
 import { Booking, ScheduleService, Slot } from './schedule.service';
 import { DatePipe } from '@angular/common';
-import { LoadingScreen } from '../../shared/loading-screen/loading-screen/loading-screen';
+import { ConfirmBox } from '../../shared/confirm-box/confirm-box';
 
 @Component({
   selector: 'app-student-dashboard',
   standalone: true,
-  imports: [RouterLink, LaneDivider, ProgressTrack, NavBar,DatePipe,LoadingScreen],
+  imports: [RouterLink, LaneDivider, ProgressTrack, NavBar, DatePipe, ConfirmBox],
   templateUrl: './student-dashboard.html',
   styleUrl: './student-dashboard.css',
 })
@@ -23,37 +23,73 @@ export class StudentDashboard implements OnInit {
 
   slots = signal<Slot[]>([])
   bookings = signal<Booking[]>([])
-  submitting = signal(false)
+
 
 
   hours = signal<{completed: number; required:number}>({completed: 0, required: 40})
+  theory = signal<{completed: number; required:number}>({completed: 0, required: 20})
+  phase = signal<'none' | 'theory' | 'awaiting-instructor' | 'practical'>('none')
+
   hoursPercent = computed(() => {
     const h = this.hours()
     return h.required > 0 ? Math.min(100, (h.completed / h.required) * 100) : 0
   })
+  theoryPercent = computed(() => {
+    const t = this.theory()
+    return t.required > 0 ? Math.min(100, (t.completed / t.required) * 100) : 0
+  })
+  readyForTest = computed(() => {
+    const h = this.hours()
+    return this.phase() === 'practical' && h.required > 0 && h.completed >= h.required
+  })
 
-  user: AuthUser | null = null; 
+  user: AuthUser | null = null;
   registration = signal<Registration | null>(null);
+
+  displayStatus = computed(() => {
+    const r = this.registration();
+    if (!r) return '';
+    return r.status === 'approved' ? 'enrolled' : r.status;
+  });
+
+  confirmMessage = signal('');
+  private pendingAction: (() => void) | null = null;
+
+  askConfirm(message: string, action: () => void) {
+    this.confirmMessage.set(message);
+    this.pendingAction = action;
+  }
+
+  onConfirmYes() {
+    const action = this.pendingAction;
+    this.confirmMessage.set('');
+    this.pendingAction = null;
+    action?.();
+  }
+
+  onConfirmNo() {
+    this.confirmMessage.set('');
+    this.pendingAction = null;
+  }
+
+  loadingReg = signal(true);
 
   ngOnInit() {
     this.user = this.authService.getCurrentUser();
-    this.submitting.set(true)
 
     this.registrationService.getMyRegistration().subscribe({
       next: (res) => {
         this.registration.set(res.registration);
+        this.loadingReg.set(false);
           if (res.registration?.status === 'approved') {
           this.loadSchedule();
         }
-      
-        setTimeout(() => {
-          this.submitting.set(false)
-        },3000)
 
-        
-        
       },
-      error: (err) => console.error('Failed to load registration', err),
+      error: (err) => {
+        this.loadingReg.set(false);
+        console.error('Failed to load registration', err);
+      },
     });
 }
 
@@ -67,14 +103,46 @@ private loadSchedule() {
     error: (err) => console.error('Failed to load bookings', err),
   });
   this.scheduleService.getMyHours().subscribe({
-    next: (res) => this.hours.set(res)
+    next: (res) => {
+      this.hours.set({ completed: res.completed, required: res.required });
+      this.theory.set(res.theory);
+      this.phase.set(res.phase);
+    }
   })
 }
 
   bookSlot(slot: Slot){
     this.scheduleService.bookSlot(slot.id).subscribe({
-    next: () => this.loadSchedule(),   
+    next: () => this.loadSchedule(),
     error: (err) => console.error('Booking failed', err),
   });
 }
+
+  cancelBooking(b: Booking){
+    this.scheduleService.cancelBooking(b.id).subscribe({
+      next: () => this.loadSchedule(),
+      error: (err) => console.error('Cancel failed', err),
+    });
+  }
+
+  toggleMedical() {
+    const current = !!this.registration()?.medical_done;
+    this.registrationService.updateChecklist({ medicalDone: !current }).subscribe({
+      next: (res) => this.patchRegistration({ medical_done: res.checklist.medical_done }),
+      error: (err) => console.error('Failed to update medical status', err),
+    });
+  }
+
+  toggleFirstAid() {
+    const current = !!this.registration()?.first_aid_done;
+    this.registrationService.updateChecklist({ firstAidDone: !current }).subscribe({
+      next: (res) => this.patchRegistration({ first_aid_done: res.checklist.first_aid_done }),
+      error: (err) => console.error('Failed to update first-aid status', err),
+    });
+  }
+
+  private patchRegistration(patch: Partial<Registration>) {
+    const reg = this.registration();
+    if (reg) this.registration.set({ ...reg, ...patch });
+  }
 }

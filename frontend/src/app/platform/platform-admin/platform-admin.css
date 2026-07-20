@@ -56,4 +56,6 @@
 .primary-btn:disabled { opacity: 0.6; cursor: not-allowed; }
 .secondary-btn { background: white; border: 1px solid #E2E6E9; color: #717182; }
 
-@media (max-width: 700px) { .field-row { grid-template-columns: 1fr; } }
+@media (max-width: 700px) {
+  .field-row { grid-template-columns: 1fr; }
+}

@@ -7,11 +7,10 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
 import { debounceTime } from 'rxjs';
 import { AuthService } from '../auth.service';
 import { AuthPanel } from '../../shared/auth-panel/auth-panel';
-import { LoadingScreen } from "../../shared/loading-screen/loading-screen/loading-screen";
+import { ToastService } from '../../shared/toast/toast.service';
 
 let initialValue = '';
 
@@ -37,18 +36,21 @@ function equalValues(controlName1: string, controlName2: string) {
 
 @Component({
   selector: 'app-signup',
-  imports: [RouterLink, ReactiveFormsModule, AuthPanel, LoadingScreen],
+  imports: [RouterLink, ReactiveFormsModule, AuthPanel],
   templateUrl: './signup.html',
   styleUrl: './signup.css',
 })
 export class Signup implements OnInit {
   private destroyRef = inject(DestroyRef);
   private authService = inject(AuthService)
-  private http = inject(HttpClient);
+  private toast = inject(ToastService);
   private router = inject(Router);
 
   signupError = '';
   submitting = signal(false)
+  showPassword = signal(false)
+
+  togglePassword() { this.showPassword.update(v => !v); }
 
   form = new FormGroup({
     email: new FormControl(initialValue, {
@@ -129,6 +131,7 @@ export class Signup implements OnInit {
     }
 
     this.signupError = '';
+    this.submitting.set(true)
 
     this.authService.signup({
         firstName: this.form.value.firstName!,
@@ -140,12 +143,11 @@ export class Signup implements OnInit {
       .subscribe({
         next: (res) => {
           this.authService.storeSession(res)
-          this.submitting.set(true)
-          setTimeout(() => {
-            this.router.navigate(['/login'], {queryParams: {checkEmail: true}});
-          },5000)
+          this.toast.success('Account created! Check your email to confirm before signing in.', 7000)
+          this.router.navigate(['/login'], {queryParams: {checkEmail: true}});
         },
         error: (err) => {
+          this.submitting.set(false)
           this.signupError =
             err.error?.message || 'Signup failed. Please try again.';
         },

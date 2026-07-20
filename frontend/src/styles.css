@@ -71,6 +71,18 @@ textarea {
 button {
   cursor: pointer;
   border: none;
+  white-space: nowrap;
+}
+
+button,
+[class*="-btn"] {
+  transition: transform 0.08s ease, opacity 0.08s ease;
+}
+
+button:not(:disabled):active,
+[class*="-btn"]:not(:disabled):active {
+  transform: scale(0.96);
+  opacity: 0.85;
 }
 
 .section-container {
@@ -80,7 +92,6 @@ button {
 
 .gradient-text {
   background: linear-gradient(135deg, #60a5fa, #2563eb, #7c3aed);
-  /* -webkit-background-clip: text; */
   -webkit-text-fill-color: transparent;
 }
 
@@ -162,3 +173,90 @@ button {
     width: 100%;
   }
 }
+
+:root {
+  --motion-fast: 160ms;
+  --motion-normal: 300ms;
+  --motion-slow: 600ms;
+  --ease-standard: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.96); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@keyframes skeletonShimmer {
+  from { background-position: -180% 0; }
+  to   { background-position: 180% 0; }
+}
+
+.fade-in  { animation: fadeIn var(--motion-normal) var(--ease-standard) both; }
+.fade-up  { animation: fadeUp var(--motion-normal) var(--ease-standard) both; }
+.scale-in { animation: scaleIn var(--motion-normal) var(--ease-standard) both; }
+
+.stagger-item { animation: fadeUp var(--motion-normal) var(--ease-standard) both; animation-delay: calc(var(--i, 0) * 70ms); }
+.stagger > * { animation: fadeUp var(--motion-normal) var(--ease-standard) both; }
+.stagger > *:nth-child(1) { animation-delay: 40ms; }
+.stagger > *:nth-child(2) { animation-delay: 110ms; }
+.stagger > *:nth-child(3) { animation-delay: 180ms; }
+.stagger > *:nth-child(4) { animation-delay: 250ms; }
+.stagger > *:nth-child(5) { animation-delay: 320ms; }
+.stagger > *:nth-child(6) { animation-delay: 390ms; }
+.stagger > *:nth-child(7) { animation-delay: 460ms; }
+.stagger > *:nth-child(8) { animation-delay: 530ms; }
+
+.button-interactive { transition: transform var(--motion-fast) var(--ease-standard), box-shadow var(--motion-fast) var(--ease-standard), background-color var(--motion-fast) var(--ease-standard), border-color var(--motion-fast) var(--ease-standard); }
+.button-interactive:not(:disabled):hover { transform: translateY(-2px); }
+.button-interactive:not(:disabled):active { transform: translateY(0) scale(0.97); }
+.button-interactive:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.status-transition { transition: background-color var(--motion-normal) var(--ease-standard), color var(--motion-normal) var(--ease-standard), border-color var(--motion-normal) var(--ease-standard); }
+
+.skeleton {
+  position: relative;
+  background: linear-gradient(100deg, #e9edf1 30%, #f5f7f9 50%, #e9edf1 70%);
+  background-size: 200% 100%;
+  animation: skeletonShimmer 1.3s ease-in-out infinite;
+  border-radius: 4px;
+}
+
+@keyframes btnSpin { to { transform: rotate(360deg); } }
+.btn-spinner {
+  width: 15px; height: 15px; flex-shrink: 0;
+  border: 2px solid currentColor; border-right-color: transparent;
+  border-radius: 50%;
+  display: inline-block;
+  animation: btnSpin 0.6s linear infinite;
+  vertical-align: -2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+.field-error { animation: fadeUp var(--motion-fast) var(--ease-standard) both; }
+
+.password-wrap { position: relative; }
+.password-wrap input { width: 100%; padding-right: 44px; }
+.password-toggle {
+  position: absolute; top: 50%; right: 8px; transform: translateY(-50%);
+  background: none; border: none; padding: 6px; cursor: pointer;
+  font-size: 15px; line-height: 1; color: #717182;
+  transition: color var(--motion-fast) var(--ease-standard);
+}
+.password-toggle:hover { color: #1C1F26; }

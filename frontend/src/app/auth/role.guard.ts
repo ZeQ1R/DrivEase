@@ -9,7 +9,7 @@ export const roleGuard = (allowedRole: string) : CanActivateFn => {
         const router = inject(Router)
         const user = auth.getCurrentUser()
 
-     
+
         if(user && user.role === allowedRole) return true
 
         router.navigate(['/'])

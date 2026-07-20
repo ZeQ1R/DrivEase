@@ -36,7 +36,7 @@
               <td><span class="status-pill approved">Active</span></td>
               <td class="actions-cell">
                 <button class="icon-btn" (click)="openEditForm(school)">Edit</button>
-                <button class="icon-btn danger" (click)="onDelete(school)" safeCancel>Delete</button>
+                <button class="icon-btn danger" (click)="askConfirm('Delete ' + school.name + '?', () => onDelete(school))" >Delete</button>
               </td>
             </tr>
           }
@@ -97,13 +97,23 @@
           }
 
           <div class="modal-actions">
-            <button type="button" class="secondary-btn" (click)="closeForm()" safeCancel>Cancel</button>
+            <button type="button" class="secondary-btn" (click)="askConfirm('Discard changes and close ? ', () => closeForm())" >Cancel</button>
             <button type="submit" class="primary-btn" [disabled]="saving()">
               {{ saving() ? 'Saving…' : (editingSchool() ? 'Save Changes' : 'Create School') }}
             </button>
           </div>
         </form>
+
       </div>
     </div>
   }
+      @if (confirmMessage()) {
+        <app-confirm-box
+          [message]="confirmMessage()"
+          confirmText="Delete "
+          cancelText="Cancel "
+          (yes)="onConfirmYes()"
+          (no)="onConfirmNo()">
+        </app-confirm-box>
+      }
 </div>

@@ -35,16 +35,32 @@
       }
     </div>
 
-    @if (filtered.length > 0) {
+    @if (loading()) {
       <div class="school-grid">
+        @for (n of [1,2,3,4,5,6]; track n) {
+          <div class="skeleton-card">
+            <div class="skeleton skel-img"></div>
+            <div class="skel-body">
+              <div class="skeleton skel-line lg"></div>
+              <div class="skeleton skel-line sm"></div>
+              <div class="skeleton skel-line md"></div>
+              <div class="skeleton skel-cta"></div>
+            </div>
+          </div>
+        }
+      </div>
+    } @else if (filtered.length > 0) {
+      <div class="school-grid stagger">
         @for (school of filtered; track school.id) {
           <app-school-card [school]="school"></app-school-card>
         }
       </div>
     } @else {
-      <div class="empty-state">
+      <div class="empty-state fade-up">
+        <div class="empty-icon">🔍</div>
         <p>No Schools Match Your Filters</p>
-        <button (click)="clearFilters()">Clear all filters</button>
+        <span class="empty-sub">Try widening your price range or clearing the city filter.</span>
+        <button class="button-interactive" (click)="clearFilters()">Clear all filters</button>
       </div>
     }
   </div>

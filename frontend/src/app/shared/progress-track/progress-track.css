@@ -1,14 +1,32 @@
 .track-wrapper { position: relative; padding: 24px 0 8px; }
     .track-line { position: absolute; left: 16px; right: 16px; top: 33px; height: 2px;
       background-image: repeating-linear-gradient(90deg, #1E4B8C 0, #1E4B8C 12px, transparent 12px, transparent 20px); }
-    .track-line-filled { position: absolute; left: 16px; top: 33px; height: 2px; background: #1E4B8C; transition: width 0.4s ease; }
+    .track-line-filled { position: absolute; left: 16px; top: 33px; height: 2px; background: #1E4B8C; transition: width 0.6s ease; }
     .stops { position: relative; display: flex; justify-content: space-between; padding: 0 16px; max-width: 280px; }
     .stop { display: flex; flex-direction: column; align-items: center; gap: 10px; }
     .dot { width: 32px; height: 32px; border-radius: 50%; border: 2px solid #CBD5E1; background: white;
       display: flex; align-items: center; justify-content: center;
-      font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 700; color: #9CA3AF; z-index: 1; }
+      font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 700; color: #9CA3AF; z-index: 1;
+      transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease; }
+    .dot.done, .dot.current { animation: dot-pop 0.35s ease; }
     .dot.done { background: #1E4B8C; border-color: #1E4B8C; color: white; }
     .dot.current { border-color: #1E4B8C; box-shadow: 0 0 0 4px rgba(30,75,140,0.2); color: #1E4B8C; }
-    .label { font-family: 'IBM Plex Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; color: #9CA3AF; }
+    .num { display: inline-block; animation: num-in 0.3s ease; }
+    .check { display: inline-block; animation: check-in 0.3s ease; }
+    .label { font-family: 'IBM Plex Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; color: #9CA3AF; transition: color 0.3s ease; }
     .label.current { color: #1E4B8C; }
     .label.done { color: #1C1F26; }
+
+    @keyframes dot-pop {
+      0% { transform: scale(0.7); }
+      60% { transform: scale(1.15); }
+      100% { transform: scale(1); }
+    }
+    @keyframes num-in {
+      from { opacity: 0; transform: scale(0.5); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    @keyframes check-in {
+      from { opacity: 0; transform: scale(0.4) rotate(-25deg); }
+      to { opacity: 1; transform: scale(1) rotate(0); }
+    }

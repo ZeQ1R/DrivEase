@@ -1,15 +1,15 @@
 
-<header class="nav-bar">
+<header class="nav-bar" [class.scrolled]="scrolled()">
       <div class="nav-inner">
         <a routerLink="/" class="nav-brand">Driv<span>Ease</span></a>
         <nav class="nav-links">
-          <a routerLink="/browse">Browse Schools</a>
+          <a routerLink="/browse" routerLinkActive="active" class="nav-link">Browse Schools</a>
           @if (user) {
-            <a [routerLink]="dashboardLink">Dashboard</a>
+            <a [routerLink]="dashboardLink" routerLinkActive="active" class="nav-link">Dashboard</a>
             <button class="nav-link-btn" (click)="logout()">Sign Out</button>
           } @else {
-            <a routerLink="/login">Login</a>
-            <a routerLink="/signup" class="nav-signup-btn">Sign Up</a>
+            <a routerLink="/login" routerLinkActive="active" class="nav-link">Login</a>
+            <a routerLink="/signup" class="nav-signup-btn button-interactive">Sign Up</a>
           }
         </nav>
       </div>

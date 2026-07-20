@@ -1,10 +1,10 @@
-import { Component, inject } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { Component, HostListener, inject, signal } from '@angular/core';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService, AuthUser } from '../../auth/auth.service';
 
 @Component({
   selector: 'app-nav-bar',
-  imports: [RouterLink],
+  imports: [RouterLink, RouterLinkActive],
   templateUrl: './nav-bar.html',
   styleUrl: './nav-bar.css',
 })
@@ -13,6 +13,11 @@ export class NavBar {
   private router = inject(Router);
   user: AuthUser | null = null;
 
+  scrolled = signal(false);
+
+  @HostListener('window:scroll')
+  onScroll() { this.scrolled.set(window.scrollY > 8); }
+
   ngOnInit() { this.user = this.authService.getCurrentUser(); }
 
   logout() {
@@ -20,7 +25,7 @@ export class NavBar {
     this.router.navigate(['/']);
   }
 
-  get dashboardLink(): string{  
+  get dashboardLink(): string{
     const role = this.user?.role
     if(role === 'school_admin') return '/school-admin-dashboard';
     if(role === 'platform_admin') return '/platform-admin-dashboard'

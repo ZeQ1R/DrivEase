@@ -8,6 +8,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { SchoolsService } from '../../schools/schools.service';
 import { ValidationError } from '@angular/forms/signals';
 import { LoadingScreen } from '../../shared/loading-screen/loading-screen/loading-screen';
+import { ToastService } from '../../shared/toast/toast.service';
 
 @Component({
   selector: 'app-register-school',
@@ -21,6 +22,7 @@ export class RegisterSchool implements OnInit{
   private router = inject(Router)
   private schoolsService = inject(SchoolsService)
   private registrationService = inject(RegistrationService)
+  private toast = inject(ToastService)
 
 
   school = signal<School | null>(null)
@@ -28,7 +30,7 @@ export class RegisterSchool implements OnInit{
   registering = false
   selectedFile: File | null = null
   submitting = signal(false)
-  
+
 
   form = new FormGroup({
     firstName: new FormControl('',{
@@ -52,6 +54,9 @@ export class RegisterSchool implements OnInit{
     postalCode: new FormControl('',{
       validators: [Validators.required]
     }),
+    licenseCategory: new FormControl('', {
+      validators: [Validators.required]
+    }),
     embg: new FormControl('', {
       validators: [Validators.required, Validators.minLength(13), Validators.maxLength(13)]
     }),
@@ -61,11 +66,14 @@ export class RegisterSchool implements OnInit{
     const id = Number(this.route.snapshot.paramMap.get('id'))
     this.submitting.set(true)
     this.schoolsService.getSchoolById(id).subscribe({
-      next: (school) => {this.school.set(school)
-      setTimeout(() => {
+      next: (school) => {
+        this.school.set(school)
         this.submitting.set(false)
-      }, 3000)},
-      error: (err) => console.error('Failed to load school', err)
+      },
+      error: (err) => {
+        console.error('Failed to load school', err)
+        this.submitting.set(false)
+      }
     })
   }
 
@@ -125,15 +133,20 @@ export class RegisterSchool implements OnInit{
     data.append('postalCode', this.form.value.postalCode!);
     data.append('embg', this.form.value.embg!);
     data.append('dateOfBirth', this.form.value.dateOfBirth!);
+    data.append('licenseCategory', this.form.value.licenseCategory!)
     if (this.selectedFile) {
       data.append('idDocument', this.selectedFile);
     }
 
     this.registrationService.registerToSchool(data).subscribe({
-      next: () => this.router.navigate(['/student-platform-dashboard']),
+      next: () => {
+        this.toast.success('Registration submitted! Track its status on your dashboard.', 6000);
+        this.router.navigate(['/student-platform-dashboard']);
+      },
       error: (err) => {
         this.registering = false;
         this.registerError = err.error?.message || 'Failed to register. Please try again.';
+        this.toast.error(this.registerError);
       },
     });
   }

@@ -1,6 +1,9 @@
-import { HttpClient } from "@angular/common/http";
-import { inject, Injectable } from "@angular/core";
+import { HttpClient } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
+import { API_URL } from '../shared/api.config';
+import { Instructor } from '../instructor-platform/instructor.model';
 
+export type { Instructor } from '../instructor-platform/instructor.model';
 
 export interface AdminRegistration {
   id: number;
@@ -14,24 +17,73 @@ export interface AdminRegistration {
   postal_code: string;
   embg: string;
   date_of_birth: string;
-  id_document_url: string | null
+  id_document_url: string | null;
+  licenseCategory: string;
+  instructor_id: number | null;
+  required_theory_hours: number;
+  theory_completed_hours: number;
+  instructor_first_name: string | null;
+  instructor_last_name: string | null;
 }
 
-
-@Injectable({
-    providedIn: 'root'
-}) 
+@Injectable({ providedIn: 'root' })
 export class AdminSchoolService {
+  private http = inject(HttpClient);
 
-    private http = inject(HttpClient)
-    private apiUrl = 'http://localhost:3000'
+  getRegistrations() {
+    return this.http.get<{ schoolName: string; registrations: AdminRegistration[] }>(
+      `${API_URL}/admin/registrations`
+    );
+  }
 
-    getRegistrations(){
-        return this.http.get<{schoolName: string;registrations: AdminRegistration[]}>(`${this.apiUrl}/admin/registrations`)
-    }
+  getInstructors() {
+    return this.http.get<{ instructors: Instructor[] }>(`${API_URL}/admin/instructors`);
+  }
 
-    updateStatus(id: number, status: 'approved' | 'rejected'){
-        return this.http.patch<{registration: {id: number; status: string}}>(`${this.apiUrl}/admin/registrations/${id}/status`, {status})
-    }
+  updateStatus(id: number, status: 'approved' | 'rejected') {
+    return this.http.patch<{ registration: any }>(
+      `${API_URL}/admin/registrations/${id}/status`,
+      { status }
+    );
+  }
 
+  assignInstructor(id: number, instructorId: number) {
+    return this.http.patch<{ registration: any }>(
+      `${API_URL}/admin/registrations/${id}/instructor`,
+      { instructorId }
+    );
+  }
+
+  createTheorySlot(slotDate: string, slotTime: string, note: string, durationHours: number) {
+    return this.http.post<{ slot: any }>(
+      `${API_URL}/admin/slots`,
+      { slotDate, slotTime, note, durationHours }
+    );
+  }
+
+  createInstructor(firstName: string, lastName: string, email: string, phone: string) {
+    return this.http.post<{ instructor: Instructor; login: { email: string; password: string } }>(
+      `${API_URL}/admin/instructors`,
+      { firstName, lastName, email, phone }
+    );
+  }
+
+  updateInstructor(id: number, firstName: string, lastName: string, email: string, phone: string) {
+    return this.http.put<{ instructor: Instructor }>(
+      `${API_URL}/admin/instructors/${id}`,
+      { firstName, lastName, email, phone }
+    );
+  }
+
+  deleteInstructor(id: number) {
+    return this.http.delete<{ message: string }>(`${API_URL}/admin/instructors/${id}`);
+  }
+
+  updateRegistration(id: number, data: Partial<AdminRegistration> & { postalCode?: string; licenseCategory?: string }) {
+    return this.http.put<{ details: any }>(`${API_URL}/admin/registrations/${id}`, data);
+  }
+
+  deleteRegistration(id: number) {
+    return this.http.delete<{ message: string }>(`${API_URL}/admin/registrations/${id}`);
+  }
 }

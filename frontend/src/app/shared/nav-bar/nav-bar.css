@@ -1,15 +1,44 @@
-.nav-bar { background: #1C1F26; position: sticky; top: 0; z-index: 50; }
-    .nav-inner { max-width: 1152px; margin: 0 auto; padding: 0 24px; height: 60px; display: flex; align-items: center; justify-content: space-between; }
-    .nav-brand {
-      font-family: 'Big Shoulders Display', sans-serif; font-weight: 900; font-size: 24px;
-      text-transform: uppercase; letter-spacing: 0.05em; color: white; text-decoration: none;
-    }
-    .nav-brand span { color: #1E4B8C; }
-    .nav-links { display: flex; align-items: center; gap: 20px; }
-    .nav-links a, .nav-link-btn {
-      color: #9CA3AF; font-size: 14px; font-weight: 500; text-decoration: none;
-      background: none; border: none; cursor: pointer; font-family: 'IBM Plex Sans', sans-serif;
-    }
-    .nav-links a:hover, .nav-link-btn:hover { color: white; }
-    .nav-signup-btn { padding: 6px 16px; background: #1E4B8C; color: white !important; }
-    .nav-signup-btn:hover { background: #163a6e !important; color: white !important; }
+.nav-bar {
+  background: #1C1F26;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  transition: box-shadow var(--motion-normal) var(--ease-standard), background-color var(--motion-normal) var(--ease-standard);
+}
+.nav-bar.scrolled {
+  background: #16181e;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.28);
+}
+.nav-inner { max-width: 1152px; margin: 0 auto; padding: 0 24px; height: 60px; display: flex; align-items: center; justify-content: space-between; }
+.nav-brand {
+  font-family: 'Big Shoulders Display', sans-serif; font-weight: 900; font-size: 24px;
+  text-transform: uppercase; letter-spacing: 0.05em; color: white; text-decoration: none;
+  transition: opacity var(--motion-fast) var(--ease-standard);
+}
+.nav-brand:hover { opacity: 0.85; }
+.nav-brand span { color: #1E4B8C; }
+.nav-links { display: flex; align-items: center; gap: 20px; }
+.nav-links a, .nav-link-btn {
+  color: #9CA3AF; font-size: 14px; font-weight: 500; text-decoration: none;
+  background: none; border: none; cursor: pointer; font-family: 'IBM Plex Sans', sans-serif;
+  transition: color var(--motion-fast) var(--ease-standard);
+}
+.nav-links a:hover, .nav-link-btn:hover { color: white; }
+
+.nav-link { position: relative; padding-bottom: 2px; }
+.nav-link::after {
+  content: '';
+  position: absolute;
+  left: 0; bottom: -2px;
+  height: 2px; width: 100%;
+  background: #FFC93C;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--motion-normal) var(--ease-standard);
+}
+.nav-link:hover::after { transform: scaleX(1); }
+.nav-link.active { color: white; }
+.nav-link.active::after { transform: scaleX(1); }
+
+.nav-signup-btn { padding: 6px 16px; background: #1E4B8C; color: white !important; }
+.nav-signup-btn:hover { background: #163a6e !important; color: white !important; }
