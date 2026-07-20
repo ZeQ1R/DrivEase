@@ -4,19 +4,24 @@ import pool from "./config/database.js";
 const PASSWORD = "test123";
 
 const users = [
-  { firstName: "Ana",    lastName: "Petrovska", email: "ana@test.com",    phone: "070111222", role: "student" },
-  { firstName: "Bujar",  lastName: "Ismaili",   email: "bujar@test.com",  phone: "070333444", role: "student" },
-  { firstName: "Elena",  lastName: "Markoska",  email: "elena@test.com",  phone: "070555666", role: "student" },
-  { firstName: "Kushtrim",    lastName: "Kushtrim", email: "kushtrim@test.com",    phone: "070111222", role: "student" },
-  { firstName: "Leotrim",  lastName: "Ismaili",   email: "leotrim@test.com",  phone: "070333444", role: "student" },
-  { firstName: "Albulena",  lastName: "Albulena",  email: "albulena@test.com",  phone: "070555666", role: "student" },
-  { firstName: "Arben",  lastName: "Krasniqi",  email: "arben@test.com",  phone: "070777888", role: "instructor", schoolId: 3 },
+  { firstName: "Ana",      lastName: "Berisha",   email: "ana@test.com",      phone: "070111001", role: "student" },
+  { firstName: "Bujar",    lastName: "Ismaili",   email: "bujar@test.com",    phone: "070111002", role: "student" },
+  { firstName: "Elona",    lastName: "Markaj",    email: "elona@test.com",    phone: "070111003", role: "student" },
+  { firstName: "Kushtrim", lastName: "Gashi",     email: "kushtrim@test.com", phone: "070111004", role: "student" },
+  { firstName: "Leotrim",  lastName: "Rexhepi",   email: "leotrim@test.com",  phone: "070111005", role: "student" },
+  { firstName: "Albulena", lastName: "Halimi",    email: "albulena@test.com", phone: "070111006", role: "student" },
+  { firstName: "Blerta",   lastName: "Krasniqi",  email: "blerta@test.com",   phone: "070111007", role: "student" },
+  { firstName: "Driton",   lastName: "Kastrati",  email: "driton@test.com",   phone: "070111008", role: "student" },
+  { firstName: "Arta",     lastName: "Shala",     email: "arta@test.com",     phone: "070111009", role: "student" },
+  { firstName: "Valon",    lastName: "Dervishi",  email: "valon@test.com",    phone: "070111010", role: "student" },
+  { firstName: "Arben",    lastName: "Krasniqi",  email: "arben@test.com",    phone: "070222001", role: "instructor", schoolId: 3 },
+  { firstName: "Teuta",    lastName: "Berisha",   email: "teuta@test.com",    phone: "070222002", role: "instructor", schoolId: 3 },
 ];
 
 for (const u of users) {
   const existing = await pool.query("SELECT id FROM users WHERE email = $1", [u.email]);
   if (existing.rows.length > 0) {
-    console.log(`Skipped (exists): ${u.email}`);
+    console.log(`Kaluar (ekziston): ${u.email}`);
     continue;
   }
 
@@ -27,8 +32,8 @@ for (const u of users) {
      RETURNING id, email, role`,
     [u.firstName, u.lastName, u.email, u.phone, hash, u.role, u.schoolId || null]
   );
-  console.log(`Created: ${res.rows[0].email} (${res.rows[0].role}) — password: ${PASSWORD}`);
+  console.log(`Krijuar: ${res.rows[0].email} (${res.rows[0].role})`);
 }
 
-console.log("\nDone. All test users have password:", PASSWORD);
+console.log("\nMbaroi. Të gjithë përdoruesit kanë fjalëkalimin:", PASSWORD);
 process.exit(0);

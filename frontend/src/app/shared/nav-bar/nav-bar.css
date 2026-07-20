@@ -43,16 +43,6 @@
 .nav-signup-btn { padding: 6px 16px; background: #1E4B8C; color: white !important; }
 .nav-signup-btn:hover { background: #163a6e !important; color: white !important; }
 
-/* ---- Notification bell ---- */
-.notif { position: relative; display: flex; align-items: center; }
-.notif-bell { position: relative; background: none; border: none; cursor: pointer; font-size: 17px; line-height: 1; padding: 4px; filter: grayscale(0.2); }
-.notif-badge {
-  position: absolute; top: -4px; right: -4px;
-  background: #D14B3D; color: #fff;
-  font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 700;
-  min-width: 16px; height: 16px; padding: 0 4px;
-  border-radius: 999px; display: flex; align-items: center; justify-content: center;
-}
 .notif-backdrop { position: fixed; inset: 0; z-index: 60; }
 .notif-panel {
   position: absolute; top: calc(100% + 12px); right: 0; z-index: 61;
@@ -76,3 +66,36 @@
 .notif-msg { font-family: 'IBM Plex Sans', sans-serif; font-size: 13px; color: #1C1F26; line-height: 1.4; }
 .notif-time { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #9CA3AF; }
 .notif-empty { padding: 24px 16px; text-align: center; color: #9CA3AF; font-size: 13px; margin: 0; }
+
+/* ---- Mobile menu ---- */
+.nav-toggle { display: none; flex-direction: column; justify-content: center; gap: 5px; width: 40px; height: 40px; background: none; border: none; cursor: pointer; padding: 8px; z-index: 62; }
+.nav-toggle span { display: block; height: 2px; width: 100%; background: #fff; transition: transform var(--motion-fast) var(--ease-standard), opacity var(--motion-fast) var(--ease-standard); }
+.nav-toggle.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.nav-toggle.open span:nth-child(2) { opacity: 0; }
+.nav-toggle.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+.nav-menu-backdrop { display: none; }
+
+@media (max-width: 720px) {
+  .nav-inner { padding: 0 16px; }
+  .nav-toggle { display: flex; }
+  .nav-menu-backdrop { display: block; position: fixed; inset: 60px 0 0; background: rgba(0,0,0,0.4); z-index: 40; }
+
+  .nav-links {
+    position: absolute;
+    top: 100%; right: 0; left: 0;
+    z-index: 61;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    background: #1C1F26;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.3);
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height var(--motion-normal) var(--ease-standard);
+  }
+  .nav-links.open { max-height: 340px; }
+  .nav-links a, .nav-link-btn { padding: 15px 20px; width: 100%; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.06); font-size: 15px; }
+  .nav-link::after { display: none; }
+  .nav-signup-btn { margin: 12px 20px; width: calc(100% - 40px); text-align: center; padding: 12px; }
+}

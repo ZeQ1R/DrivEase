@@ -26,7 +26,7 @@
       <div class="instr-form">
         <div class="slot-field"><label>Date</label><input type="date" [(ngModel)]="newTheoryDate" name="theoryDate" /></div>
         <div class="slot-field"><label>Time</label><input type="time" [(ngModel)]="newTheoryTime" name="theoryTime" /></div>
-        <div class="slot-field"><label>Duration (h)</label><input type="number" step="0.5" min="0.5" [(ngModel)]="newTheoryDuration" name="theoryDur" /></div>
+        <div class="slot-field"><label>Duration (h)</label><input type="number" value="1.5" [(ngModel)]="newTheoryDuration" name="theoryDur" disableds/></div>
         <div class="slot-field"><label>Note (optional)</label><input [(ngModel)]="newTheoryNote" name="theoryNote" placeholder="e.g. Road signs" /></div>
         <button class="add-slot-btn" (click)="addTheorySlot()">Add Class</button>
       </div>

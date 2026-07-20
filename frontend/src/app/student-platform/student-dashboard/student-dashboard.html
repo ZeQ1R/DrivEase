@@ -71,7 +71,7 @@
             <h2>Book a Practical Lesson</h2>
           }
 
-          @if (phase() === 'awaiting-instructor' || phase() === 'practical') {
+          @if (phase() === 'practical') {
             <div class="milestones-card">
               <h3 class="milestones-title">Your Progress</h3>
 
@@ -106,11 +106,15 @@
             </div>
           }
 
-          @if (phase() === 'theory' || phase() === 'practical') {
+          @if (phase() === 'awaiting-instructor') {
+            <div class="await-note">
+              <p>You've finished all your theory classes. Your school is assigning your instructor — practical booking unlocks as soon as they do.</p>
+            </div>
+          } @else if (!readyForTest() && (phase() === 'theory' || phase() === 'practical')) {
             @if (slots().length > 0) {
               <div class="slot-list">
                 @for (slot of slots(); track slot.id) {
-                  <div class="slot">
+                  <div class="slot" @fadeOut>
                     <div class="slot-info">
                       <span class="slot-date">{{ slot.slot_date | date:'mediumDate' }}</span>
                       <span class="slot-time">{{ slot.slot_time }}</span>
@@ -124,10 +128,6 @@
             } @else {
               <p class="no-slots">No {{ phase() === 'theory' ? 'theory classes' : 'practical slots' }} available right now. Check back soon.</p>
             }
-          } @else {
-            <div class="await-note">
-              <p>You've finished all your theory classes. Your school is assigning your instructor — practical booking unlocks as soon as they do.</p>
-            </div>
           }
 
           @if (bookings().length > 0) {
@@ -146,7 +146,7 @@
             </div>
           }
 
-          @if (phase() === 'practical') {
+          @if (phase() === 'practical' && !readyForTest()) {
             <div class="hours-card">
               <h2>Practical Hours</h2>
               <div class="hours-stat">

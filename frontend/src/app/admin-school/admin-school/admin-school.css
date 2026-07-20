@@ -159,3 +159,18 @@
 .sa-tabs button.active { background: #1C1F26; color: white; }
 .sa-tabs button:not(.active):hover { color: #1C1F26; }
 .students-heading { margin-top: 0; padding-top: 0; border-top: none; }
+
+/* ---- Responsive ---- */
+@media (max-width: 600px) {
+  .sa-content { padding: 24px 16px 48px; }
+  .sa-header-inner { padding: 28px 16px 24px; }
+  .instr-form { grid-template-columns: 1fr; }
+  .instr-row.editing { grid-template-columns: 1fr; }
+  .applicant-grid { grid-template-columns: 1fr; }
+  .applicant-cards { grid-template-columns: 1fr; }
+  .sa-tabs { display: flex; width: 100%; }
+  .sa-tabs button { flex: 1; padding: 10px 8px; text-align: center; }
+  .sa-toolbar { flex-direction: column; align-items: stretch; }
+  .filter-tabs { width: 100%; justify-content: space-between; }
+  .instr-row { flex-wrap: wrap; }
+}

@@ -30,17 +30,28 @@ export class PlatformAdmin implements OnInit{
   pendingAction: (() => void) | null = null
 
   form = new FormGroup({
-  name: new FormControl('', { validators: [Validators.required] }),
-  city: new FormControl('', { validators: [Validators.required] }),
-  address: new FormControl('', { validators: [Validators.required] }),
-  description: new FormControl('', { validators: [Validators.required] }),
-  price: new FormControl('', { validators: [Validators.required] }),
-  rating: new FormControl('', { validators: [Validators.required] }),
-  transmission: new FormControl('', { validators: [Validators.required] }),
-  instructors_count: new FormControl('', { validators: [Validators.required] }),
-  pass_rate: new FormControl('', { validators: [Validators.required] }),
-  phone: new FormControl('', { validators: [Validators.required] }),
-  email: new FormControl('', { validators: [Validators.required] }),
+    name: new FormControl('', 
+      { validators: [Validators.required] }),
+    city: new FormControl('', 
+      { validators: [Validators.required] }),
+    address: new FormControl('', 
+      { validators: [Validators.required] }),
+    description: new FormControl('', 
+      { validators: [Validators.required] }),
+    price: new FormControl('', 
+      { validators: [Validators.required] }),
+    rating: new FormControl('', 
+      { validators: [Validators.required] }),
+    transmission: new FormControl('', 
+      { validators: [Validators.required] }),
+    instructors_count: new FormControl('', 
+      { validators: [Validators.required] }),
+    pass_rate: new FormControl('', 
+      { validators: [Validators.required] }),
+    phone: new FormControl('', 
+      { validators: [Validators.required] }),
+    email: new FormControl('', 
+      { validators: [Validators.required] }),
 });
 
   ngOnInit(){
@@ -61,7 +72,8 @@ export class PlatformAdmin implements OnInit{
   openEditForm(school: School){
     this.editingSchool.set(school)
     this.form.patchValue(
-      {name: school.name,
+      { 
+        name: school.name,
         city: school.city,
         address: school.address,
         description: school.description,
@@ -100,7 +112,6 @@ export class PlatformAdmin implements OnInit{
   }
 
   onSubmitForm(){
-
     if(this.form.invalid){
       this.form.markAllAsTouched()
       this.formError.set('Please fill out all required fields.')
@@ -110,7 +121,7 @@ export class PlatformAdmin implements OnInit{
     this.saving.set(true)
 
     console.log('form valid?', this.form.valid);
-  console.log('invalid controls:', Object.keys(this.form.controls).filter(k => this.form.get(k)?.invalid));
+    console.log('invalid controls:', Object.keys(this.form.controls).filter(k => this.form.get(k)?.invalid));
 
     const data = new FormData();
     data.append('name', this.form.value.name!);
@@ -144,7 +155,6 @@ export class PlatformAdmin implements OnInit{
         this.saving.set(false)
         this.formError.set(err.error?.message || 'Failed to save school. Please try again.')
       }
-
     })
   }
 

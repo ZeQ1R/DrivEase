@@ -6,7 +6,7 @@ import { NotificationService, AppNotification } from '../notifications/notificat
 
 @Component({
   selector: 'app-nav-bar',
-  imports: [RouterLink, RouterLinkActive, DatePipe],
+  imports: [RouterLink, RouterLinkActive],
   templateUrl: './nav-bar.html',
   styleUrl: './nav-bar.css',
 })
@@ -18,6 +18,10 @@ export class NavBar {
 
   scrolled = signal(false);
   notifOpen = signal(false);
+  menuOpen = signal(false);
+
+  toggleMenu() { this.menuOpen.update(v => !v); }
+  closeMenu() { this.menuOpen.set(false); }
 
   // expose the service signals to the template
   notifList = this.notifications.notifications;
@@ -29,20 +33,6 @@ export class NavBar {
   ngOnInit() {
     this.user = this.authService.getCurrentUser();
     if (this.user) this.notifications.load();
-  }
-
-  toggleNotif() {
-    const next = !this.notifOpen();
-    this.notifOpen.set(next);
-    if (next) this.notifications.load();
-  }
-
-  closeNotif() { this.notifOpen.set(false); }
-
-  onNotifClick(n: AppNotification) {
-    if (!n.is_read) this.notifications.markRead(n.id);
-    this.notifOpen.set(false);
-    if (n.link) this.router.navigateByUrl(n.link);
   }
 
   markAllRead() { this.notifications.markAllRead(); }
