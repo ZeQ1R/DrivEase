@@ -6,16 +6,17 @@ import { AuthService, AuthUser } from '../../auth/auth.service';
 import { NavBar } from '../../shared/nav-bar/nav-bar';
 import { StarRating } from '../../shared/star-rating/star-rating';
 import { LaneDivider } from '../../shared/lane-divider/lane-divider';
-import { SchoolsService } from '../../schools/schools.service';
+import { SchoolsService, SchoolReview } from '../../schools/schools.service';
 import { Registration, RegistrationService } from '../../auth/registration.service';
 import { School } from '../../schools/school.model';
 import { LoadingScreen } from '../../shared/loading-screen/loading-screen/loading-screen';
 import { ConfirmBox } from '../../shared/confirm-box/confirm-box';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-browse-school',
   standalone: true,
-  imports: [CommonModule, RouterLink, NavBar, StarRating, LaneDivider, LoadingScreen, ConfirmBox],
+  imports: [CommonModule, RouterLink, NavBar, StarRating, LaneDivider, LoadingScreen, ConfirmBox, FormsModule],
   templateUrl: './browse-school.html',
   styleUrl: './browse-school.css',
 })
@@ -31,6 +32,17 @@ export class BrowseSchool implements OnInit {
   user: AuthUser | null = null;
   submitting = signal(false)
   confirmOpen = signal(false)
+
+  // reviews
+  reviews = signal<SchoolReview[]>([]);
+  reviewAverage = signal(0);
+  reviewCount = signal(0);
+  canReview = signal(false);
+  hasReviewed = signal(false);
+  reviewRating = 0;
+  reviewComment = '';
+  reviewSaving = signal(false);
+  reviewMessage = signal('');
 
   openRegisterConfirm() { this.confirmOpen.set(true); }
   cancelRegister() { this.confirmOpen.set(false); }
@@ -62,6 +74,51 @@ export class BrowseSchool implements OnInit {
         error: (err) => console.error('Failed to load registration', err),
       });
     }
+
+    this.loadReviews(id);
+  }
+
+  private loadReviews(schoolId: number) {
+    this.schoolsService.getReviews(schoolId).subscribe({
+      next: (res) => {
+        this.reviews.set(res.reviews);
+        this.reviewAverage.set(res.average);
+        this.reviewCount.set(res.count);
+        this.canReview.set(res.canReview);
+        this.hasReviewed.set(!!res.myReview);
+        if (res.myReview) {
+          this.reviewRating = res.myReview.rating;
+          this.reviewComment = res.myReview.comment ?? '';
+        }
+      },
+      error: (err) => console.error('Failed to load reviews', err),
+    });
+  }
+
+  setReviewRating(n: number) { this.reviewRating = n; }
+
+  submitReview() {
+    const id = this.school()?.id;
+    if (id == null) return;
+    if (this.reviewRating < 1) {
+      this.reviewMessage.set('Please pick a star rating.');
+      return;
+    }
+    this.reviewSaving.set(true);
+    this.reviewMessage.set('');
+    this.schoolsService.submitReview(id, this.reviewRating, this.reviewComment).subscribe({
+      next: () => {
+        this.reviewSaving.set(false);
+        this.reviewMessage.set(this.hasReviewed() ? 'Review updated.' : 'Thanks for your review!');
+        this.loadReviews(id);
+        // refresh the school so the header star rating reflects the new average
+        this.schoolsService.getSchoolById(id).subscribe({ next: (s) => this.school.set(s) });
+      },
+      error: (err) => {
+        this.reviewSaving.set(false);
+        this.reviewMessage.set(err.error?.message || 'Failed to submit review.');
+      },
+    });
   }
 
   private get hasActiveReg() {

@@ -49,6 +49,54 @@
             <div>✉️ {{ school.email }}</div>
           </div>
         </section>
+
+        <app-lane-divider></app-lane-divider>
+
+        <section class="reviews-section">
+          <div class="reviews-head">
+            <h2>Reviews</h2>
+            @if (reviewCount() > 0) {
+              <span class="reviews-summary"><strong>{{ reviewAverage().toFixed(1) }}</strong> ★ · {{ reviewCount() }} {{ reviewCount() === 1 ? 'review' : 'reviews' }}</span>
+            }
+          </div>
+
+          @if (canReview()) {
+            <div class="review-form">
+              <p class="review-form-title">{{ hasReviewed() ? 'Update your review' : 'Leave a review' }}</p>
+              <div class="star-input">
+                @for (n of [1,2,3,4,5]; track n) {
+                  <button type="button" class="star-btn" [class.on]="n <= reviewRating" (click)="setReviewRating(n)" [attr.aria-label]="n + ' star'">★</button>
+                }
+              </div>
+              <textarea class="review-comment" [(ngModel)]="reviewComment" name="reviewComment" rows="3" placeholder="Share your experience with this school (optional)"></textarea>
+              <div class="review-form-actions">
+                <button class="primary-btn button-interactive" [disabled]="reviewSaving()" (click)="submitReview()">
+                  @if (reviewSaving()) { <span class="btn-spinner"></span> Saving… } @else { {{ hasReviewed() ? 'Update Review' : 'Submit Review' }} }
+                </button>
+                @if (reviewMessage()) { <span class="review-msg">{{ reviewMessage() }}</span> }
+              </div>
+            </div>
+          }
+
+          @if (reviews().length > 0) {
+            <div class="review-list">
+              @for (r of reviews(); track r.id) {
+                <div class="review-item">
+                  <div class="review-item-head">
+                    <span class="review-author">{{ r.first_name }} {{ r.last_name }}</span>
+                    <span class="review-stars">
+                      @for (s of [1,2,3,4,5]; track s) { <span [class.on]="s <= r.rating">★</span> }
+                    </span>
+                  </div>
+                  @if (r.comment) { <p class="review-text">{{ r.comment }}</p> }
+                  <span class="review-date">{{ r.created_at | date:'mediumDate' }}</span>
+                </div>
+              }
+            </div>
+          } @else {
+            <p class="no-reviews">No reviews yet — be the first to share your experience.</p>
+          }
+        </section>
       </div>
 
       <aside class="detail-sidebar">

@@ -91,4 +91,62 @@ router.get("/verify-email", async (req, res) => {
   }
 });
 
+// Request a password reset link. Always responds 200 so it can't be used to
+// probe which emails have accounts.
+router.post("/forgot-password", async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ message: "Email is required." });
+
+    const user = await pool.query("SELECT id, first_name FROM users WHERE email = $1", [email]);
+    if (user.rows.length > 0) {
+      const token = crypto.randomBytes(32).toString("hex");
+      const expires = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+      await pool.query(
+        "UPDATE users SET reset_token = $1, reset_expires = $2 WHERE id = $3",
+        [token, expires, user.rows[0].id]
+      );
+      const link = `${process.env.APP_URL}/reset-password?token=${token}`;
+      sendMail({
+        to: email,
+        subject: "Reset your DrivEase password",
+        html: `<h2>Password reset</h2>
+               <p>Hi ${user.rows[0].first_name}, we received a request to reset your password.</p>
+               <p><a href="${link}">Choose a new password</a> — this link expires in 1 hour.</p>
+               <p>If you didn't request this, you can ignore this email.</p>`,
+      }).catch(err => console.error("Reset email failed:", err.message));
+    }
+
+    res.status(200).json({ message: "If an account exists for that email, a reset link has been sent." });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to process request.", error: error.message });
+  }
+});
+
+// Complete the reset with the emailed token.
+router.post("/reset-password", async (req, res) => {
+  try {
+    const { token, password } = req.body;
+    if (!token || !password) return res.status(400).json({ message: "Token and new password are required." });
+    if (String(password).length < 6) return res.status(400).json({ message: "Password must be at least 6 characters." });
+
+    const user = await pool.query(
+      "SELECT id FROM users WHERE reset_token = $1 AND reset_expires > NOW()",
+      [token]
+    );
+    if (user.rows.length === 0) {
+      return res.status(400).json({ message: "This reset link is invalid or has expired." });
+    }
+
+    const passwordHash = await bcrypt.hash(password, 10);
+    await pool.query(
+      "UPDATE users SET password_hash = $1, reset_token = NULL, reset_expires = NULL WHERE id = $2",
+      [passwordHash, user.rows[0].id]
+    );
+    res.status(200).json({ message: "Password updated. You can now sign in." });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to reset password.", error: error.message });
+  }
+});
+
 export default router;

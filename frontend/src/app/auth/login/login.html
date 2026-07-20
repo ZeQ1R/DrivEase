@@ -44,6 +44,8 @@
           <p class="field-error"><span class="dot"></span>{{ loginError }}</p>
         }
 
+        <a routerLink="/forgot-password" class="auth-forgot">Forgot password?</a>
+
         <button type="submit" class="auth-submit button-interactive" [disabled]="loading()">
           @if (loading()) {
             <span class="btn-spinner"></span> Signing in…

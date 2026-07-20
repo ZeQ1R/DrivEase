@@ -260,3 +260,20 @@ button:not(:disabled):active,
   transition: color var(--motion-fast) var(--ease-standard);
 }
 .password-toggle:hover { color: #1C1F26; }
+
+/* Password reset pages (forgot-password / reset-password) */
+.pw-page { min-height: calc(100vh - 60px); display: flex; align-items: flex-start; justify-content: center; background: #F3F5F6; padding: 60px 20px; }
+.pw-card { background: #fff; border: 1px solid #E2E6E9; width: 100%; max-width: 420px; padding: 36px 32px; }
+.pw-eyebrow { font-family: 'IBM Plex Mono', monospace; color: #1E4B8C; font-size: 12px; text-transform: uppercase; letter-spacing: 0.2em; margin: 0 0 8px; }
+.pw-card h1 { font-family: 'Big Shoulders Display', sans-serif; font-weight: 900; font-size: 30px; text-transform: uppercase; color: #1C1F26; margin: 0 0 12px; line-height: 1.05; }
+.pw-sub { font-size: 14px; color: #717182; line-height: 1.5; margin: 0 0 24px; }
+.pw-field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+.pw-field label { font-family: 'IBM Plex Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: #717182; }
+.pw-field input { padding: 11px 12px; border: 1px solid #E2E6E9; font-size: 14px; font-family: 'IBM Plex Sans', sans-serif; transition: border-color var(--motion-fast) var(--ease-standard); }
+.pw-field input:focus { outline: none; border-color: #1E4B8C; box-shadow: 0 0 0 3px rgba(30,75,140,.12); }
+.pw-submit { width: 100%; padding: 13px; background: #1E4B8C; color: #fff; border: none; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+.pw-submit:hover:not(:disabled) { background: #163a6e; }
+.pw-error { font-size: 13px; color: #D14B3D; margin: 0 0 12px; }
+.pw-success { font-size: 14px; color: #2F9E6E; line-height: 1.5; margin: 0 0 20px; }
+.pw-back { display: inline-block; margin-top: 18px; font-size: 13px; color: #1E4B8C; font-weight: 500; }
+.pw-back:hover { text-decoration: underline; }

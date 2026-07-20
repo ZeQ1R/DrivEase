@@ -6,6 +6,38 @@
           <a routerLink="/browse" routerLinkActive="active" class="nav-link">Browse Schools</a>
           @if (user) {
             <a [routerLink]="dashboardLink" routerLinkActive="active" class="nav-link">Dashboard</a>
+
+            <div class="notif">
+              <button class="notif-bell" (click)="toggleNotif()" aria-label="Notifications">
+                🔔
+                @if (unread() > 0) { <span class="notif-badge">{{ unread() > 9 ? '9+' : unread() }}</span> }
+              </button>
+              @if (notifOpen()) {
+                <div class="notif-backdrop" (click)="closeNotif()"></div>
+                <div class="notif-panel">
+                  <div class="notif-panel-head">
+                    <span>Notifications</span>
+                    @if (unread() > 0) { <button class="notif-readall" (click)="markAllRead()">Mark all read</button> }
+                  </div>
+                  @if (notifList().length > 0) {
+                    <div class="notif-list">
+                      @for (n of notifList(); track n.id) {
+                        <button class="notif-item" [class.unread]="!n.is_read" (click)="onNotifClick(n)">
+                          <span class="notif-dot" [class]="n.type"></span>
+                          <span class="notif-body">
+                            <span class="notif-msg">{{ n.message }}</span>
+                            <span class="notif-time">{{ n.created_at | date:'MMM d, h:mm a' }}</span>
+                          </span>
+                        </button>
+                      }
+                    </div>
+                  } @else {
+                    <p class="notif-empty">No notifications yet.</p>
+                  }
+                </div>
+              }
+            </div>
+
             <button class="nav-link-btn" (click)="logout()">Sign Out</button>
           } @else {
             <a routerLink="/login" routerLinkActive="active" class="nav-link">Login</a>

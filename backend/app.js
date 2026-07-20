@@ -7,6 +7,8 @@ import registrationsRoutes from "./routes/registrations.routes.js";
 import slotsRoutes from "./routes/slots.routes.js";
 import bookingsRoutes from "./routes/bookings.routes.js";
 import instructorsRoutes from "./routes/instructors.routes.js";
+import reviewsRoutes from "./routes/reviews.routes.js";
+import notificationsRoutes from "./routes/notifications.routes.js";
 
 const app = express();
 app.disable("etag");
@@ -21,6 +23,8 @@ app.use(registrationsRoutes);
 app.use(slotsRoutes);
 app.use(bookingsRoutes);
 app.use(instructorsRoutes);
+app.use(reviewsRoutes);
+app.use(notificationsRoutes);
 
 app.listen(3000, () => {
   console.log("Backend server listening on port 3000");
