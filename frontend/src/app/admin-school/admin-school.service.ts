@@ -24,6 +24,8 @@ export interface AdminRegistration {
   theory_completed_hours: number;
   instructor_first_name: string | null;
   instructor_last_name: string | null;
+  medical_done: boolean;
+  first_aid_done: boolean;
 }
 
 @Injectable({ providedIn: 'root' })

@@ -48,6 +48,22 @@
         }
       </div>
 
+      <button type="button" class="milestone toggle" [class.done]="registration()?.medical_done" (click)="toggleMedical()">
+                <span class="ms-box" [class.checked]="registration()?.medical_done">{{ registration()?.medical_done ? '✓' : '' }}</span>
+                <div>
+                  <p class="ms-name">Medical health test &amp; doctor control</p>
+                  <span class="ms-sub">{{ registration()?.medical_done ? 'Marked as completed' : 'Tap once you have your medical approval' }}</span>
+                </div>
+              </button>
+
+              <button type="button" class="milestone toggle" [class.done]="registration()?.first_aid_done" (click)="toggleFirstAid()">
+                <span class="ms-box" [class.checked]="registration()?.first_aid_done">{{ registration()?.first_aid_done ? '✓' : '' }}</span>
+                <div>
+                  <p class="ms-name">Red Cross first aid test</p>
+                  <span class="ms-sub">{{ registration()?.first_aid_done ? 'Marked as completed' : 'Tap once you pass the Red Cross first aid course' }}</span>
+                </div>
+              </button>
+
       @if (registration()?.status === 'approved') {
         <div class="schedule-card">
 
@@ -70,6 +86,8 @@
             <span class="phase-chip practical">Phase 2 · Practical</span>
             <h2>Book a Practical Lesson</h2>
           }
+
+          
 
           @if (phase() === 'practical') {
             <div class="milestones-card">

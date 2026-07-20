@@ -12,7 +12,7 @@ import { trigger, transition, style, animate } from '@angular/animations';
   imports: [NavBar,LaneDivider,DatePipe,FormsModule],
   templateUrl: './instructor-platform.html',
   styleUrl: './instructor-platform.css',
-  animations: [
+    animations: [
     trigger('fadeOut', [
       transition(':leave', [
         animate('600ms ease', style({ opacity: 0, transform: 'translateX(20px)' }))
@@ -35,7 +35,6 @@ export class InstructorPlatform implements OnInit, OnDestroy {
   newSlotNote = ''
   newSlotMessage = signal('')
 
-  // earliest selectable date = today (no past dates)
   today = new Date().toISOString().split('T')[0]
 
   bookings = signal<any[]>([])
@@ -52,7 +51,6 @@ export class InstructorPlatform implements OnInit, OnDestroy {
   ngOnInit() {
     this.user = this.authService.getCurrentUser()
     this.refresh()
-    // auto-refresh so newly-booked students appear without any manual action
     this.pollId = setInterval(() => this.refresh(), 10000)
   }
 
@@ -60,7 +58,6 @@ export class InstructorPlatform implements OnInit, OnDestroy {
     if (this.pollId) clearInterval(this.pollId)
   }
 
-  // reload the moment the instructor returns to this tab
   @HostListener('window:focus')
   refresh() {
     this.loadBookings()

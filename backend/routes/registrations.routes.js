@@ -27,7 +27,6 @@ router.get("/registrations/me", authenticate, async (req, res) => {
   }
 });
 
-// STUDENT: toggle the self-attested checklist items (medical test, first-aid test)
 router.patch("/registrations/me/checklist", authenticate, async (req, res) => {
   try {
     const { medicalDone, firstAidDone } = req.body;
@@ -116,7 +115,7 @@ router.get("/admin/registrations", authenticate, async (req, res) => {
     const school = schoolResult.rows[0];
 
     const result = await pool.query(
-      `SELECT r.id, r.status, r.registered_at, r.instructor_id, r.required_theory_hours,
+      `SELECT r.id, r.status, r.registered_at, r.instructor_id, r.required_theory_hours,r.medical_done,r.first_aid_done,
               d.first_name, d.last_name, d.email, d.phone,
               d.address, d.postal_code, d.embg, d.date_of_birth,
               d.id_document_url, d.license_category AS "licenseCategory",
@@ -171,7 +170,6 @@ router.patch("/admin/registrations/:id/status", authenticate, async (req, res) =
       [status, status === "rejected", req.params.id]
     );
 
-    // notify the student (in-app always; email best-effort on approval)
     const info = check.rows[0];
     if (status === "approved") {
       notify(info.student_id, `Your registration at ${info.school_name} was approved! You can start booking theory classes.`, "success", "/student-platform-dashboard");
