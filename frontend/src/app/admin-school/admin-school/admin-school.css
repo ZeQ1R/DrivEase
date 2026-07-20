@@ -174,3 +174,13 @@
   .filter-tabs { width: 100%; justify-content: space-between; }
   .instr-row { flex-wrap: wrap; }
 }
+
+.checks-row { display: flex; gap: 8px; flex-wrap: wrap; margin: 10px 0; }
+.check-badge {
+  font-family: 'IBM Plex Mono', monospace; font-size: 11px;
+  padding: 4px 10px; border: 1px solid #E2E6E9;
+  color: #9CA3AF; background: #F8FAFB;
+}
+.check-badge.done {
+  color: #2F9E6E; border-color: rgba(47,158,110,0.4); background: rgba(47,158,110,0.08);
+}

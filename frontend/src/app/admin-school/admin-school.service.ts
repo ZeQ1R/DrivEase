@@ -24,6 +24,8 @@ export interface AdminRegistration {
   theory_completed_hours: number;
   instructor_first_name: string | null;
   instructor_last_name: string | null;
+  medical_done: boolean;
+  first_aid_done: boolean;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -34,6 +36,11 @@ export class AdminSchoolService {
     return this.http.get<{ schoolName: string; registrations: AdminRegistration[] }>(
       `${API_URL}/admin/registrations`
     );
+  }
+
+  getDocument(documentUrl: string) {
+    const file = documentUrl.split('/').pop();
+    return this.http.get(`${API_URL}/documents/${file}`, { responseType: 'blob' });
   }
 
   getInstructors() {

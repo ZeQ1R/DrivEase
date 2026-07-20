@@ -4,28 +4,32 @@ import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import pool from "../config/database.js";
 import { sendMail } from "../config/mailer.js";
+import { validate } from "../middleware/validate.js";
+import { loginSchema, signupSchema, forgotSchema, resetSchema } from "../schemas/auth.schema.js";
+import { loginLimiter, signupLimiter, passwordResetLimiter } from "../middleware/rateLimit.js";
 
 const router = Router();
 
-router.post("/signup", async (req, res) => {
+const DUMMY_HASH = bcrypt.hashSync(crypto.randomBytes(32).toString("hex"), 10);
+
+const hashToken = (token) => crypto.createHash("sha256").update(token).digest("hex");
+
+router.post("/signup", signupLimiter, validate(signupSchema), async (req, res) => {
   try {
     const { email, password, firstName, lastName, phone } = req.body;
-    if (!email || !password || !firstName || !lastName) {
-      return res.status(400).json({ message: "Missing required fields." });
-    }
 
     const existingUser = await pool.query("SELECT id FROM users WHERE email = $1", [email]);
     if (existingUser.rows.length > 0) {
       return res.status(409).json({ message: "Email already exists." });
     }
 
-    const passwordHash = await bcrypt.hash(password, 10);
+    const passwordHash = await bcrypt.hash(password, 12);
     const verificationToken = crypto.randomBytes(32).toString("hex");
 
     await pool.query(
       `INSERT INTO users (first_name, last_name, email, phone, password_hash, role, is_verified, verification_token)
        VALUES ($1, $2, $3, $4, $5, 'student', false, $6)`,
-      [firstName, lastName, email, phone || null, passwordHash, verificationToken]
+      [firstName, lastName, email, phone || null, passwordHash, hashToken(verificationToken)]
     );
 
     const verifyLink = `${process.env.API_URL}/auth/verify-email?token=${verificationToken}`;
@@ -35,29 +39,34 @@ router.post("/signup", async (req, res) => {
       html: `<h2>Welcome, ${firstName}!</h2>
              <p>Please confirm your email to activate your account:</p>
              <a href="${verifyLink}">Confirm my email</a>`,
-    }).catch(err => console.error("Verification email failed:", err));
+    }).catch(err => console.error("Verification email failed:", err.message));
 
     res.status(201).json({ message: "Account created. Check your email to confirm before logging in." });
   } catch (error) {
-    res.status(500).json({ message: "Signup failed.", error: error.message });
+    console.error("Signup failed:", error);
+    res.status(500).json({ message: "Could not create your account. Please try again." });
   }
 });
 
-router.post("/login", async (req, res) => {
+router.post("/login", loginLimiter, validate(loginSchema), async (req, res) => {
   try {
     const { email, password } = req.body;
-    const result = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
-    if (result.rows.length === 0) {
-      return res.status(401).json({ message: "Invalid email or password." });
-    }
+
+    const result = await pool.query(
+      `SELECT id, first_name, last_name, email, phone, role, school_id, password_hash, is_verified
+         FROM users WHERE email = $1`,
+      [email]
+    );
     const user = result.rows[0];
-    const passwordIsValid = await bcrypt.compare(password, user.password_hash);
-    if (!passwordIsValid) {
+
+    const passwordIsValid = await bcrypt.compare(password, user?.password_hash ?? DUMMY_HASH);
+    if (!user || !passwordIsValid) {
       return res.status(401).json({ message: "Invalid email or password." });
     }
     if (!user.is_verified) {
       return res.status(403).json({ message: "Please confirm your email before logging in." });
     }
+
     const token = jwt.sign(
       { id: user.id, email: user.email, role: user.role, school_id: user.school_id },
       process.env.JWT_SECRET,
@@ -69,42 +78,42 @@ router.post("/login", async (req, res) => {
       user: { id: user.id, firstName: user.first_name, lastName: user.last_name, email: user.email, phone: user.phone, role: user.role },
     });
   } catch (error) {
-    res.status(500).json({ message: "Login failed.", error: error.message });
+    console.error("Login failed:", error);
+    res.status(500).json({ message: "Something went wrong. Please try again." });
   }
 });
 
 router.get("/verify-email", async (req, res) => {
   try {
     const { token } = req.query;
-    if (!token) return res.status(400).send("Invalid link.");
+    if (typeof token !== "string" || !/^[a-f0-9]{64}$/.test(token)) {
+      return res.status(400).send("Invalid link.");
+    }
 
-    const result = await pool.query("SELECT id FROM users WHERE verification_token = $1", [token]);
+    const result = await pool.query(
+      "UPDATE users SET is_verified = true, verification_token = NULL WHERE verification_token = $1 RETURNING id",
+      [hashToken(token)]
+    );
     if (result.rows.length === 0) return res.status(400).send("Invalid or expired link.");
 
-    await pool.query(
-      "UPDATE users SET is_verified = true, verification_token = NULL WHERE verification_token = $1",
-      [token]
-    );
     res.redirect(`${process.env.APP_URL}/login?verified=true`);
   } catch (error) {
+    console.error("Email verification failed:", error);
     res.status(500).send("Verification failed.");
   }
 });
 
-// Request a password reset link. Always responds 200 so it can't be used to
-// probe which emails have accounts.
-router.post("/forgot-password", async (req, res) => {
+router.post("/forgot-password", passwordResetLimiter, validate(forgotSchema), async (req, res) => {
   try {
     const { email } = req.body;
-    if (!email) return res.status(400).json({ message: "Email is required." });
 
     const user = await pool.query("SELECT id, first_name FROM users WHERE email = $1", [email]);
     if (user.rows.length > 0) {
       const token = crypto.randomBytes(32).toString("hex");
-      const expires = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+      const expires = new Date(Date.now() + 60 * 60 * 1000);
       await pool.query(
         "UPDATE users SET reset_token = $1, reset_expires = $2 WHERE id = $3",
-        [token, expires, user.rows[0].id]
+        [hashToken(token), expires, user.rows[0].id]
       );
       const link = `${process.env.APP_URL}/reset-password?token=${token}`;
       sendMail({
@@ -119,33 +128,32 @@ router.post("/forgot-password", async (req, res) => {
 
     res.status(200).json({ message: "If an account exists for that email, a reset link has been sent." });
   } catch (error) {
-    res.status(500).json({ message: "Failed to process request.", error: error.message });
+    console.error("Forgot password failed:", error);
+    res.status(500).json({ message: "Could not process that request. Please try again." });
   }
 });
 
-// Complete the reset with the emailed token.
-router.post("/reset-password", async (req, res) => {
+router.post("/reset-password", passwordResetLimiter, validate(resetSchema), async (req, res) => {
   try {
     const { token, password } = req.body;
-    if (!token || !password) return res.status(400).json({ message: "Token and new password are required." });
-    if (String(password).length < 6) return res.status(400).json({ message: "Password must be at least 6 characters." });
 
     const user = await pool.query(
       "SELECT id FROM users WHERE reset_token = $1 AND reset_expires > NOW()",
-      [token]
+      [hashToken(token)]
     );
     if (user.rows.length === 0) {
       return res.status(400).json({ message: "This reset link is invalid or has expired." });
     }
 
-    const passwordHash = await bcrypt.hash(password, 10);
+    const passwordHash = await bcrypt.hash(password, 12);
     await pool.query(
       "UPDATE users SET password_hash = $1, reset_token = NULL, reset_expires = NULL WHERE id = $2",
       [passwordHash, user.rows[0].id]
     );
     res.status(200).json({ message: "Password updated. You can now sign in." });
   } catch (error) {
-    res.status(500).json({ message: "Failed to reset password.", error: error.message });
+    console.error("Password reset failed:", error);
+    res.status(500).json({ message: "Could not reset your password. Please try again." });
   }
 });
 

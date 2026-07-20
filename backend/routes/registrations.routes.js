@@ -23,11 +23,11 @@ router.get("/registrations/me", authenticate, async (req, res) => {
     );
     res.status(200).json({ registration: result.rows[0] || null });
   } catch (error) {
-    res.status(500).json({ message: "Failed to fetch registration.", error: error.message });
+    console.error("Failed to fetch registration.", error);
+    res.status(500).json({ message: "Failed to fetch registration." });
   }
 });
 
-// STUDENT: toggle the self-attested checklist items (medical test, first-aid test)
 router.patch("/registrations/me/checklist", authenticate, async (req, res) => {
   try {
     const { medicalDone, firstAidDone } = req.body;
@@ -48,7 +48,8 @@ router.patch("/registrations/me/checklist", authenticate, async (req, res) => {
     }
     res.status(200).json({ checklist: result.rows[0] });
   } catch (error) {
-    res.status(500).json({ message: "Failed to update checklist.", error: error.message });
+    console.error("Failed to update checklist.", error);
+    res.status(500).json({ message: "Failed to update checklist." });
   }
 });
 
@@ -98,7 +99,8 @@ router.post("/register-school", authenticate, uploadId.single("idDocument"), asy
     res.status(201).json({ message: "Registration submitted.", registrationId });
   } catch (error) {
     await client.query("ROLLBACK");
-    res.status(500).json({ message: "Failed to submit registration.", error: error.message });
+    console.error("Failed to submit registration.", error);
+    res.status(500).json({ message: "Failed to submit registration." });
   } finally {
     client.release();
   }
@@ -116,7 +118,7 @@ router.get("/admin/registrations", authenticate, async (req, res) => {
     const school = schoolResult.rows[0];
 
     const result = await pool.query(
-      `SELECT r.id, r.status, r.registered_at, r.instructor_id, r.required_theory_hours,
+      `SELECT r.id, r.status, r.registered_at, r.instructor_id, r.required_theory_hours,r.medical_done,r.first_aid_done,
               d.first_name, d.last_name, d.email, d.phone,
               d.address, d.postal_code, d.embg, d.date_of_birth,
               d.id_document_url, d.license_category AS "licenseCategory",
@@ -140,7 +142,8 @@ router.get("/admin/registrations", authenticate, async (req, res) => {
       registrations: result.rows,
     });
   } catch (error) {
-    res.status(500).json({ message: "Failed to fetch registrations.", error: error.message });
+    console.error("Failed to fetch registrations.", error);
+    res.status(500).json({ message: "Failed to fetch registrations." });
   }
 });
 
@@ -171,7 +174,6 @@ router.patch("/admin/registrations/:id/status", authenticate, async (req, res) =
       [status, status === "rejected", req.params.id]
     );
 
-    // notify the student (in-app always; email best-effort on approval)
     const info = check.rows[0];
     if (status === "approved") {
       notify(info.student_id, `Your registration at ${info.school_name} was approved! You can start booking theory classes.`, "success", "/student-platform-dashboard");
@@ -186,7 +188,8 @@ router.patch("/admin/registrations/:id/status", authenticate, async (req, res) =
 
     res.status(200).json({ registration: result.rows[0] });
   } catch (error) {
-    res.status(500).json({ message: "Failed to update status.", error: error.message });
+    console.error("Failed to update status.", error);
+    res.status(500).json({ message: "Failed to update status." });
   }
 });
 
@@ -241,7 +244,8 @@ router.patch("/admin/registrations/:id/instructor", authenticate, async (req, re
 
     res.status(200).json({ registration: result.rows[0] });
   } catch (error) {
-    res.status(500).json({ message: "Failed to assign instructor.", error: error.message });
+    console.error("Failed to assign instructor.", error);
+    res.status(500).json({ message: "Failed to assign instructor." });
   }
 });
 
@@ -272,7 +276,8 @@ router.put("/admin/registrations/:id", authenticate, async (req, res) => {
     );
     res.status(200).json({ details: result.rows[0] });
   } catch (error) {
-    res.status(500).json({ message: "Failed to update registration.", error: error.message });
+    console.error("Failed to update registration.", error);
+    res.status(500).json({ message: "Failed to update registration." });
   }
 });
 
@@ -291,7 +296,8 @@ router.delete("/admin/registrations/:id", authenticate, async (req, res) => {
     await pool.query(`DELETE FROM registrations WHERE id = $1`, [req.params.id]);
     res.status(200).json({ message: "Registration deleted." });
   } catch (error) {
-    res.status(500).json({ message: "Failed to delete registration.", error: error.message });
+    console.error("Failed to delete registration.", error);
+    res.status(500).json({ message: "Failed to delete registration." });
   }
 });
 
