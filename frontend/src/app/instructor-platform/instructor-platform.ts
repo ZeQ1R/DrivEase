@@ -41,7 +41,7 @@ export class InstructorPlatform implements OnInit, OnDestroy {
   students = signal<any[]>([])
 
   visibleStudents = computed(() =>
-    this.students().filter(s => Number(s.completed_hours) < Number(s.required_hours ?? 40))
+    this.students().filter(s => Number(s.completed_hours) < Number(s.required_hours ?? 40.5))
   )
 
   upcomingCount = computed(() => this.bookings().length)
@@ -120,8 +120,8 @@ export class InstructorPlatform implements OnInit, OnDestroy {
     })
   }
 
-  progress(completedHours: number, requiredHours = 40){
-    const required = Number(requiredHours) || 40
+  progress(completedHours: number, requiredHours = 40.5){
+    const required = Number(requiredHours) || 40.5
     return Math.min(100, (Number(completedHours) / required) * 100)
   }
 }

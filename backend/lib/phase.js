@@ -24,11 +24,11 @@ export async function getStudentPhase(db, studentId) {
   );
 
   const theoryCompleted = Number(theory.rows[0].hours);
-  const theoryRequired = Number(r.required_theory_hours ?? 20);
+  const theoryRequired = Number(r.required_theory_hours ?? 21);
   const theoryDone = theoryCompleted >= theoryRequired;
 
   const practicalCompleted = Number(practical.rows[0].hours);
-  const practicalRequired = Number(r.required_hours ?? 40);
+  const practicalRequired = Number(r.required_hours ?? 40.5);
   const practicalDone = practicalCompleted >= practicalRequired;
 
   // phase stays 'practical' even once practical is done, so the frontend's

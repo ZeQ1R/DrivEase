@@ -20,8 +20,11 @@ export interface AdminRegistration {
   id_document_url: string | null;
   licenseCategory: string;
   instructor_id: number | null;
+  student_id: number | null;
   required_theory_hours: number;
   theory_completed_hours: number;
+  required_hours: number;
+  practical_completed_hours: number;
   instructor_first_name: string | null;
   instructor_last_name: string | null;
   medical_done: boolean;
