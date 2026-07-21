@@ -1,4 +1,4 @@
-# 🚗 DrivEase
+#  DrivEase
 
 DrivEase is a full-stack web application that modernizes the process of registering and managing driving schools. Instead of requiring students to visit schools in person, the platform allows them to browse schools, register online, submit enrollment requests, and manage their driving journey digitally.
 
@@ -148,19 +148,6 @@ PostgreSQL stores:
 
 ---
 
-# Planned Features
-
-- Email verification
-- Notifications
-- Lesson calendar
-- Driving lesson progress tracking
-- Search and filtering
-- School ratings and reviews
-- Analytics dashboard
-- File/document uploads
-
----
-
 # Installation
 
 ## Clone the repository
@@ -200,34 +187,6 @@ Runs on
 ```
 http://localhost:3000
 ```
-
----
-
-# Environment Variables
-
-Create a `.env` file inside the backend folder.
-
-Example:
-
-```env
-PORT=3000
-
-DB_HOST=localhost
-DB_PORT=5432
-DB_NAME=drivease
-DB_USER=postgres
-DB_PASSWORD=your_password
-
-JWT_SECRET=your_secret
-```
-
-> Do not commit your `.env` file to GitHub.
-
----
-
-# Screenshots
-
-Screenshots will be added as the project progresses.
 
 ---
 
