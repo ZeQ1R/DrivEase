@@ -1,0 +1,36 @@
+
+<div class="nf-page">
+  <div class="nf-inner fade-up">
+
+    <div class="nf-sign" aria-hidden="true">
+      <div class="nf-sign-plate">
+        <span class="nf-code">404</span>
+      </div>
+      <div class="nf-sign-post"></div>
+    </div>
+
+    <p class="nf-eyebrow">Wrong turn</p>
+    <h1 class="nf-title">This road doesn't exist</h1>
+    <p class="nf-text">
+      The page you're looking for isn't on our map. It may have moved,
+      or the link that brought you here might be out of date.
+    </p>
+
+    <div class="nf-actions">
+      <a routerLink="/" class="nf-btn primary button-interactive">Back to home</a>
+      <button type="button" class="nf-btn ghost button-interactive" (click)="goBack()">Go back</button>
+    </div>
+
+    <app-lane-divider class="nf-divider" />
+
+    <div class="nf-links">
+      <span class="nf-links-label">Popular destinations</span>
+      <div class="nf-links-row">
+        <a routerLink="/browse">Browse schools</a>
+        <a routerLink="/login">Sign in</a>
+        <a routerLink="/signup">Create an account</a>
+      </div>
+    </div>
+
+  </div>
+</div>

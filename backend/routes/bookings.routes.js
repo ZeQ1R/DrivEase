@@ -66,7 +66,7 @@ router.get("/hours/me", authenticate, async (req, res) => {
     const p = await getStudentPhase(pool, req.user.id);
     res.status(200).json({
       completed: Number(completed.rows[0].hours),
-      required: required.rows[0] ? Number(required.rows[0].required_hours) : 40,
+      required: required.rows[0] ? Number(required.rows[0].required_hours) : 40.5,
       theory: {
         completed: p ? p.theoryCompleted : 0,
         required: p ? p.theoryRequired : 20,

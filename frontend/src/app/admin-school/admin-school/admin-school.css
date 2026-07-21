@@ -184,3 +184,26 @@
 .check-badge.done {
   color: #2F9E6E; border-color: rgba(47,158,110,0.4); background: rgba(47,158,110,0.08);
 }
+
+.phase-fill.practical { background: #2F9E6E; }
+
+.status-pill.finished { background: rgba(47,158,110,.12); color: #2F9E6E; border: 1px solid rgba(47,158,110,.35); }
+
+.stat-box.finished .stat-num { color: #2F9E6E; }
+
+.finished-banner {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 14px; margin-top: 4px;
+  background: rgba(47,158,110,.07);
+  border: 1px solid rgba(47,158,110,.3);
+  border-left: 3px solid #2F9E6E;
+  animation: fadeUp var(--motion-normal) var(--ease-standard) both;
+}
+.finished-icon { font-size: 22px; line-height: 1; }
+.finished-title {
+  margin: 0 0 2px; font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px; text-transform: uppercase; letter-spacing: .1em; color: #2F9E6E;
+}
+.finished-sub { font-size: 13px; color: #1C1F26; }
+
+@media (prefers-reduced-motion: reduce) { .finished-banner { animation: none; } }

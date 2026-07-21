@@ -36,8 +36,8 @@ export class StudentDashboard implements OnInit {
   slots = signal<Slot[]>([])
   bookings = signal<Booking[]>([])
 
-  hours = signal<{completed: number; required:number}>({completed: 0, required: 40})
-  theory = signal<{completed: number; required:number}>({completed: 0, required: 20})
+  hours = signal<{completed: number; required:number}>({completed: 0, required: 40.5})
+  theory = signal<{completed: number; required:number}>({completed: 0, required: 21})
   phase = signal<'none' | 'theory' | 'awaiting-instructor' | 'practical'>('none')
 
   hoursPercent = computed(() => {
@@ -128,7 +128,6 @@ private loadSchedule() {
       this.loadSchedule();
     },
     error: (err) => {
-      // 409 = someone grabbed this slot first; show why and refresh the list
       this.toast.error(err.error?.message || 'Booking failed. Please try again.');
       this.loadSchedule();
     },

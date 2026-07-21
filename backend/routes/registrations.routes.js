@@ -84,8 +84,8 @@ router.post("/register-school", authenticate, uploadId.single("idDocument"), asy
 
     await client.query("BEGIN");
     const regResult = await client.query(
-      `INSERT INTO registrations (student_id, school_id, status, required_hours)
-       VALUES ($1, $2, 'pending', 40) RETURNING id`,
+      `INSERT INTO registrations (student_id, school_id, status, required_hours, required_theory_hours)
+       VALUES ($1, $2, 'pending', 40.5, 21) RETURNING id`,
       [studentId, schoolId]
     );
     const registrationId = regResult.rows[0].id;
@@ -119,6 +119,7 @@ router.get("/admin/registrations", authenticate, async (req, res) => {
 
     const result = await pool.query(
       `SELECT r.id, r.status, r.registered_at, r.instructor_id, r.required_theory_hours,r.medical_done,r.first_aid_done,
+              r.required_hours,
               d.first_name, d.last_name, d.email, d.phone,
               d.address, d.postal_code, d.embg, d.date_of_birth,
               d.id_document_url, d.license_category AS "licenseCategory",
@@ -128,7 +129,13 @@ router.get("/admin/registrations", authenticate, async (req, res) => {
                 FROM lesson_bookings b
                 JOIN lesson_slots s ON s.id = b.slot_id
                 WHERE b.student_id = r.student_id AND s.slot_type = 'theory' AND (s.slot_date + s.slot_time) < NOW()
-              ), 0) AS theory_completed_hours
+              ), 0) AS theory_completed_hours,
+              COALESCE((
+                SELECT SUM(s.duration_hours)
+                FROM lesson_bookings b
+                JOIN lesson_slots s ON s.id = b.slot_id
+                WHERE b.student_id = r.student_id AND b.attended = true AND s.slot_type = 'practical'
+              ), 0) AS practical_completed_hours
        FROM registrations r
        JOIN registration_details d ON d.registration_id = r.id
        LEFT JOIN users i ON i.id = r.instructor_id

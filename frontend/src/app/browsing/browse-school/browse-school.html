@@ -83,13 +83,13 @@
               @for (r of reviews(); track r.id) {
                 <div class="review-item">
                   <div class="review-item-head">
-                    <span class="review-author">{{ r.first_name }} {{ r.last_name }}</span>
-                    <span class="review-stars">
+                    <!-- <span class="review-author">{{ r.first_name }} {{ r.last_name }}</span> -->
+                    <!-- <span class="review-stars">
                       @for (s of [1,2,3,4,5]; track s) { <span [class.on]="s <= r.rating">★</span> }
-                    </span>
+                    </span> -->
                   </div>
-                  @if (r.comment) { <p class="review-text">{{ r.comment }}</p> }
-                  <span class="review-date">{{ r.created_at | date:'mediumDate' }}</span>
+                  <!-- @if (r.comment) { <p class="review-text">{{ r.comment }}</p> }
+                  <span class="review-date">{{ r.created_at | date:'mediumDate' }}</span> -->
                 </div>
               }
             </div>

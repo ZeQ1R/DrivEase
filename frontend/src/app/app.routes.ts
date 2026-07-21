@@ -13,6 +13,7 @@ import { PlatformAdmin } from './platform/platform-admin/platform-admin';
 import { InstructorPlatform } from './instructor-platform/instructor-platform';
 import { ForgotPassword } from './auth/forgot-password/forgot-password';
 import { ResetPassword } from './auth/reset-password/reset-password';
+import { NotFound } from './shared/not-found/not-found';
 
 export const routes: Routes = [
 	{
@@ -78,5 +79,10 @@ export const routes: Routes = [
 		component: InstructorPlatform,
 		canActivate: [authGuard, roleGuard('instructor')],
 		title: 'DrivEase - Instructor Platform'
+	},
+	{
+		path:'**',
+		component: NotFound,
+		title: 'DrivEase - Not Found Page'
 	}
 ];

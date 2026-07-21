@@ -19,7 +19,7 @@ export class AdminSchool implements OnInit {
 
   registrations = signal<AdminRegistration[]>([]);
   registration = signal<RegistrationService>
-  filter = signal<'all' | 'pending' | 'approved' | 'rejected'>('all');
+  filter = signal<'all' | 'pending' | 'approved' | 'rejected' | 'finished'>('all');
   schoolName = signal('');
   searchTerm = signal('');
 
@@ -53,6 +53,19 @@ export class AdminSchool implements OnInit {
     return Math.min(100, (Number(reg.theory_completed_hours) / req) * 100);
   }
 
+  practicalDone(reg: AdminRegistration) {
+    return Number(reg.practical_completed_hours) >= Number(reg.required_hours);
+  }
+
+  practicalPercent(reg: AdminRegistration) {
+    const req = Number(reg.required_hours) || 1;
+    return Math.min(100, (Number(reg.practical_completed_hours) / req) * 100);
+  }
+
+  finished(reg: AdminRegistration) {
+    return reg.status === 'approved' && this.theoryDone(reg) && this.practicalDone(reg);
+  }
+
   editingInstructorId = signal<number | null>(null);
   editInstr = { firstName: '', lastName: '', email: '', phone: '' };
 
@@ -84,7 +97,10 @@ export class AdminSchool implements OnInit {
   filtered = computed(() => {
     const f = this.filter();
     const q = this.searchTerm().trim().toLowerCase();
-    let list = f === 'all' ? this.registrations() : this.registrations().filter(r => r.status === f);
+    let list =
+      f === 'all' ? this.registrations()
+      : f === 'finished' ? this.registrations().filter(r => this.finished(r))
+      : this.registrations().filter(r => r.status === f);
     if (q) {
       list = list.filter(r => `${r.first_name} ${r.last_name}`.toLowerCase().includes(q));
     }
@@ -94,6 +110,7 @@ export class AdminSchool implements OnInit {
   pendingCount  = computed(() => this.registrations().filter(r => r.status === 'pending').length);
   approvedCount = computed(() => this.registrations().filter(r => r.status === 'approved').length);
   rejectedCount = computed(() => this.registrations().filter(r => r.status === 'rejected').length);
+  finishedCount = computed(() => this.registrations().filter(r => this.finished(r)).length);
 
   setFilter(f: any) { this.filter.set(f); }
 
