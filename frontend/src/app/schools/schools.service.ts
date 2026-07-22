@@ -57,5 +57,12 @@ export class SchoolsService {
       { rating, comment }
     );
   }
+
+  getStats(){
+    return this.http.get<{
+      schools: number; users:number; students: number; 
+      instructors: number; lessons: number;reviews: number}>
+    (`${API_URL}/stats`)
+  }
 }
 

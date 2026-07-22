@@ -6,11 +6,12 @@ import { LaneDivider } from "../../shared/lane-divider/lane-divider";
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ConfirmBox } from '../../shared/confirm-box/confirm-box';
 import { ToastService } from '../../shared/toast/toast.service';
+import { EmptyState } from "../../shared/empty-state/empty-state";
 
 
 @Component({
   selector: 'app-platform-admin',
-  imports: [NavBar, LaneDivider, FormsModule, ReactiveFormsModule,ConfirmBox],
+  imports: [NavBar, LaneDivider, FormsModule, ReactiveFormsModule, ConfirmBox, EmptyState],
   templateUrl: './platform-admin.html',
   styleUrl: './platform-admin.css',
 })

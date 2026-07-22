@@ -6,11 +6,12 @@ import { NavBar } from '../../shared/nav-bar/nav-bar';
 import { LaneDivider } from '../../shared/lane-divider/lane-divider';
 import { ConfirmBox } from '../../shared/confirm-box/confirm-box';
 import { RegistrationService } from '../../auth/registration.service';
+import { EmptyState } from '../../shared/empty-state/empty-state';
 
 @Component({
   selector: 'app-admin-school',
   standalone: true,
-  imports: [CommonModule, DatePipe, FormsModule, NavBar, LaneDivider, ConfirmBox],
+  imports: [CommonModule, DatePipe, FormsModule, NavBar, LaneDivider, ConfirmBox,EmptyState],
   templateUrl: './admin-school.html',
   styleUrl: './admin-school.css',
 })

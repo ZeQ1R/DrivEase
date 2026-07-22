@@ -19,6 +19,8 @@ export class LandingPage implements OnInit{
   private schoolsService = inject(SchoolsService)
   featuredSchools= signal<School[]>([])
 
+  stats = signal({schools: 0, users: 0 ,students: 0, instructors: 0 ,lessons: 0, reviews: 0})
+
   ngOnInit() {
     this.schoolsService.getSchools().subscribe({
       next: (res) => {
@@ -27,5 +29,33 @@ export class LandingPage implements OnInit{
       },
       error: (err) => console.error('Failed to load schools ', err)
     })
+
+    this.schoolsService.getStats().subscribe({
+      next: (res) => this.countUp(res),
+      error: (err) => console.error('Failed to load stats', err)
+    })
 }
+
+  private countUp(target: {schools: number; users: number; students: number; instructors: number;lessons: number;reviews: number}){
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches
+
+    if (reduced) {this.stats.set(target); return}
+
+    const duration = 1200
+    const start = performance.now()
+    const step = (now: number) => {
+      const p = Math.min(1, (now - start) / duration)
+      const eased = 1 - Math.pow(1 - p, 3)
+      this.stats.set({
+        schools: Math.round(target.schools * eased),
+        users: Math.round(target.users * eased),
+        students: Math.round(target.students * eased),
+        instructors: Math.round(target.instructors * eased),
+        lessons: Math.round(target.lessons * eased),
+        reviews: Math.round(target.reviews * eased)
+      })
+      if(p < 1) requestAnimationFrame(step)
+    }
+    requestAnimationFrame(step)
+  }
 }

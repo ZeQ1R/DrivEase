@@ -12,11 +12,12 @@ import { School } from '../../schools/school.model';
 import { LoadingScreen } from '../../shared/loading-screen/loading-screen/loading-screen';
 import { ConfirmBox } from '../../shared/confirm-box/confirm-box';
 import { FormsModule } from '@angular/forms';
+import { EmptyState } from "../../shared/empty-state/empty-state";
 
 @Component({
   selector: 'app-browse-school',
   standalone: true,
-  imports: [CommonModule, RouterLink, NavBar, StarRating, LaneDivider, LoadingScreen, ConfirmBox, FormsModule],
+  imports: [CommonModule, RouterLink, NavBar, StarRating, LaneDivider, LoadingScreen, ConfirmBox, FormsModule, EmptyState],
   templateUrl: './browse-school.html',
   styleUrl: './browse-school.css',
 })
@@ -33,7 +34,7 @@ export class BrowseSchool implements OnInit {
   submitting = signal(false)
   confirmOpen = signal(false)
 
-  // reviews
+  
   reviews = signal<SchoolReview[]>([]);
   reviewAverage = signal(0);
   reviewCount = signal(0);

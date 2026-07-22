@@ -123,23 +123,23 @@ export class RegisterSchool implements OnInit{
     this.registering = true;
 
     const data = new FormData()
-    data.append('schoolId', String(currentSchool.id));
-    data.append('firstName', this.form.value.firstName!);
-    data.append('lastName', this.form.value.lastName!);
-    data.append('email', this.form.value.email!);
-    data.append('phone', this.form.value.phone!);
-    data.append('address', this.form.value.address!);
-    data.append('postalCode', this.form.value.postalCode!);
-    data.append('embg', this.form.value.embg!);
-    data.append('dateOfBirth', this.form.value.dateOfBirth!);
-    data.append('licenseCategory', this.form.value.licenseCategory!)
+      data.append('schoolId', String(currentSchool.id));
+      data.append('firstName', this.form.value.firstName!);
+      data.append('lastName', this.form.value.lastName!);
+      data.append('email', this.form.value.email!);
+      data.append('phone', this.form.value.phone!);
+      data.append('address', this.form.value.address!);
+      data.append('postalCode', this.form.value.postalCode!);
+      data.append('embg', this.form.value.embg!);
+      data.append('dateOfBirth', this.form.value.dateOfBirth!);
+      data.append('licenseCategory', this.form.value.licenseCategory!)
     if (this.selectedFile) {
       data.append('idDocument', this.selectedFile);
     }
 
     this.registrationService.registerToSchool(data).subscribe({
       next: () => {
-        this.toast.success('Registration submitted! Track its status on your dashboard.', 6000);
+        this.toast.success('Registration submitted! Track your status on your dashboard.', 6000);
         this.router.navigate(['/student-platform-dashboard']);
       },
       error: (err) => {

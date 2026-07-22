@@ -36,6 +36,33 @@ router.get("/schools", async (req, res) => {
   }
 });
 
+router.get("/stats", async (req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT
+        (SELECT COUNT(*) FROM driving_schools)
+        (SELECT COUNT(*) FROM users)                            
+        (SELECT COUNT(*) FROM users WHERE role = 'student)
+        (SELECT COUNT(*) FROM users WHERE role = 'instructor)
+        (SELECT COUNT(*) FROM lesson_bookings)                            
+        (SELECT COUNT(*) FROM reviews)                                    
+    `);
+    const r = result.rows[0];
+    res.status(200).json({
+      schools: Number(r.schools),
+      users: Number(r.users),
+      students: Number(r.students),
+      instructors: Number(r.instructors),
+      lessons: Number(r.lessons),
+      reviews: Number(r.reviews),
+    });
+  } catch (error) {
+    console.error("Failed to fetch stats.", error);
+    res.status(500).json({ message: "Failed to fetch stats." });
+  }
+});
+
+
 router.get("/schools/:id", async (req, res) => {
   try {
     const result = await pool.query("SELECT * FROM driving_schools WHERE id = $1", [req.params.id]);

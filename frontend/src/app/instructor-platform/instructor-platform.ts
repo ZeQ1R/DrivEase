@@ -6,10 +6,11 @@ import { AuthService, AuthUser } from '../auth/auth.service';
 import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { trigger, transition, style, animate } from '@angular/animations';
+import { EmptyState } from '../shared/empty-state/empty-state';
 
 @Component({
   selector: 'app-instructor-platform',
-  imports: [NavBar,LaneDivider,DatePipe,FormsModule],
+  imports: [NavBar,LaneDivider,DatePipe,FormsModule,EmptyState],
   templateUrl: './instructor-platform.html',
   styleUrl: './instructor-platform.css',
     animations: [
