@@ -72,7 +72,7 @@
             <h2>Book a Theory Class</h2>
             <div class="hours-card compact">
               <div class="hours-stat">
-                <span class="hours-done">{{ theory().completed }}</span>
+                <span class="hours-done"><app-count-up [value]="theory().completed" /></span>
                 <span class="hours-sep">/</span>
                 <span class="hours-total">{{ theory().required }} theory hrs</span>
               </div>
@@ -169,7 +169,7 @@
             <div class="hours-card">
               <h2>Practical Hours</h2>
               <div class="hours-stat">
-                <span class="hours-done">{{ hours().completed }}</span>
+                <span class="hours-done"><app-count-up [value]="hours().completed" /></span>
                 <span class="hours-sep">/</span>
                 <span class="hours-total">{{ hours().required }} hrs</span>
               </div>

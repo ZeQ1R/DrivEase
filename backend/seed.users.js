@@ -15,6 +15,7 @@ const users = [
   { firstName: "Arta",     lastName: "Shala",     email: "arta@test.com",     phone: "070111009", role: "student" },
   { firstName: "Valon",    lastName: "Dervishi",  email: "valon@test.com",    phone: "070111010", role: "student" },
   { firstName: "Tamara",   lastName: "Tami",  email: "tamara@test.com",   phone: "070111008", role: "student" },
+  { firstName: "Yamal",   lastName: "Yami",  email: "yamal@test.com",   phone: "070111008", role: "student" },
   { firstName: "Arben",    lastName: "Krasniqi",  email: "arben@test.com",    phone: "070222001", role: "instructor", schoolId: 3 },
   { firstName: "Teuta",    lastName: "Berisha",   email: "teuta@test.com",    phone: "070222002", role: "instructor", schoolId: 3 },
 ];
