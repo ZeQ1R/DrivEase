@@ -277,3 +277,115 @@ button:not(:disabled):active,
 .pw-success { font-size: 14px; color: #2F9E6E; line-height: 1.5; margin: 0 0 20px; }
 .pw-back { display: inline-block; margin-top: 18px; font-size: 13px; color: #1E4B8C; font-weight: 500; }
 .pw-back:hover { text-decoration: underline; }
+
+/* ============================================================
+   Global interaction layer
+   Subtle, fast feedback on every click, focus and hover.
+   The prefers-reduced-motion block above neutralises all of it.
+   ============================================================ */
+
+/* Every button gets press feedback, not just .button-interactive */
+button,
+.btn,
+a.cta-btn,
+a.hero-cta-primary,
+a.hero-cta-secondary,
+a.cta-button {
+  transition:
+    background-color var(--motion-fast) var(--ease-standard),
+    border-color var(--motion-fast) var(--ease-standard),
+    color var(--motion-fast) var(--ease-standard),
+    box-shadow var(--motion-fast) var(--ease-standard),
+    transform var(--motion-fast) var(--ease-standard);
+}
+button:not(:disabled):active,
+.btn:not(:disabled):active,
+a.cta-btn:active,
+a.hero-cta-primary:active,
+a.hero-cta-secondary:active,
+a.cta-button:active {
+  transform: scale(0.97);
+}
+button:disabled { cursor: not-allowed; }
+
+/* One consistent keyboard focus ring across the app */
+:where(button, a, input, select, textarea, [tabindex]):focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(30, 75, 140, 0.28);
+}
+
+/* Form fields ease into focus instead of snapping */
+input, select, textarea {
+  transition:
+    border-color var(--motion-fast) var(--ease-standard),
+    box-shadow var(--motion-fast) var(--ease-standard),
+    background-color var(--motion-fast) var(--ease-standard);
+}
+
+/* Inline links */
+a { transition: color var(--motion-fast) var(--ease-standard); }
+
+/* Cards lift very slightly on hover — 2px, not a jump */
+.school-card,
+.applicant-card,
+.stat-box,
+.step,
+.testimonial,
+.school-card-mini,
+.cta-card {
+  transition:
+    transform var(--motion-normal) var(--ease-standard),
+    box-shadow var(--motion-normal) var(--ease-standard),
+    border-color var(--motion-normal) var(--ease-standard);
+}
+.school-card:hover,
+.applicant-card:hover,
+.stat-box:hover,
+.step:hover,
+.testimonial:hover,
+.school-card-mini:hover,
+.cta-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(28, 31, 38, 0.09);
+}
+
+/* Rows highlight on hover so long lists feel responsive */
+.instr-row,
+.slot,
+.booking,
+.milestone,
+.legend-item {
+  transition:
+    background-color var(--motion-fast) var(--ease-standard),
+    border-color var(--motion-fast) var(--ease-standard),
+    transform var(--motion-fast) var(--ease-standard);
+}
+.instr-row:hover,
+.slot:hover,
+.booking:hover { background-color: #FAFBFC; }
+
+/* Tabs and filter pills cross-fade between states */
+.sa-tabs button,
+.filter-tabs button,
+.nav-links a {
+  transition:
+    background-color var(--motion-normal) var(--ease-standard),
+    color var(--motion-normal) var(--ease-standard),
+    border-color var(--motion-normal) var(--ease-standard);
+}
+
+/* Status pills and progress bars animate when their value changes */
+.status-pill,
+.check-badge,
+.phase-chip { transition: all var(--motion-normal) var(--ease-standard); }
+
+.phase-fill,
+.hours-fill { transition: width var(--motion-slow) var(--ease-standard); }
+
+/* Newly rendered list items ease in.
+   `backwards`, not `both`: a filled-forwards transform would outrank the
+   :hover rules above and silently kill the lift. */
+.slot,
+.booking,
+.instr-row,
+.applicant-card { animation: fadeUp var(--motion-normal) var(--ease-standard) backwards; }

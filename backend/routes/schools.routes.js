@@ -40,12 +40,12 @@ router.get("/stats", async (req, res) => {
   try {
     const result = await pool.query(`
       SELECT
-        (SELECT COUNT(*) FROM driving_schools)
-        (SELECT COUNT(*) FROM users)                            
-        (SELECT COUNT(*) FROM users WHERE role = 'student)
-        (SELECT COUNT(*) FROM users WHERE role = 'instructor)
-        (SELECT COUNT(*) FROM lesson_bookings)                            
-        (SELECT COUNT(*) FROM reviews)                                    
+        (SELECT COUNT(*) FROM driving_schools)                      AS schools,
+        (SELECT COUNT(*) FROM users)                                AS users,
+        (SELECT COUNT(*) FROM users WHERE role = 'student')         AS students,
+        (SELECT COUNT(*) FROM users WHERE role = 'instructor')      AS instructors,
+        (SELECT COUNT(*) FROM lesson_bookings)                      AS lessons,
+        (SELECT COUNT(*) FROM reviews)                              AS reviews
     `);
     const r = result.rows[0];
     res.status(200).json({
@@ -61,6 +61,7 @@ router.get("/stats", async (req, res) => {
     res.status(500).json({ message: "Failed to fetch stats." });
   }
 });
+
 
 
 router.get("/schools/:id", async (req, res) => {
