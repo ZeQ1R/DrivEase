@@ -144,7 +144,8 @@
                 }
               </div>
             } @else {
-              <p class="no-slots">No {{ phase() === 'theory' ? 'theory classes' : 'practical slots' }} available right now. Check back soon.</p>
+              <app-empty-state icon="📅" title="No classes available" message="Your school hasn't published new slots yet. Check back soon." />
+              <!-- <p class="no-slots">No {{ phase() === 'theory' ? 'theory classes' : 'practical slots' }} available right now. Check back soon.</p> -->
             }
           }
 

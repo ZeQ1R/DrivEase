@@ -37,6 +37,24 @@
 .hero-cta-secondary { display: inline-flex; align-items: center; border: 1px solid #4B5563; color: #9CA3AF; padding: 14px 28px; font-size: 14px; font-weight: 500; text-decoration: none; }
 .hero-cta-secondary:hover { border-color: white; color: white; }
 
+.stats-band {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 24px; padding: 36px 24px; max-width: 1100px; margin: 0 auto;
+  border-bottom: 1px solid #E2E6E9;
+}
+.stats-band .stat { text-align: center; }
+.stats-band .stat-num {
+  display: block; font-family: 'Big Shoulders Display', Impact, sans-serif;
+  font-size: clamp(34px, 6vw, 52px); line-height: 1; color: #1E4B8C;
+  font-variant-numeric: tabular-nums;
+}
+.stats-band .stat-label {
+  font-family: 'IBM Plex Mono', monospace; font-size: 10px;
+  text-transform: uppercase; letter-spacing: .12em; color: #717182;
+}
+@media (max-width: 700px) { .stats-band { grid-template-columns: repeat(2, 1fr); row-gap: 28px; } }
+
+
 .how-it-works { max-width: 1152px; margin: 0 auto; padding: 64px 24px; }
 .section-eyebrow { font-family: 'IBM Plex Mono', monospace; color: #717182; font-size: 12px; text-transform: uppercase; letter-spacing: 0.2em; margin: 0 0 8px; }
 .section-title { font-family: 'Big Shoulders Display', sans-serif; font-weight: 700; font-size: 36px; text-transform: uppercase; color: #1C1F26; margin: 0 0 40px; }

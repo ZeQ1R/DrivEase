@@ -11,12 +11,13 @@ import { ConfirmBox } from '../../shared/confirm-box/confirm-box';
 import { ReviewBox } from '../../shared/review-box/review-box';
 import { ToastService } from '../../shared/toast/toast.service';
 import { trigger, transition, style, animate } from '@angular/animations';
+import { EmptyState } from "../../shared/empty-state/empty-state";
 
 
 @Component({
   selector: 'app-student-dashboard',
   standalone: true,
-  imports: [RouterLink, LaneDivider, ProgressTrack, NavBar, DatePipe, ConfirmBox, ReviewBox],
+  imports: [RouterLink, LaneDivider, ProgressTrack, NavBar, DatePipe, ConfirmBox, ReviewBox, EmptyState],
   templateUrl: './student-dashboard.html',
   styleUrl: './student-dashboard.css',
   animations: [

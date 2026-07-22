@@ -191,6 +191,9 @@
 
 .stat-box.finished .stat-num { color: #2F9E6E; }
 
+.stat-box.rejected .stat-num { color: #D14B3D; }
+
+
 .finished-banner {
   display: flex; align-items: center; gap: 12px;
   padding: 12px 14px; margin-top: 4px;

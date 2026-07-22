@@ -67,7 +67,7 @@
           }
         </div>
       } @else {
-        <p class="no-instr">No instructors yet. Add one below.</p>
+        <app-empty-state icon="👤" title="No instructors yet" message="Add your first instructor below to start scheduling practical lessons."/>
       }
 
       <h3>Add an Instructor</h3>
@@ -88,7 +88,7 @@
     <div class="sa-stats">
       <div class="stat-box"><span class="stat-num">{{ pendingCount() }}</span><span class="stat-label">Pending</span></div>
       <div class="stat-box"><span class="stat-num">{{ approvedCount() }}</span><span class="stat-label">Approved</span></div>
-      <div class="stat-box"><span class="stat-num">{{ rejectedCount() }}</span><span class="stat-label">Rejected</span></div>
+      <div class="stat-box rejected"><span class="stat-num">{{ rejectedCount() }}</span><span class="stat-label">Rejected</span></div>
       <div class="stat-box finished"><span class="stat-num">{{ finishedCount() }}</span><span class="stat-label">Completed</span></div>
       <!-- <div class="stat-box"><span class="stat-num">{{ finishedCount()}}</span><span class="stat-label">Finished</span></div> -->
       <div class="stat-box total"><span class="stat-num">{{ registrations().length }}</span><span class="stat-label">Total</span></div>

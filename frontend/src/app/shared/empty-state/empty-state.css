@@ -1,0 +1,10 @@
+.es {
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+  gap: 8px; padding: 48px 24px;
+  border: 1px dashed #D5DADF; background: #FAFBFC;
+  animation: fadeUp var(--motion-normal) var(--ease-standard) both;
+}
+.es-icon { font-size: 34px; line-height: 1; opacity: .75; }
+.es-title { margin: 0; font-size: 16px; font-weight: 600; color: #1C1F26; }
+.es-msg { font-size: 14px; color: #717182; max-width: 38ch; line-height: 1.6; }
+@media (prefers-reduced-motion: reduce) { .es { animation: none; } }
