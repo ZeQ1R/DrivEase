@@ -5,13 +5,18 @@
     <div class="in-header-inner">
       <p class="eyebrow">Instructor</p>
       <h1>Hello, {{ user?.firstName }}</h1>
-      <p class="in-sub">{{ bookings().length }} upcoming lessons</p>
     </div>
   </div>
   <app-lane-divider class="flush" />
 
   <div class="in-content">
-    <div class="in-main">
+  <div class="in-stats">
+    <div class="stat-box"><span class="stat-num">{{ studentCount() }}</span><span class="stat-label">Active students</span></div>
+    <div class="stat-box"><span class="stat-num">{{ upcomingCount() }}</span><span class="stat-label">Upcoming lessons</span></div>
+    <div class="stat-box"><span class="stat-num">{{ lessonsToday() }}</span><span class="stat-label">Lessons today</span></div>
+    <div class="stat-box"><span class="stat-num">{{ hoursTaught() }}</span><span class="stat-label">Hours taught</span></div>
+  </div>
+  <div class="in-main">
       <div class="in-card">
         <h2>Upcoming Lessons</h2>
         @if (bookings().length > 0) {
