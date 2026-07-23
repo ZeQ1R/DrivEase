@@ -12,12 +12,12 @@
     .school-card:hover .card-image img { transform: scale(1.04); opacity: 1; }
     .card-body { padding: 20px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
     .card-top { display: flex; justify-content: space-between; gap: 8px; }
-    .card-top h3 { font-family: 'Big Shoulders Display', sans-serif; font-weight: 700; font-size: 20px; text-transform: uppercase; color: #1C1F26; margin: 0; line-height: 1.1; }
+    .card-top h3 { font-family: 'Big Shoulders Display', sans-serif; font-weight: 700; font-size: 20px; text-transform: uppercase; color: #1C1F26; margin: 0; line-height: 1.1; min-height: 2.2em; }
     .price { font-family: 'IBM Plex Mono', monospace; font-weight: 700; font-size: 18px; color: #1E4B8C; white-space: nowrap; }
     .card-city { font-size: 14px; color: #717182; }
     .card-features { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
     .card-cta {
-      margin-top: 12px; width: 100%; padding: 10px; text-align: center;
+      margin-top: auto; width: 100%; padding: 10px; text-align: center;
       background: #1C1F26; color: white; font-size: 14px; font-weight: 500;
       text-decoration: none; box-sizing: border-box;
       transition: background-color var(--motion-fast) var(--ease-standard), transform var(--motion-fast) var(--ease-standard);

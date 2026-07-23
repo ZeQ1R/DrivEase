@@ -44,7 +44,8 @@
             <div class="status-note"><p class="rejected">Your application to <strong>{{ registration.school_name }}</strong> was not approved. You can register to another school.</p></div>
           }
         } @else {
-          <div class="empty-status"><p>No Active Registration</p><span>Browse driving schools to get started</span></div>
+          <app-empty-state title="No Active Registration" message="Browse driving schools to get started " />
+          <!-- <div class="empty-status"><p>No Active Registration</p><span>Browse driving schools to get started</span></div> -->
         }
       </div>
 

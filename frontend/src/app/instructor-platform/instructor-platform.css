@@ -39,6 +39,22 @@
 .hours-bar { height: 6px; background: #E2E6E9; overflow: hidden; }
 .hours-fill { height: 100%; background: #2F9E6E; transition: width 0.4s ease; }
 
+.in-stats { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 4px; }
+.in-stats .stat-box {
+  background: #fff; border: 1px solid #E2E6E9; padding: 18px 20px;
+  display: flex; flex-direction: column; gap: 4px;
+}
+.in-stats .stat-num {
+  font-family: 'Big Shoulders Display', Impact, sans-serif;
+  font-size: 34px; line-height: 1; color: #1E4B8C; font-variant-numeric: tabular-nums;
+}
+.in-stats .stat-label {
+  font-family: 'IBM Plex Mono', monospace; font-size: 10px;
+  text-transform: uppercase; letter-spacing: .1em; color: #717182;
+}
+@media (max-width: 700px) { .in-stats { grid-template-columns: repeat(2, 1fr); } }
+
+
 .empty-text { color: #9CA3AF; font-size: 14px; margin: 0; }
 
 @media (max-width: 900px) {

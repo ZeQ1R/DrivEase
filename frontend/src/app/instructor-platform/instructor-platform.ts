@@ -48,6 +48,17 @@ export class InstructorPlatform implements OnInit, OnDestroy {
   upcomingCount = computed(() => this.bookings().length)
   studentCount = computed(() => this.visibleStudents().length)
 
+  lessonsToday = computed(() =>
+    this.bookings().filter(b => {
+      const d = new Date(b.slot_date).toDateString()
+      return d === new Date().toDateString()
+    }).length
+  )
+
+  hoursTaught = computed(() =>
+    this.students().reduce((sum, s) => sum + Number(s.completed_hours || 0), 0)
+  )
+
 
   ngOnInit() {
     this.user = this.authService.getCurrentUser()

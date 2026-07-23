@@ -4,7 +4,7 @@ import pool from "./config/database.js";
 const admins = [
   { email: "momento@gmail.com",  firstName: "Momento", lastName: "Admin", schoolId: 1 },
   { email: "uno1@gmail.com",     firstName: "Uno1",    lastName: "Admin", schoolId: 2 },
-  { email: "autoshkollasharr@gmail.com",     firstName: "Sharr",    lastName: "Admin", schoolId: 3 },
+  { email: "sharr@gmail.com",     firstName: "Sharr",    lastName: "Admin", schoolId: 3 },
   { email: "golfd@gmail.com",    firstName: "GolfD",   lastName: "Admin", schoolId: 4 },
   { email: "og@gmail.com",       firstName: "OG",      lastName: "Admin", schoolId: 5 },
   { email: "hiti@gmail.com",     firstName: "HITI",    lastName: "Admin", schoolId: 6 },
