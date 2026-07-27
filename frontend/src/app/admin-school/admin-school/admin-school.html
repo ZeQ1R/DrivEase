@@ -36,6 +36,16 @@
     <div class="instructors-card">
       <h2>Instructors</h2>
 
+      <h3>Add an Instructor</h3>
+      <div class="instr-form">
+        <div class="slot-field"><label>First Name</label><input [(ngModel)]="newInstrFirst" name="instrFirst" /></div>
+        <div class="slot-field"><label>Last Name</label><input [(ngModel)]="newInstrLast" name="instrLast" /></div>
+        <div class="slot-field"><label>Email</label><input type="email" [(ngModel)]="newInstrEmail" name="instrEmail" /></div>
+        <div class="slot-field"><label>Phone</label><input [(ngModel)]="newInstrPhone" name="instrPhone" /></div>
+        <button class="add-slot-btn" (click)="createInstructor()">Add Instructor</button>
+      </div>
+      @if (instrMessage()) { <p class="instr-msg">{{ instrMessage() }}</p> }
+
       @if (instructors().length > 0) {
         <div class="instr-list">
           @for (i of instructors(); track i.id) {
@@ -70,19 +80,65 @@
         <app-empty-state icon="👤" title="No instructors yet" message="Add your first instructor below to start scheduling practical lessons."/>
       }
 
-      <h3>Add an Instructor</h3>
-      <div class="instr-form">
-        <div class="slot-field"><label>First Name</label><input [(ngModel)]="newInstrFirst" name="instrFirst" /></div>
-        <div class="slot-field"><label>Last Name</label><input [(ngModel)]="newInstrLast" name="instrLast" /></div>
-        <div class="slot-field"><label>Email</label><input type="email" [(ngModel)]="newInstrEmail" name="instrEmail" /></div>
-        <div class="slot-field"><label>Phone</label><input [(ngModel)]="newInstrPhone" name="instrPhone" /></div>
-        <button class="add-slot-btn" (click)="createInstructor()">Add Instructor</button>
-      </div>
-      @if (instrMessage()) { <p class="instr-msg">{{ instrMessage() }}</p> }
+      
     </div>
     }
 
+    <!-- @if (activeTab() === 'students') {
+
+    @if (hasAnalyticsData()) {
+      <section class="analytics">
+        <div class="an-grid">
+
+          <div class="an-card an-trend">
+            <div class="an-head">
+              <h3>Enrolments</h3>
+              <span class="an-sub">Last 6 months</span>
+            </div>
+            <div class="an-chart">
+              @for (m of enrolmentTrend(); track m.key) {
+                <div class="an-bar-col">
+                  <div class="an-bar-track">
+                    <div class="an-bar" [style.height.%]="m.percent" [attr.data-v]="m.value">
+                      @if (m.value > 0) { <span class="an-bar-val">{{ m.value }}</span> }
+                    </div>
+                  </div>
+                  <span class="an-bar-label">{{ m.label }}</span>
+                </div>
+              }
+            </div>
+          </div>
+
+          <div class="an-card an-rate">
+            <div class="an-head"><h3>Completion rate</h3></div>
+            <div class="an-ring" [style.--p]="completionRate()">
+              <span class="an-ring-num">{{ completionRate() }}<small>%</small></span>
+            </div>
+            <p class="an-rate-note">{{ finishedCount() }} of {{ approvedCount() }} enrolled students finished</p>
+          </div>
+
+          <div class="an-card an-funnel">
+            <div class="an-head"><h3>Student journey</h3></div>
+            <div class="an-funnel-rows">
+              @for (step of funnel(); track step.label) {
+                <div class="an-funnel-row">
+                  <span class="an-funnel-label">{{ step.label }}</span>
+                  <div class="an-funnel-track">
+                    <div class="an-funnel-fill"
+                      [style.width.%]="funnel()[0].value ? (step.value / funnel()[0].value) * 100 : 0"></div>
+                  </div>
+                  <span class="an-funnel-val mono">{{ step.value }}</span>
+                </div>
+              }
+            </div>
+          </div>
+
+        </div>
+      </section>
+    } -->
+
     @if (activeTab() === 'students') {
+
     <h2 class="students-heading">Registered Students</h2>
 
     <div class="sa-stats">

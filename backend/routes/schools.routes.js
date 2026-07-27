@@ -20,7 +20,9 @@ function mapSchool(row) {
     email: row.email,
     features: {
       feature1: row.transmission,
-      feature2: `${row.instructors_count} instructors`,
+      // Live count of instructors the school actually created; until they add
+      // any, fall back to the number the platform admin set on the school.
+      feature2: `${Number(row.real_instructors) > 0 ? Number(row.real_instructors) : row.instructors_count} instructors`,
       feature3: `${row.pass_rate}% pass rate`,
     },
   };
@@ -28,7 +30,11 @@ function mapSchool(row) {
 
 router.get("/schools", async (req, res) => {
   try {
-    const result = await pool.query("SELECT * FROM driving_schools ORDER BY id ASC");
+    const result = await pool.query(
+      `SELECT s.*,
+              (SELECT COUNT(*) FROM users u WHERE u.role = 'instructor' AND u.school_id = s.id) AS real_instructors
+       FROM driving_schools s ORDER BY s.id ASC`
+    );
     res.status(200).json({ schools: result.rows.map(mapSchool) });
   } catch (error) {
     console.error("Failed to fetch schools", error);
@@ -66,7 +72,12 @@ router.get("/stats", async (req, res) => {
 
 router.get("/schools/:id", async (req, res) => {
   try {
-    const result = await pool.query("SELECT * FROM driving_schools WHERE id = $1", [req.params.id]);
+    const result = await pool.query(
+      `SELECT s.*,
+              (SELECT COUNT(*) FROM users u WHERE u.role = 'instructor' AND u.school_id = s.id) AS real_instructors
+       FROM driving_schools s WHERE s.id = $1`,
+      [req.params.id]
+    );
     if (result.rows.length === 0) {
       return res.status(404).json({ message: "School not found" });
     }

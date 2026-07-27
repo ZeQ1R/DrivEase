@@ -10,13 +10,34 @@
   <app-lane-divider class="flush" />
 
   <div class="in-content">
-  <div class="in-stats">
-    <div class="stat-box"><span class="stat-num">{{ studentCount() }}</span><span class="stat-label">Active students</span></div>
-    <div class="stat-box"><span class="stat-num">{{ upcomingCount() }}</span><span class="stat-label">Upcoming lessons</span></div>
-    <div class="stat-box"><span class="stat-num">{{ lessonsToday() }}</span><span class="stat-label">Lessons today</span></div>
-    <div class="stat-box"><span class="stat-num">{{ hoursTaught() }}</span><span class="stat-label">Hours taught</span></div>
-  </div>
-  <div class="in-main">
+    <div class="in-stats">
+      <div class="stat-box"><span class="stat-num">{{ studentCount() }}</span><span class="stat-label">Active students</span></div>
+      <div class="stat-box"><span class="stat-num">{{ upcomingCount() }}</span><span class="stat-label">Upcoming lessons</span></div>
+      <div class="stat-box"><span class="stat-num">{{ lessonsToday() }}</span><span class="stat-label">Lessons today</span></div>
+      <div class="stat-box"><span class="stat-num">{{ hoursTaught() }}</span><span class="stat-label">Hours taught</span></div>
+    </div>
+
+    <div class="in-main">
+      <div class="in-card">
+        <h2>Add Availability</h2>
+        <div class="slot-form">
+          <div class="slot-field">
+            <label>Date</label>
+            <input type="date" [(ngModel)]="newSlotDate" name="slotDate" [min]="today" />
+          </div>
+          <div class="slot-field">
+            <label>Time</label>
+            <input type="time" [(ngModel)]="newSlotTime" name="slotTime" />
+          </div>
+          <div class="slot-field wide">
+            <label>Note (optional)</label>
+            <input type="text" [(ngModel)]="newSlotNote" name="slotNote" placeholder="e.g. City center practice" />
+          </div>
+          <button class="add-slot-btn" (click)="addSlot()">Add Slot</button>
+        </div>
+        @if (newSlotMessage()) { <p class="slot-msg">{{ newSlotMessage() }}</p> }
+      </div>
+
       <div class="in-card">
         <h2>Upcoming Lessons</h2>
         @if (bookings().length > 0) {
@@ -36,26 +57,6 @@
         } @else {
           <p class="empty-text">No upcoming lessons.</p>
         }
-      </div>
-
-      <div class="in-card">
-        <h2>Add Availability</h2>
-        <div class="slot-form">
-          <div class="slot-field">
-            <label>Date</label>
-            <input type="date" [(ngModel)]="newSlotDate" name="slotDate" [min]="today" />
-          </div>
-          <div class="slot-field">
-            <label>Time</label>
-            <input type="time" [(ngModel)]="newSlotTime" name="slotTime" />
-          </div>
-          <div class="slot-field wide">
-            <label>Note (optional)</label>
-            <input type="text" [(ngModel)]="newSlotNote" name="slotNote" placeholder="e.g. City center practice" />
-          </div>
-          <button class="add-slot-btn" (click)="addSlot()">Add Slot</button>
-        </div>
-        @if (newSlotMessage()) { <p class="slot-msg">{{ newSlotMessage() }}</p> }
       </div>
     </div>
 

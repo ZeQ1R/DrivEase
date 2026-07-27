@@ -5,7 +5,6 @@ import { AdminRegistration, AdminSchoolService, Instructor } from '../admin-scho
 import { NavBar } from '../../shared/nav-bar/nav-bar';
 import { LaneDivider } from '../../shared/lane-divider/lane-divider';
 import { ConfirmBox } from '../../shared/confirm-box/confirm-box';
-import { RegistrationService } from '../../auth/registration.service';
 import { EmptyState } from '../../shared/empty-state/empty-state';
 
 @Component({
@@ -19,7 +18,6 @@ export class AdminSchool implements OnInit {
   private adminService = inject(AdminSchoolService);
 
   registrations = signal<AdminRegistration[]>([]);
-  registration = signal<RegistrationService>
   filter = signal<'all' | 'pending' | 'approved' | 'rejected' | 'finished'>('all');
   schoolName = signal('');
   searchTerm = signal('');
