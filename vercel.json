@@ -1,14 +1,27 @@
 {
-  "services": {
-    "frontend": {
-      "root": "frontend",
-      "framework": "angular",
-      "routePrefix": "/"
+    "services": {
+        "frontend": {
+            "root": "frontend",
+            "framework": "angular"
+        },
+        "backend": {
+            "root": "backend"
+        }
     },
-    "backend": {
-      "root": "backend",
-      "framework": "express",
-      "routePrefix": "/api"
-    }
-  }
+    "rewrites": [
+        {
+            "source": "/api(/.*)?",
+            "destination": {
+                "type": "service",
+                "service": "backend"
+            }
+        },
+        {
+            "source": "/(.*)",
+            "destination": {
+                "type": "service",
+                "service": "frontend"
+            }
+        }
+    ]
 }
