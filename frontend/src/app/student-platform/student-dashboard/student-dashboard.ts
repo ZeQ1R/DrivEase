@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, HostListener, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AuthService, AuthUser } from '../../auth/auth.service';
 import { RegistrationService, Registration } from '../../auth/registration.service';
@@ -29,11 +29,13 @@ import { CountUp } from '../../shared/count-up/count-up';
     ])
   ]
 })
-export class StudentDashboard implements OnInit {
+export class StudentDashboard implements OnInit, OnDestroy {
   private authService = inject(AuthService);
   private registrationService = inject(RegistrationService);
   private scheduleService = inject(ScheduleService)
   private toast = inject(ToastService);
+
+  private pollId: ReturnType<typeof setInterval> | null = null;
 
   slots = signal<Slot[]>([])
   bookings = signal<Booking[]>([])
@@ -95,6 +97,7 @@ export class StudentDashboard implements OnInit {
         this.loadingReg.set(false);
           if (res.registration?.status === 'approved') {
           this.loadSchedule();
+          this.pollId = setInterval(() => this.loadSchedule(), 10000);
         }
 
       },
@@ -104,6 +107,15 @@ export class StudentDashboard implements OnInit {
       },
     });
 }
+
+  ngOnDestroy() {
+    if (this.pollId) clearInterval(this.pollId);
+  }
+
+  @HostListener('window:focus')
+  onWindowFocus() {
+    if (this.registration()?.status === 'approved') this.loadSchedule();
+  }
 
 private loadSchedule() {
   this.scheduleService.getAvailableSlots().subscribe({

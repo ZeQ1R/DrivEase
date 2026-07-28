@@ -23,7 +23,6 @@ export class NavBar {
   toggleMenu() { this.menuOpen.update(v => !v); }
   closeMenu() { this.menuOpen.set(false); }
 
-  // expose the service signals to the template
   notifList = this.notifications.notifications;
   unread = this.notifications.unread;
 

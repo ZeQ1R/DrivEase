@@ -55,7 +55,6 @@
   box-shadow: 0 16px 36px rgba(30, 75, 140, 0.38);
 }
 
-/* ---- Reviews section ---- */
 .reviews-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
 .reviews-summary { font-size: 14px; color: #717182; }
 .reviews-summary strong { color: #1C1F26; font-family: 'IBM Plex Mono', monospace; }
@@ -82,7 +81,6 @@
 .review-date { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #9CA3AF; }
 .no-reviews { color: #9CA3AF; font-size: 14px; }
 
-/* ---- Responsive ---- */
 @media (max-width: 800px) {
   .detail-sidebar { position: static; top: auto; }
 }
