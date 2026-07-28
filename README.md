@@ -153,7 +153,7 @@ PostgreSQL stores:
 ## Clone the repository
 
 ```bash
-git clone https://github.com/ZeQ1R/DeVenture.git
+git clone https://github.com/ZeQ1R/DrivEase.git
 ```
 
 ---
@@ -208,4 +208,4 @@ http://localhost:3000
 
 Computer Science Student
 
-Built as an internship project to demonstrate full-stack software engineering skills using Angular, Node.js, Express, and PostgreSQL.
+Built as an internship project to demonstrate full-stack software engineering skills using Angular, Node.js, Express.
