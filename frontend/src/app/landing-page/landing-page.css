@@ -113,7 +113,6 @@
 
 .hero-cta-primary:hover { box-shadow: 0 10px 24px rgba(30, 75, 140, 0.28); }
 
-/* ---- Responsive ---- */
 @media (max-width: 768px) {
   .hero { padding-left: 0; }
   .hero-content { padding: 90px 20px 70px; }
