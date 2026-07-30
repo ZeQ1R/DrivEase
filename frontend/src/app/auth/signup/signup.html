@@ -21,8 +21,15 @@
           <div class="field"><label>Last Name</label><input type="text" formControlName="lastName" placeholder="Last name" /></div>
         </div>
 
-        <div class="field"><label>Email Address</label><input type="email" formControlName="email" placeholder="you@example.com" /></div>
+        <div class="field">
+          <label>Email Address</label>
+          <input type="email" formControlName="email" placeholder="you@example.com" />
+          @if (checkingEmail()) { <span class="email-status">Checking…</span> }
+        </div>
         @if (emailIsInvalid) { <p class="field-error"><span class="dot"></span>Please enter a valid email address.</p> }
+        @if (emailTaken()) {
+          <p class="field-error"><span class="dot"></span>This email is already registered. <a routerLink="/login">Log in instead →</a></p>
+        }
 
         <div class="field-row" formGroupName="passwords">
           <div class="field"><label>Password</label>

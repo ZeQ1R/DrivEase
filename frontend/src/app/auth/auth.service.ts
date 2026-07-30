@@ -34,6 +34,10 @@ export class AuthService {
     return this.http.post<AuthResponse>(`${this.apiUrl}/signup`, payload);
   }
 
+  checkEmailExists(email: string) {
+    return this.http.get<{ exists: boolean }>(`${this.apiUrl}/check-email`, { params: { email } });
+  }
+
   login(email: string, password: string) {
     return this.http.post<AuthResponse>(`${this.apiUrl}/login`, { email, password });
   }

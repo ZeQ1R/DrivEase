@@ -70,9 +70,18 @@
   border-color: #1E4B8C;
 }
 
+.email-status {
+  display: block;
+  margin-top: 6px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: #9CA3AF;
+}
+
 .field-error {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 8px;
   font-size: 14px;
   color: #D14B3D;
@@ -86,6 +95,9 @@
   background: #D14B3D;
   flex-shrink: 0;
 }
+
+.field-error a { color: #1E4B8C; font-weight: 500; text-decoration: none; }
+.field-error a:hover { text-decoration: underline; }
 
 .auth-submit {
   width: 100%;

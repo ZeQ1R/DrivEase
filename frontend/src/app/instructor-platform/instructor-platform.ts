@@ -7,6 +7,7 @@ import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { trigger, transition, style, animate } from '@angular/animations';
 import { EmptyState } from '../shared/empty-state/empty-state';
+import { ToastService } from '../shared/toast/toast.service';
 
 @Component({
   selector: 'app-instructor-platform',
@@ -25,6 +26,7 @@ export class InstructorPlatform implements OnInit, OnDestroy {
 
   private instructorService = inject(InstructorService)
   private authService = inject(AuthService)
+  private toast = inject(ToastService)
 
   private pollId: ReturnType<typeof setInterval> | null = null
 
@@ -97,16 +99,11 @@ export class InstructorPlatform implements OnInit, OnDestroy {
   markAttended(b: any){
     this.instructorService.markAttended(b.id).subscribe({
       next: () => {
-        this.bookings.set(
-          this.bookings().map(x => x.id === b.id ? {...x,attended: true}: x)
-        )
+        this.toast.success('Lesson marked as attended!')
+        this.bookings.set(this.bookings().filter(x => x.id !== b.id))
         this.loadStudents()
-
-        setTimeout(() => {
-          this.bookings.set(this.bookings().filter(x => x.id !== b.id))
-        },2000)
       },
-      error: (err) => console.error('Failed to mark attended', err)
+      error: (err) => this.toast.error(err.error?.message || 'Could not mark this lesson as attended. Please try again.')
     })
   }
 

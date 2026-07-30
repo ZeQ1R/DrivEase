@@ -5,14 +5,32 @@ import crypto from "crypto";
 import pool from "../config/database.js";
 import { sendMail } from "../config/mailer.js";
 import { validate } from "../middleware/validate.js";
-import { loginSchema, signupSchema, forgotSchema, resetSchema } from "../schemas/auth.schema.js";
-import { loginLimiter, signupLimiter, passwordResetLimiter } from "../middleware/rateLimit.js";
+import { loginSchema, signupSchema, forgotSchema, resetSchema, checkEmailSchema } from "../schemas/auth.schema.js";
+import { loginLimiter, signupLimiter, passwordResetLimiter, checkEmailLimiter } from "../middleware/rateLimit.js";
 
 const router = Router();
 
 const DUMMY_HASH = bcrypt.hashSync(crypto.randomBytes(32).toString("hex"), 10);
 
 const hashToken = (token) => crypto.createHash("sha256").update(token).digest("hex");
+
+// Lets the signup form tell the user their email is already taken before they
+// fill out the rest of the form. Unlike /login, revealing this on /signup is
+// standard practice — an account's existence has to be knowable to sign up at
+// all, and every email is unique to one account by design.
+router.get("/check-email", checkEmailLimiter, async (req, res) => {
+  const result = checkEmailSchema.safeParse({ email: req.query.email });
+  if (!result.success) {
+    return res.status(400).json({ message: "Enter a valid email address." });
+  }
+  try {
+    const { rows } = await pool.query("SELECT id FROM users WHERE email = $1", [result.data.email]);
+    res.status(200).json({ exists: rows.length > 0 });
+  } catch (error) {
+    console.error("Email check failed:", error);
+    res.status(500).json({ message: "Could not check that email." });
+  }
+});
 
 router.post("/signup", signupLimiter, validate(signupSchema), async (req, res) => {
   try {

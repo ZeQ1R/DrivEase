@@ -42,6 +42,10 @@
 
         @if (loginError) {
           <p class="field-error"><span class="dot"></span>{{ loginError }}</p>
+          <p class="auth-hint">
+            New here? <a routerLink="/signup">Create an account</a>
+            — or <a routerLink="/forgot-password">reset your password</a> if you forgot it.
+          </p>
         }
 
         <a routerLink="/forgot-password" class="auth-forgot">Forgot password?</a>

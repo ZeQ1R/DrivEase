@@ -36,3 +36,13 @@ export const passwordResetLimiter = limiter({
     legacyHeaders: false,
     handler: json("Too many password reset requests. Please try again later."),
 })
+
+// Generous — fires as the user types on the signup form (debounced client-side),
+// not a one-shot submit. Still capped so it can't be used to bulk-scan emails.
+export const checkEmailLimiter = limiter({
+    windowMs: 10 * 60 * 1000,
+    max: 30,
+    standardHeaders: true,
+    legacyHeaders: false,
+    handler: json("Too many checks. Please slow down."),
+})
