@@ -81,6 +81,16 @@
   flex-shrink: 0;
 }
 
+.auth-hint {
+  margin: -6px 0 0;
+  font-size: 13px;
+  color: #717182;
+  line-height: 1.5;
+  animation: fadeUp var(--motion-fast) var(--ease-standard) both;
+}
+.auth-hint a { color: #1E4B8C; font-weight: 500; text-decoration: none; }
+.auth-hint a:hover { text-decoration: underline; }
+
 .auth-submit {
   width: 100%;
   padding: 14px;

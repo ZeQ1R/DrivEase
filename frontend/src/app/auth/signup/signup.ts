@@ -49,6 +49,8 @@ export class Signup implements OnInit {
   signupError = '';
   submitting = signal(false)
   showPassword = signal(false)
+  checkingEmail = signal(false)
+  emailTaken = signal(false)
 
   togglePassword() { this.showPassword.update(v => !v); }
 
@@ -122,10 +124,28 @@ export class Signup implements OnInit {
     });
 
     this.destroyRef.onDestroy(() => subscription.unsubscribe());
+
+    const emailCheckSub = this.form.controls.email.valueChanges
+      .pipe(debounceTime(500))
+      .subscribe((email) => {
+        this.emailTaken.set(false);
+        if (!email || this.form.controls.email.invalid) return;
+
+        this.checkingEmail.set(true);
+        this.authService.checkEmailExists(email).subscribe({
+          next: (res) => {
+            this.checkingEmail.set(false);
+            this.emailTaken.set(res.exists);
+          },
+          error: () => this.checkingEmail.set(false),
+        });
+      });
+
+    this.destroyRef.onDestroy(() => emailCheckSub.unsubscribe());
   }
 
   onSignUp() {
-    if (this.form.invalid) {
+    if (this.form.invalid || this.emailTaken()) {
       this.form.markAllAsTouched();
       return;
     }

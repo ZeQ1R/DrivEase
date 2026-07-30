@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const email = z.string().trim().toLowerCase().email("Enter a valid email address.").max(255);
+export const email = z.string().trim().toLowerCase().email("Enter a valid email address.").max(255);
 
 const password = z.string()
   .min(8, "Password must be at least 8 characters.")
@@ -22,3 +22,4 @@ export const signupSchema = z.object({
 export const loginSchema = z.object({ email, password: z.string().min(1) });
 export const forgotSchema = z.object({ email });
 export const resetSchema  = z.object({ token: z.string().length(64), password });
+export const checkEmailSchema = z.object({ email });
