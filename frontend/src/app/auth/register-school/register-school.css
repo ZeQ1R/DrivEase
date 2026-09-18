@@ -1,4 +1,4 @@
-.register-page { min-height: 100vh; background: #F3F5F6; }
+/* .register-page { min-height: 100vh; background: #F3F5F6; }
 
 .register-header { background: #1C1F26; width: 100%; }
 .register-header-inner { max-width: 1152px; margin: 0 auto; padding: 40px 24px 32px; }
@@ -55,4 +55,783 @@
 .step-item { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; font-size: 13px; color: #4B5563; }
 .step-dot { width: 22px; height: 22px; border-radius: 50%; background: #1E4B8C; color: white; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-family: 'IBM Plex Mono', monospace; }
 
-@media (max-width: 900px) { .register-content { grid-template-columns: 1fr; } .field-row { grid-template-columns: 1fr; } .register-sidebar { position: static; } }
+@media (max-width: 900px) { .register-content { grid-template-columns: 1fr; } .field-row { grid-template-columns: 1fr; } .register-sidebar { position: static; } } */
+
+
+
+/* =========================================
+   DrivEase Enrollment
+   ========================================= */
+
+:host {
+  display: block;
+  --navy: #171b24;
+  --blue: #24579b;
+  --blue-hover: #1c4784;
+  --yellow: #fbc02d;
+  --text: #101828;
+  --muted: #8a9ab0;
+  --border: #e0e7f0;
+  --background: #fafbfd;
+  --white: #ffffff;
+}
+
+/* Page */
+
+.enrollment-page {
+  min-height: 100vh;
+  background: var(--background);
+  color: var(--text);
+  font-family: 'IBM Plex Sans', sans-serif;
+}
+
+/* Header */
+
+.enrollment-header {
+  height: 56px;
+  background: #ffffff;
+  border-bottom: 1px solid var(--border);
+}
+
+.header-inner {
+  max-width: 690px;
+  height: 100%;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 0;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  color: var(--navy);
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+}
+
+.brand-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  background: var(--yellow);
+  font-size: 17px;
+}
+
+.cancel-link {
+  color: #50617a;
+  text-decoration: none;
+  font-size: 12px;
+}
+
+.cancel-link:hover {
+  color: var(--navy);
+}
+
+/* Main */
+
+.enrollment-main {
+  width: 100%;
+  max-width: 755px;
+  margin: 0 auto;
+  padding: 35px 24px 60px;
+  box-sizing: border-box;
+}
+
+/* Stepper */
+
+.stepper {
+  display: flex;
+  align-items: flex-start;
+  width: 100%;
+  margin: 0 0 36px;
+}
+
+.step-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
+  min-width: 62px;
+}
+
+.step-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #e5ebf3;
+  color: #91a1b7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.step-circle.active {
+  background: var(--navy);
+  color: #ffffff;
+}
+
+.step-circle.completed {
+  background: var(--blue);
+  color: #ffffff;
+}
+
+.step-label {
+  color: #8b9bb0;
+  font-size: 11px;
+  white-space: nowrap;
+  text-align: center;
+}
+
+.active-label {
+  color: var(--navy);
+  font-weight: 600;
+}
+
+.step-line {
+  height: 1px;
+  flex: 1;
+  min-width: 12px;
+  background: #dce4ee;
+  margin-top: 16px;
+}
+
+.step-line.completed-line {
+  background: var(--blue);
+}
+
+/* Form card */
+
+.enrollment-card {
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  padding: 28px;
+  box-sizing: border-box;
+}
+
+/* Step content */
+
+.step-content {
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.step-heading {
+  margin-bottom: 3px;
+}
+
+.step-heading h1 {
+  margin: 0 0 5px;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  color: var(--text);
+}
+
+.step-heading p {
+  margin: 0;
+  color: #7a8da5;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* Fields */
+
+.fields-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 17px 14px;
+}
+
+.full-width {
+  grid-column: 1 / -1;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 0;
+}
+
+.field label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #182337;
+}
+
+.field input,
+.field select {
+  height: 38px;
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #dce4ee;
+  border-radius: 5px;
+  background: #ffffff;
+  color: #182337;
+  font-family: inherit;
+  font-size: 13px;
+  padding: 0 11px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.field input::placeholder {
+  color: #9aa9bc;
+}
+
+.field input:focus,
+.field select:focus {
+  outline: none;
+  border-color: var(--blue);
+  box-shadow: 0 0 0 2px rgba(36, 87, 155, 0.09);
+}
+
+.field select {
+  cursor: pointer;
+}
+
+.error {
+  color: #c74646;
+  font-size: 11px;
+}
+
+/* Upload */
+
+.file-drop {
+  min-height: 120px;
+  padding: 20px;
+  border: 1px dashed #cbd7e6;
+  border-radius: 6px;
+  background: #fbfcfe;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  cursor: pointer;
+  text-align: center;
+}
+
+.file-drop:hover {
+  border-color: var(--blue);
+  background: #f6f9fd;
+}
+
+.file-drop.has-file {
+  border-style: solid;
+  border-color: #8bc6aa;
+  background: #f3fbf6;
+}
+
+.file-drop strong {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.file-drop p,
+.file-drop span {
+  font-size: 11px;
+  color: #91a1b4;
+  margin: 0;
+}
+
+.upload-icon {
+  font-size: 24px !important;
+  color: var(--blue) !important;
+}
+
+/* School and review */
+
+.school-summary,
+.review-summary {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 20px;
+  background: #fbfcfe;
+}
+
+.summary-label {
+  font-size: 11px;
+  color: #91a1b4;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.school-summary h2 {
+  font-size: 20px;
+  margin: 10px 0 0;
+}
+
+.review-summary p {
+  font-size: 13px;
+  margin: 10px 0;
+}
+
+.coming-soon {
+  color: #71839a;
+  font-size: 13px;
+}
+
+/* Form error */
+
+.form-error {
+  color: #c74646;
+  background: #fff3f3;
+  border: 1px solid #f2d4d4;
+  border-radius: 5px;
+  padding: 12px;
+  font-size: 12px;
+}
+
+/* Buttons */
+
+.enrollment-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  border-top: 1px solid #edf1f6;
+  padding-top: 20px;
+  margin-top: 20px;
+}
+
+.back-btn {
+  border: none;
+  background: transparent;
+  color: #b5c1d0;
+  font-family: inherit;
+  font-size: 13px;
+  padding: 9px 0;
+  cursor: pointer;
+}
+
+.back-btn:not(:disabled):hover {
+  color: #52647c;
+}
+
+.back-btn:disabled {
+  cursor: default;
+  opacity: 0.45;
+}
+
+.continue-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 13px;
+  min-width: 112px;
+  height: 36px;
+  padding: 0 17px;
+  border: none;
+  border-radius: 5px;
+  background: var(--blue);
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.continue-btn:hover:not(:disabled) {
+  background: var(--blue-hover);
+}
+
+.continue-btn span {
+  font-size: 16px;
+  font-weight: 400;
+}
+
+.continue-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Responsive */
+
+@media (max-width: 800px) {
+  .header-inner {
+    padding: 0 20px;
+  }
+
+  .enrollment-main {
+    padding: 28px 18px 45px;
+  }
+
+  .enrollment-card {
+    padding: 24px;
+  }
+}
+
+@media (max-width: 550px) {
+  .enrollment-main {
+    padding: 22px 12px 40px;
+  }
+
+  .stepper {
+    margin-bottom: 24px;
+  }
+
+  .step-wrapper {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .step-label {
+    font-size: 9px;
+  }
+
+  .step-circle {
+    width: 29px;
+    height: 29px;
+    font-size: 11px;
+  }
+
+  .step-line {
+    margin-top: 14px;
+  }
+
+  .enrollment-card {
+    padding: 20px 16px;
+  }
+
+  .fields-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .full-width {
+    grid-column: auto;
+  }
+
+  .step-content {
+    min-height: 0;
+  }
+}
+
+
+/* =========================================
+   License options
+   ========================================= */
+
+.license-options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.license-option {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 15px;
+  border: 1px solid #dce4ee;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.license-option input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.license-option:hover {
+  border-color: #9eb5d3;
+  background: #fbfcfe;
+}
+
+.license-option.selected {
+  border-color: #24579b;
+  background: #f4f8fd;
+}
+
+.license-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  background: #edf3fc;
+  border-radius: 7px;
+  font-size: 19px;
+  flex-shrink: 0;
+}
+
+.license-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.license-info strong {
+  font-size: 13px;
+  color: #172033;
+}
+
+.license-info span {
+  font-size: 12px;
+  color: #8a9ab0;
+}
+
+.license-check {
+  color: #24579b;
+  font-size: 17px;
+  opacity: 0;
+}
+
+.license-option.selected .license-check {
+  opacity: 1;
+}
+
+/* =========================================
+   School confirmation
+   ========================================= */
+
+.selected-school-card {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 20px;
+  background: #fbfcfe;
+  border: 1px solid #dce4ee;
+  border-radius: 8px;
+}
+
+.school-card-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  background: #edf3fc;
+  border-radius: 8px;
+  font-size: 23px;
+  flex-shrink: 0;
+}
+
+.school-card-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.school-card-label {
+  display: block;
+  color: #8a9ab0;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 7px;
+}
+
+.school-card-details h2 {
+  font-size: 19px;
+  line-height: 1.2;
+  margin: 0 0 7px;
+  color: #172033;
+  overflow-wrap: anywhere;
+}
+
+.school-card-details p {
+  font-size: 12px;
+  color: #8a9ab0;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.school-confirmed {
+  color: #27855f;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.school-note,
+.document-note,
+.schedule-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 13px;
+  background: #f5f8fc;
+  border: 1px solid #e4ebf4;
+  border-radius: 6px;
+}
+
+.school-note span,
+.document-note span,
+.schedule-note span {
+  color: #7188a6;
+  font-size: 15px;
+}
+
+.school-note p,
+.document-note p,
+.schedule-note p {
+  color: #7b8da5;
+  font-size: 12px;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* =========================================
+   Schedule
+   ========================================= */
+
+.time-options {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.time-option {
+  height: 40px;
+  border: 1px solid #dce4ee;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #53647b;
+  font-family: inherit;
+  font-size: 12px;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.time-option:hover {
+  border-color: #9eb5d3;
+}
+
+.time-option.selected {
+  background: #24579b;
+  border-color: #24579b;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+/* =========================================
+   Review
+   ========================================= */
+
+.review-section {
+  border: 1px solid #e0e7f0;
+  border-radius: 7px;
+  overflow: hidden;
+}
+
+.review-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 13px 15px;
+  background: #f8fafc;
+  border-bottom: 1px solid #e0e7f0;
+}
+
+.review-section-header h3 {
+  color: #172033;
+  font-size: 13px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.review-section-header button {
+  border: none;
+  background: transparent;
+  color: #24579b;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.review-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+  padding: 11px 15px;
+  border-bottom: 1px solid #edf1f6;
+}
+
+.review-row:last-child {
+  border-bottom: none;
+}
+
+.review-row span {
+  color: #8a9ab0;
+  font-size: 12px;
+}
+
+.review-row strong {
+  color: #172033;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+.review-confirmation {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 13px;
+  border-radius: 6px;
+  background: #f0faf5;
+  border: 1px solid #cfeadd;
+}
+
+.review-confirmation > span {
+  color: #27855f;
+  font-weight: 700;
+}
+
+.review-confirmation p {
+  color: #52806b;
+  font-size: 12px;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Small screens */
+
+@media (max-width: 550px) {
+  .selected-school-card {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .school-confirmed {
+    width: 100%;
+    margin-left: 63px;
+  }
+
+  .time-options {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .review-row {
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .review-row strong {
+    text-align: left;
+  }
+}
