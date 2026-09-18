@@ -11,7 +11,7 @@ import { ToastService } from '../../shared/toast/toast.service';
 
 @Component({
   selector: 'app-register-school',
-  imports: [LaneDivider, RouterLink, ReactiveFormsModule, NavBar,LoadingScreen],
+  imports: [ RouterLink, ReactiveFormsModule],
   templateUrl: './register-school.html',
   styleUrl: './register-school.css',
 })
@@ -22,6 +22,72 @@ export class RegisterSchool implements OnInit{
   private schoolsService = inject(SchoolsService)
   private registrationService = inject(RegistrationService)
   private toast = inject(ToastService)
+
+  preferredDate = '';
+preferredTime = '';
+
+availableTimes = [
+  '08:00',
+  '10:00',
+  '12:00',
+  '14:00',
+  '16:00',
+  '18:00'
+];
+
+  currentStep = 1;
+
+steps = [
+  { number: 1, label: 'Personal Info' },
+  { number: 2, label: 'License' },
+  { number: 3, label: 'School' },
+  { number: 4, label: 'Documents' },
+  { number: 5, label: 'Schedule' },
+  { number: 6, label: 'Review' },
+];
+
+nextStep() {
+  const fieldsByStep: Record<number, string[]> = {
+    1: [
+      'firstName',
+      'lastName',
+      'phone',
+      'dateOfBirth',
+      'address'
+    ],
+    2: ['licenseCategory'],
+    4: ['embg']
+  };
+
+  const fields = fieldsByStep[this.currentStep] ?? [];
+
+  fields.forEach(field => {
+    this.form.get(field)?.markAsTouched();
+  });
+
+  if (fields.some(field => this.form.get(field)?.invalid)) {
+    return;
+  }
+
+  if (this.currentStep === 4 && !this.selectedFile) {
+    this.registerError = 'Please upload your ID document.';
+    return;
+  }
+
+  this.registerError = '';
+
+  if (this.currentStep < 6) {
+    this.currentStep++;
+  }
+}
+
+previousStep() {
+  this.registerError = '';
+
+  if (this.currentStep > 1) {
+    this.currentStep--;
+  }
+}
 
 
   school = signal<School | null>(null)
@@ -112,8 +178,17 @@ export class RegisterSchool implements OnInit{
   }
 
   onRegister() {
+
+    console.log("SUBMIT CLICKED")
     this.form.markAllAsTouched();
+
+    console.log('Form valid : ', this.form.valid)
+    console.log('Form values : ', this.form.value)
+
     if (this.form.invalid) return;
+
+
+
 
     const currentSchool = this.school();
     if (!currentSchool) return;
@@ -138,15 +213,33 @@ export class RegisterSchool implements OnInit{
     }
 
     this.registrationService.registerToSchool(data).subscribe({
-      next: () => {
-        this.toast.success('Registration submitted! Track your status on your dashboard.', 6000);
-        this.router.navigate(['/student-platform-dashboard']);
-      },
-      error: (err) => {
-        this.registering = false;
-        this.registerError = err.error?.message || 'Failed to register. Please try again.';
-        this.toast.error(this.registerError);
-      },
-    });
+  next: (response) => {
+    console.log('Registration successful:', response);
+
+    this.registering = false;
+
+    this.toast.success(
+      'Registration submitted! Track your status on your dashboard.',
+      6000
+    );
+
+    this.router.navigate(['/student-platform-dashboard'])
+      .then(success => {
+        console.log('Navigation success:', success);
+      })
+      .catch(error => {
+        console.error('Navigation error:', error);
+      });
+  },
+
+  error: (err) => {
+    this.registering = false;
+
+    this.registerError =
+      err.error?.message || 'Failed to register. Please try again.';
+
+    this.toast.error(this.registerError);
+  },
+});
   }
 }

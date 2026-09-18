@@ -1,4 +1,4 @@
-@if(submitting()){
+<!-- @if(submitting()){
   <app-loading-screen message="Taking You To Register Form..."/>
 }@else {
   <app-nav-bar/>
@@ -150,4 +150,609 @@
   </div>
 </div>
 }
+ -->
 
+
+<div class="enrollment-page">
+
+  <!-- Minimal header -->
+  <header class="enrollment-header">
+    <div class="header-inner">
+      <a class="brand" [routerLink]="['/browse', schoolId]">
+        <span class="brand-icon">🚗</span>
+        <span>DRIVEASE</span>
+      </a>
+
+      <a class="cancel-link" [routerLink]="['/browse', schoolId]">
+        Cancel
+      </a>
+    </div>
+  </header>
+
+  <main class="enrollment-main">
+
+    <!-- Progress indicator -->
+    <nav class="stepper" aria-label="Registration progress">
+      @for (step of steps; track step.number) {
+        <div class="step-wrapper">
+          <div
+            class="step-circle"
+            [class.active]="currentStep === step.number"
+            [class.completed]="currentStep > step.number"
+          >
+            @if (currentStep > step.number) {
+              ✓
+            } @else {
+              {{ step.number }}
+            }
+          </div>
+
+          <span
+            class="step-label"
+            [class.active-label]="currentStep === step.number"
+          >
+            {{ step.label }}
+          </span>
+        </div>
+
+        @if (step.number < steps.length) {
+          <div
+            class="step-line"
+            [class.completed-line]="currentStep > step.number"
+          ></div>
+        }
+      }
+    </nav>
+
+    <!-- Registration card -->
+    <form
+      class="enrollment-card"
+      [formGroup]="form"
+      (ngSubmit)="onRegister()"
+    >
+
+      <!-- STEP 1: PERSONAL INFO -->
+      @if (currentStep === 1) {
+        <section class="step-content">
+
+          <div class="step-heading">
+            <h1>Personal information</h1>
+            <p>Tell us a bit about yourself.</p>
+          </div>
+
+          <div class="fields-grid">
+
+            <div class="field">
+              <label for="firstName">First name</label>
+              <input
+                id="firstName"
+                type="text"
+                formControlName="firstName"
+                placeholder="Enter first name"
+              />
+              @if (isInvalid('firstName')) {
+                <span class="error">First name is required</span>
+              }
+            </div>
+
+            <div class="field">
+              <label for="lastName">Last name</label>
+              <input
+                id="lastName"
+                type="text"
+                formControlName="lastName"
+                placeholder="Enter last name"
+              />
+              @if (isInvalid('lastName')) {
+                <span class="error">Last name is required</span>
+              }
+            </div>
+
+            <div class="field">
+              <label for="phone">Phone</label>
+              <input
+                id="phone"
+                type="tel"
+                formControlName="phone"
+                placeholder="+389 70 000 000"
+              />
+              @if (isInvalid('phone')) {
+                <span class="error">Phone is required</span>
+              }
+            </div>
+
+            <div class="field">
+              <label for="dateOfBirth">Date of birth</label>
+              <input
+                id="dateOfBirth"
+                type="date"
+                formControlName="dateOfBirth"
+              />
+              @if (isInvalid('dateOfBirth')) {
+                <span class="error">Valid date of birth required</span>
+              }
+            </div>
+
+            <div class="field">
+              <label for="email">Email Address</label>
+              <input 
+              id="email"
+              type="text"
+              formControlName="email"
+              />
+              @if(isInvalid('email')){
+                <span class="error">Valid email address required</span>
+              }
+            </div>
+
+            <div class="field">
+              <label for="address">Address</label>
+              <input
+                id="address"
+                type="text"
+                formControlName="address"
+                placeholder="Street and number"
+              />
+              @if (isInvalid('address')) {
+                <span class="error">Address is required</span>
+              }
+            </div>
+
+          </div>
+
+        </section>
+      }
+
+      <!-- STEP 2: LICENSE -->
+      
+@if (currentStep === 2) {
+  <section class="step-content">
+
+    <div class="step-heading">
+      <h1>License details</h1>
+      <p>Choose the driving license category you want to obtain.</p>
+    </div>
+
+    <div class="license-options">
+
+      <label
+        class="license-option"
+        [class.selected]="form.get('licenseCategory')?.value === 'A'"
+      >
+        <input
+          type="radio"
+          formControlName="licenseCategory"
+          value="A"
+        />
+        <div class="license-icon">🏍</div>
+        <div class="license-info">
+          <strong>Category A</strong>
+          <span>Motorcycles</span>
+        </div>
+        <span class="license-check">✓</span>
+      </label>
+
+      <label
+        class="license-option"
+        [class.selected]="form.get('licenseCategory')?.value === 'B'"
+      >
+        <input
+          type="radio"
+          formControlName="licenseCategory"
+          value="B"
+        />
+        <div class="license-icon">🚗</div>
+        <div class="license-info">
+          <strong>Category B</strong>
+          <span>Cars and light vehicles</span>
+        </div>
+        <span class="license-check">✓</span>
+      </label>
+
+      <label
+        class="license-option"
+        [class.selected]="form.get('licenseCategory')?.value === 'C'"
+      >
+        <input
+          type="radio"
+          formControlName="licenseCategory"
+          value="C"
+        />
+        <div class="license-icon">🚚</div>
+        <div class="license-info">
+          <strong>Category C</strong>
+          <span>Trucks</span>
+        </div>
+        <span class="license-check">✓</span>
+      </label>
+
+      <label
+        class="license-option"
+        [class.selected]="form.get('licenseCategory')?.value === 'D'"
+      >
+        <input
+          type="radio"
+          formControlName="licenseCategory"
+          value="D"
+        />
+        <div class="license-icon">🚌</div>
+        <div class="license-info">
+          <strong>Category D</strong>
+          <span>Buses</span>
+        </div>
+        <span class="license-check">✓</span>
+      </label>
+
+    </div>
+
+    @if (isInvalid('licenseCategory')) {
+      <p class="error">Please select a license category.</p>
+    }
+
+  </section>
+}
+
+      <!-- STEP 3: SCHOOL -->
+      
+@if (currentStep === 3) {
+  <section class="step-content">
+
+    <div class="step-heading">
+      <h1>Driving school</h1>
+      <p>Confirm the school you want to register with.</p>
+    </div>
+
+    <div class="selected-school-card">
+
+      <div class="school-card-icon">
+        🚗
+      </div>
+
+      <div class="school-card-details">
+        <span class="school-card-label">Selected school</span>
+        <h2>{{ schoolName }}</h2>
+        <p>Your application will be sent to this driving school.</p>
+      </div>
+
+      <div class="school-confirmed">
+        ✓ Selected
+      </div>
+
+    </div>
+
+    <div class="school-note">
+      <span>ⓘ</span>
+      <p>
+        You can review the school details before continuing.
+        Your registration will be submitted to this school.
+      </p>
+    </div>
+
+  </section>
+}
+
+      <!-- STEP 4: DOCUMENTS -->
+      
+@if (currentStep === 4) {
+  <section class="step-content">
+
+    <div class="step-heading">
+      <h1>Identity documents</h1>
+      <p>Provide the documents needed to verify your identity.</p>
+    </div>
+
+    <div class="field">
+      <label for="embg">EMBG / Personal ID number</label>
+
+      <input
+        id="embg"
+        type="text"
+        formControlName="embg"
+        placeholder="13-digit EMBG"
+        maxlength="13"
+        inputmode="numeric"
+        autocomplete="off"
+      />
+
+      <span class="field-hint">
+        Enter your 13-digit personal identification number.
+      </span>
+
+      @if (isInvalid('embg')) {
+        <p class="error">
+          EMBG must be exactly 13 digits.
+        </p>
+      }
+    </div>
+    <div class="field">
+      <label for="postalcode">Postal Code</label>
+      <input 
+      id="postalcode"
+      type="number"
+      formControlName="postalCode"
+      placeholder="1200"
+      maxlength="4"
+      />
+    </div>
+
+    <div class="field">
+      <label>Identity document</label>
+
+      <div
+        class="file-drop"
+        [class.has-file]="selectedFile"
+        role="button"
+        tabindex="0"
+        (click)="fileInput.click()"
+        (keydown.enter)="fileInput.click()"
+        (keydown.space)="fileInput.click(); $event.preventDefault()"
+      >
+
+        @if (selectedFile) {
+          <div class="file-selected">
+            <div class="file-icon">✓</div>
+
+            <div class="file-details">
+              <strong>{{ selectedFile.name }}</strong>
+              <span>
+                {{ (selectedFile.size / 1024).toFixed(1) }} KB
+              </span>
+            </div>
+
+            <span class="file-check">Uploaded</span>
+          </div>
+        } @else {
+          <div class="file-placeholder">
+            <div class="upload-icon">↑</div>
+            <strong>Upload your ID document</strong>
+            <p>Drag and drop or click to browse</p>
+            <span>JPG, PNG or PDF · Maximum 5MB</span>
+          </div>
+        }
+
+      </div>
+
+      <input
+        #fileInput
+        type="file"
+        accept=".jpg,.jpeg,.png,.pdf"
+        (change)="onFileSelected($event)"
+        hidden
+      />
+    </div>
+
+    <div class="document-note">
+      <span>ⓘ</span>
+      <p>
+        Your document is used for registration verification.
+      </p>
+    </div>
+
+  </section>
+}
+
+      <!-- STEP 5: SCHEDULE -->
+      
+@if (currentStep === 5) {
+  <section class="step-content">
+
+    <div class="step-heading">
+      <h1>Choose your schedule</h1>
+      <p>Select your preferred days and lesson time.</p>
+    </div>
+
+    <div class="field">
+      <label for="preferredDate">Preferred starting date</label>
+
+      <input
+        id="preferredDate"
+        type="date"
+        [value]="preferredDate"
+        (change)="preferredDate = $any($event.target).value"
+      />
+    </div>
+
+    <div class="field">
+      <label>Preferred lesson time</label>
+
+      <div class="time-options">
+        @for (time of availableTimes; track time) {
+          <button
+            type="button"
+            class="time-option"
+            [class.selected]="preferredTime === time"
+            (click)="preferredTime = time"
+          >
+            {{ time }}
+          </button>
+        }
+      </div>
+    </div>
+
+    <div class="schedule-note">
+      <span>ⓘ</span>
+      <p>
+        Your preferred schedule will be reviewed by the driving school.
+        Final lesson times depend on instructor availability.
+      </p>
+    </div>
+
+  </section>
+}
+
+      <!-- STEP 6: REVIEW -->
+      
+@if (currentStep === 6) {
+  <section class="step-content">
+
+    <div class="step-heading">
+      <h1>Review your application</h1>
+      <p>Make sure your information is correct before submitting.</p>
+    </div>
+
+    <div class="review-section">
+
+      <div class="review-section-header">
+        <h3>Personal information</h3>
+        <button type="button" (click)="currentStep = 1">
+          Edit
+        </button>
+      </div>
+
+      <div class="review-row">
+        <span>Full name</span>
+        <strong>
+          {{ form.value.firstName }} {{ form.value.lastName }}
+        </strong>
+      </div>
+
+      <div class="review-row">
+        <span>Phone</span>
+        <strong>{{ form.value.phone }}</strong>
+      </div>
+
+      <div class="review-row">
+        <span>Date of birth</span>
+        <strong>{{ form.value.dateOfBirth }}</strong>
+      </div>
+
+      <div class="review-row">
+        <span>Email Address</span>
+        <strong>{{ form.value.email }}</strong>
+      </div>
+
+      <div class="review-row">
+        <span>Address</span>
+        <strong>{{ form.value.address }}</strong>
+      </div>
+
+    </div>
+
+    <div class="review-section">
+
+      <div class="review-section-header">
+        <h3>License & school</h3>
+        <button type="button" (click)="currentStep = 2">
+          Edit
+        </button>
+      </div>
+
+      <div class="review-row">
+        <span>License category</span>
+        <strong>{{ form.value.licenseCategory }}</strong>
+      </div>
+
+      <div class="review-row">
+        <span>Driving school</span>
+        <strong>{{ schoolName }}</strong>
+      </div>
+
+    </div>
+
+    <div class="review-section">
+
+      <div class="review-section-header">
+        <h3>Documents & schedule</h3>
+        <button type="button" (click)="currentStep = 4">
+          Edit
+        </button>
+      </div>
+
+      <div class="review-row">
+        <span>EMBG</span>
+        <strong>{{form.value.embg}}</strong>
+      </div>
+
+      <div class="review-row">
+        <span>Postal Code</span>
+        <strong>{{form.value.postalCode }}</strong>
+      </div>
+
+      <div class="review-row">
+        <span>ID document</span>
+        <strong>
+          {{ selectedFile ? selectedFile.name : 'Not uploaded' }}
+        </strong>
+      </div>
+
+      <div class="review-row">
+        <span>Preferred date</span>
+        <strong>{{ preferredDate || 'Not selected' }}</strong>
+      </div>
+
+      <div class="review-row">
+        <span>Preferred time</span>
+        <strong>{{ preferredTime || 'Not selected' }}</strong>
+      </div>
+
+    </div>
+
+    <div class="review-confirmation">
+      <span>✓</span>
+      <p>
+        By submitting, you confirm that the information provided
+        is accurate.
+      </p>
+    </div>
+
+  </section>
+}
+
+      @if (registerError) {
+        <p class="form-error">{{ registerError }}</p>
+      }
+
+      <!-- Navigation -->
+      <div class="enrollment-actions">
+
+        <button
+          type="button"
+          class="back-btn"
+          [disabled]="currentStep === 1"
+          (click)="previousStep()"
+        >
+          ← Back
+        </button>
+
+        @if (registerError) {
+  <p class="form-error">{{ registerError }}</p>
+}
+
+<div class="enrollment-actions">
+
+  <button
+    type="button"
+    class="back-btn"
+    [disabled]="currentStep === 1 || registering"
+    (click)="previousStep()"
+  >
+    ← Back
+  </button>
+
+  @if (currentStep < 6) {
+    <button
+      type="button"
+      class="continue-btn"
+      (click)="nextStep()"
+    >
+      Continue <span>→</span>
+    </button>
+  } @else {
+    <button
+      type="submit"
+      class="continue-btn"
+      [disabled]="registering"
+    >
+      {{ registering ? 'Submitting...' : 'Submit application' }}
+      <span>→</span>
+    </button>
+  }
+
+</div>
+
+      </div>
+
+    </form>
+
+  </main>
+</div>
