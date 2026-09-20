@@ -24,16 +24,16 @@ export class RegisterSchool implements OnInit{
   private toast = inject(ToastService)
 
   preferredDate = '';
-preferredTime = '';
+  preferredTime = '';
 
-availableTimes = [
-  '08:00',
-  '10:00',
-  '12:00',
-  '14:00',
-  '16:00',
-  '18:00'
-];
+  availableTimes = [
+    '08:00',
+    '10:00',
+    '12:00',
+    '14:00',
+    '16:00',
+    '18:00'
+  ];
 
   currentStep = 1;
 
@@ -117,7 +117,7 @@ previousStep() {
       validators: [Validators.required]
     }),
     postalCode: new FormControl('',{
-      validators: [Validators.required]
+      validators: [Validators.required, Validators.minLength(4), Validators.maxLength(4)]
     }),
     licenseCategory: new FormControl('', {
       validators: [Validators.required]
