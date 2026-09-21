@@ -11,8 +11,13 @@ dist/
 /frontend/dist/
 .angular/
 
-# User-uploaded files (ID documents, school images)
-backend/uploads/
+# User-uploaded files
+backend/uploads/documents/
+
+# Demo school images
+!backend/uploads/
+!backend/uploads/schools/
+!backend/uploads/schools/**
 
 # Logs
 *.log
