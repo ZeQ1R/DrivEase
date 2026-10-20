@@ -61,8 +61,22 @@ export class AdminSchool implements OnInit {
     return Math.min(100, (Number(reg.practical_completed_hours) / req) * 100);
   }
 
-  finished(reg: AdminRegistration) {
+  readyToComplete(reg: AdminRegistration) {
     return reg.status === 'approved' && this.theoryDone(reg) && this.practicalDone(reg);
+  }
+
+  finished(reg: AdminRegistration) {
+    return reg.status === 'completed';
+  }
+
+  completeTraining(reg: AdminRegistration) {
+    this.statusMessage.set('');
+    this.adminService.updateStatus(reg.id, 'completed').subscribe({
+      next: () => this.registrations.set(
+        this.registrations().map(r => r.id === reg.id ? { ...r, status: 'completed' } : r)
+      ),
+      error: (err) => this.statusMessage.set(err.error?.message || 'Failed to complete.'),
+    });
   }
 
   editingInstructorId = signal<number | null>(null);

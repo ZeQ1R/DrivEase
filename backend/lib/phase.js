@@ -1,6 +1,6 @@
 export async function getStudentPhase(db, studentId) {
   const reg = await db.query(
-    `SELECT school_id, instructor_id, required_theory_hours, required_hours
+    `SELECT registered_at, school_id, instructor_id, required_theory_hours, required_hours
      FROM registrations WHERE student_id = $1 AND status = 'approved' LIMIT 1`,
     [studentId]
   );
@@ -11,16 +11,16 @@ export async function getStudentPhase(db, studentId) {
     `SELECT COALESCE(SUM(s.duration_hours), 0) AS hours
      FROM lesson_bookings b
      JOIN lesson_slots s ON s.id = b.slot_id
-     WHERE b.student_id = $1 AND s.slot_type = 'theory' AND (s.slot_date + s.slot_time) < NOW()`,
-    [studentId]
+     WHERE b.student_id = $1 AND s.slot_type = 'theory' AND (s.slot_date + s.slot_time) < NOW() AND s.slot_date >= $2::timestamptz::date`,
+    [studentId, r.registered_at]
   );
 
   const practical = await db.query(
     `SELECT COALESCE(SUM(s.duration_hours), 0) AS hours
      FROM lesson_bookings b
      JOIN lesson_slots s ON s.id = b.slot_id
-     WHERE b.student_id = $1 AND b.attended = true AND s.slot_type = 'practical'`,
-    [studentId]
+     WHERE b.student_id = $1 AND b.attended = true AND s.slot_type = 'practical' AND s.slot_date >= $2::timestamptz::date`,
+    [studentId, r.registered_at]
   );
 
   const theoryCompleted = Number(theory.rows[0].hours);

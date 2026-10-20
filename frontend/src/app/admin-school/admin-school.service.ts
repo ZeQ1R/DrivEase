@@ -50,7 +50,7 @@ export class AdminSchoolService {
     return this.http.get<{ instructors: Instructor[] }>(`${API_URL}/admin/instructors`);
   }
 
-  updateStatus(id: number, status: 'approved' | 'rejected') {
+  updateStatus(id: number, status: 'approved' | 'rejected' | 'completed') {
     return this.http.patch<{ registration: any }>(
       `${API_URL}/admin/registrations/${id}/status`,
       { status }

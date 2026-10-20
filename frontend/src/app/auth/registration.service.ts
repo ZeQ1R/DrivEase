@@ -25,6 +25,11 @@ export class RegistrationService {
     );
   }
 
+  getHistory() {
+    return this.http.get<{ registrations: { id: number; status: string; registered_at: string; school_name: string; licenseCategory: string | null }[] }>(
+      `${API_URL}/registrations/history`);
+  }
+
   getMyRegistration() {
     return this.http.get<{ registration: Registration | null }>(`${API_URL}/registrations/me`);
   }
