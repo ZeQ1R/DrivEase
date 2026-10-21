@@ -28,6 +28,25 @@ router.get("/registrations/me", authenticate, async (req, res) => {
   }
 });
 
+router.get("/registrations/history", authenticate, async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT r.id, r.status, r.registered_at, s.name AS school_name,
+              d.license_category AS "licenseCategory"
+       FROM registrations r
+       JOIN driving_schools s ON s.id = r.school_id
+       LEFT JOIN registration_details d ON d.registration_id = r.id
+       WHERE r.student_id = $1
+       ORDER BY r.registered_at DESC`,
+      [req.user.id]
+    );
+    res.status(200).json({ registrations: result.rows });
+  } catch (error) {
+    console.error("Failed to fetch history.", error);
+    res.status(500).json({ message: "Failed to fetch history." });
+  }
+});
+
 router.patch("/registrations/me/checklist", authenticate, async (req, res) => {
   try {
     const { medicalDone, firstAidDone } = req.body;
@@ -82,6 +101,16 @@ router.post("/register-school", authenticate, uploadId.single("idDocument"), asy
       return res.status(409).json({ message: "You already have an active registration." });
     }
 
+    const alreadyDone = await client.query(
+      `SELECT r.id FROM registrations r
+       JOIN registration_details d ON d.registration_id = r.id
+       WHERE r.student_id = $1 AND r.status = 'completed' AND d.license_category = $2`,
+      [studentId, licenseCategory]
+    );
+    if (alreadyDone.rows.length > 0) {
+      return res.status(409).json({ message: `You have already completed category ${licenseCategory}. Choose a different category.` });
+    }
+
     await client.query("BEGIN");
     const regResult = await client.query(
       `INSERT INTO registrations (student_id, school_id, status, required_hours, required_theory_hours)
@@ -128,13 +157,13 @@ router.get("/admin/registrations", authenticate, async (req, res) => {
                 SELECT SUM(s.duration_hours)
                 FROM lesson_bookings b
                 JOIN lesson_slots s ON s.id = b.slot_id
-                WHERE b.student_id = r.student_id AND s.slot_type = 'theory' AND (s.slot_date + s.slot_time) < NOW()
+                WHERE b.student_id = r.student_id AND s.slot_type = 'theory' AND (s.slot_date + s.slot_time) < NOW() AND s.slot_date >= r.registered_at::date
               ), 0) AS theory_completed_hours,
               COALESCE((
                 SELECT SUM(s.duration_hours)
                 FROM lesson_bookings b
                 JOIN lesson_slots s ON s.id = b.slot_id
-                WHERE b.student_id = r.student_id AND b.attended = true AND s.slot_type = 'practical'
+                WHERE b.student_id = r.student_id AND b.attended = true AND s.slot_type = 'practical' AND s.slot_date >= r.registered_at::date
               ), 0) AS practical_completed_hours
        FROM registrations r
        JOIN registration_details d ON d.registration_id = r.id
@@ -157,12 +186,13 @@ router.get("/admin/registrations", authenticate, async (req, res) => {
 router.patch("/admin/registrations/:id/status", authenticate, async (req, res) => {
   try {
     const { status } = req.body;
-    if (!["approved", "rejected"].includes(status)) {
+    if (!["approved", "rejected", "completed"].includes(status)) {
       return res.status(400).json({ message: "Invalid status." });
     }
 
     const check = await pool.query(
-      `SELECT r.id, r.student_id, s.name AS school_name, u.email AS student_email, u.first_name
+      `SELECT r.id, r.student_id, r.registered_at, r.status AS current_status, r.required_hours, r.required_theory_hours,
+              s.name AS school_name, u.email AS student_email, u.first_name
        FROM registrations r
        JOIN driving_schools s ON s.id = r.school_id
        JOIN users u ON u.id = r.student_id
@@ -171,6 +201,25 @@ router.patch("/admin/registrations/:id/status", authenticate, async (req, res) =
     );
     if (check.rows.length === 0) {
       return res.status(403).json({ message: "Not your school's registration." });
+    }
+
+    if (status === "completed") {
+      const c = check.rows[0];
+      if (c.current_status !== "approved") {
+        return res.status(400).json({ message: "Only an enrolled student can be completed." });
+      }
+      const hours = await pool.query(
+        `SELECT
+           COALESCE(SUM(s.duration_hours) FILTER (WHERE s.slot_type = 'theory' AND (s.slot_date + s.slot_time) < NOW()), 0) AS theory,
+           COALESCE(SUM(s.duration_hours) FILTER (WHERE s.slot_type = 'practical' AND b.attended = true), 0) AS practical
+         FROM lesson_bookings b JOIN lesson_slots s ON s.id = b.slot_id
+         WHERE b.student_id = $1 AND s.slot_date >= $2::timestamptz::date`,
+        [c.student_id, c.registered_at]
+      );
+      if (Number(hours.rows[0].theory) < Number(c.required_theory_hours) ||
+          Number(hours.rows[0].practical) < Number(c.required_hours)) {
+        return res.status(409).json({ message: "Student hasn't completed all required hours yet." });
+      }
     }
 
     const result = await pool.query(
@@ -189,6 +238,8 @@ router.patch("/admin/registrations/:id/status", authenticate, async (req, res) =
         subject: `You're enrolled at ${info.school_name}!`,
         html: `<h2>Welcome aboard, ${info.first_name}!</h2><p>Your registration at <strong>${info.school_name}</strong> has been approved. Log in to book your theory classes.</p>`,
       }).catch(err => console.error("Approval email failed:", err.message));
+    } else if (status === "completed") {
+      notify(info.student_id, `Congratulations! You completed your training at ${info.school_name}. You can now register for another license category.`, "success", "/browse");
     } else {
       notify(info.student_id, `Your registration at ${info.school_name} was not approved. You can apply to another school.`, "error", "/browse");
     }

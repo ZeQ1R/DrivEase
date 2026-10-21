@@ -59,11 +59,12 @@ export class StudentDashboard implements OnInit, OnDestroy {
 
   user: AuthUser | null = null;
   registration = signal<Registration | null>(null);
+  history = signal<{ id: number; status: string; registered_at: string; school_name: string; licenseCategory: string | null }[]>([]);
 
   displayStatus = computed(() => {
     const r = this.registration();
     if (!r) return '';
-    return r.status === 'approved' ? 'enrolled' : r.status;
+    return r.status === 'approved' ? 'enrolled' : r.status === 'completed' ? 'enrolled' : r.status;
   });
 
   confirmMessage = signal('');
@@ -90,6 +91,11 @@ export class StudentDashboard implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.user = this.authService.getCurrentUser();
+
+    this.registrationService.getHistory().subscribe({
+      next: (res) => this.history.set(res.registrations),
+      error: () => {},
+    });
 
     this.registrationService.getMyRegistration().subscribe({
       next: (res) => {

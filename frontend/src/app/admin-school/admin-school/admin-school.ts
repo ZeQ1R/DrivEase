@@ -2,7 +2,6 @@ import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AdminRegistration, AdminSchoolService, Instructor } from '../admin-school.service';
-import { NavBar } from '../../shared/nav-bar/nav-bar';
 import { LaneDivider } from '../../shared/lane-divider/lane-divider';
 import { ConfirmBox } from '../../shared/confirm-box/confirm-box';
 import { EmptyState } from '../../shared/empty-state/empty-state';
@@ -63,8 +62,22 @@ export class AdminSchool implements OnInit {
     return Math.min(100, (Number(reg.practical_completed_hours) / req) * 100);
   }
 
-  finished(reg: AdminRegistration) {
+  readyToComplete(reg: AdminRegistration) {
     return reg.status === 'approved' && this.theoryDone(reg) && this.practicalDone(reg);
+  }
+
+  finished(reg: AdminRegistration) {
+    return reg.status === 'completed';
+  }
+
+  completeTraining(reg: AdminRegistration) {
+    this.statusMessage.set('');
+    this.adminService.updateStatus(reg.id, 'completed').subscribe({
+      next: () => this.registrations.set(
+        this.registrations().map(r => r.id === reg.id ? { ...r, status: 'completed' } : r)
+      ),
+      error: (err) => this.statusMessage.set(err.error?.message || 'Failed to complete.'),
+    });
   }
 
   editingInstructorId = signal<number | null>(null);
