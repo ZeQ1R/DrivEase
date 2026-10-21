@@ -2,7 +2,6 @@ import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AdminRegistration, AdminSchoolService, Instructor } from '../admin-school.service';
-import { NavBar } from '../../shared/nav-bar/nav-bar';
 import { LaneDivider } from '../../shared/lane-divider/lane-divider';
 import { ConfirmBox } from '../../shared/confirm-box/confirm-box';
 import { EmptyState } from '../../shared/empty-state/empty-state';
@@ -10,7 +9,7 @@ import { EmptyState } from '../../shared/empty-state/empty-state';
 @Component({
   selector: 'app-admin-school',
   standalone: true,
-  imports: [CommonModule, DatePipe, FormsModule, NavBar, LaneDivider, ConfirmBox,EmptyState],
+  imports: [CommonModule, DatePipe, FormsModule, LaneDivider, ConfirmBox,EmptyState],
   templateUrl: './admin-school.html',
   styleUrl: './admin-school.css',
 })
