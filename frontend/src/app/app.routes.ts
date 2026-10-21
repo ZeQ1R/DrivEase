@@ -13,6 +13,8 @@ import { PlatformAdmin } from './platform/platform-admin/platform-admin';
 import { InstructorPlatform } from './instructor-platform/instructor-platform';
 import { ForgotPassword } from './auth/forgot-password/forgot-password';
 import { ResetPassword } from './auth/reset-password/reset-password';
+import { AdminSchoolLayout } from './admin-school/admin-school-layout/admin-school-layout/admin-school-layout';
+import { PagePlaceholder } from './admin-school/pages/placeholder/page-placeholder';
 import { NotFound } from './shared/not-found/not-found';
 
 export const routes: Routes = [
@@ -62,11 +64,20 @@ export const routes: Routes = [
 		canActivate: [authGuard, roleGuard('student')],
 		title: 'DrivEase - Register School'
 	},
-	{
-		path:'school-admin-dashboard',
-		component: AdminSchool,
+		{
+		path: 'school-admin-dashboard',
+		component: AdminSchoolLayout,
 		canActivate: [authGuard, roleGuard('school_admin')],
-		title: 'DrivEase - School Admin'
+		title: 'DrivEase - School Admin',
+		children: [
+			{ path: '', redirectTo: 'applications', pathMatch: 'full' },
+			{ path: 'overview', component: PagePlaceholder, data: { title: 'Overview' } },
+			{ path: 'applications', component: AdminSchool },
+			{ path: 'students', component: PagePlaceholder, data: { title: 'Students' } },
+			{ path: 'schedules', component: PagePlaceholder, data: { title: 'Schedules' } },
+			{ path: 'messages', component: PagePlaceholder, data: { title: 'Messages' } },
+			{ path: 'reviews', component: PagePlaceholder, data: { title: 'Reviews' } },
+		]
 	},
 	{
 		path: 'platform-admin',
