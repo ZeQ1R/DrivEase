@@ -11,6 +11,7 @@ import { NotificationService, AppNotification } from '../notifications/notificat
   styleUrl: './nav-bar.css',
 })
 export class NavBar {
+  
   private authService = inject(AuthService);
   private router = inject(Router);
   private notifications = inject(NotificationService);

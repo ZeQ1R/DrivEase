@@ -1,7 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
-// Temporary page used until each section is built.
 @Component({
   selector: 'app-page-placeholder',
   standalone: true,

@@ -13,7 +13,7 @@ import { PlatformAdmin } from './platform/platform-admin/platform-admin';
 import { InstructorPlatform } from './instructor-platform/instructor-platform';
 import { ForgotPassword } from './auth/forgot-password/forgot-password';
 import { ResetPassword } from './auth/reset-password/reset-password';
-import { SchoolAdminLayout } from './admin-school/layout/school-admin-layout/school-admin-layout';
+import { AdminSchoolLayout } from './admin-school/admin-school-layout/admin-school-layout/admin-school-layout';
 import { PagePlaceholder } from './admin-school/pages/placeholder/page-placeholder';
 import { NotFound } from './shared/not-found/not-found';
 
@@ -64,9 +64,9 @@ export const routes: Routes = [
 		canActivate: [authGuard, roleGuard('student')],
 		title: 'DrivEase - Register School'
 	},
-	{
+		{
 		path: 'school-admin-dashboard',
-		component: SchoolAdminLayout,
+		component: AdminSchoolLayout,
 		canActivate: [authGuard, roleGuard('school_admin')],
 		title: 'DrivEase - School Admin',
 		children: [

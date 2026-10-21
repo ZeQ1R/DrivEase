@@ -475,6 +475,12 @@
       />
     </div>
 
+    @if(isInvalid('postalCode')){
+      <p class="error">
+        Postal Code must be exactly 4 digits.
+      </p>
+    }
+
     <div class="field">
       <label>Identity document</label>
 

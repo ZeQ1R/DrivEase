@@ -5,11 +5,13 @@ import { AdminRegistration, AdminSchoolService, Instructor } from '../admin-scho
 import { LaneDivider } from '../../shared/lane-divider/lane-divider';
 import { ConfirmBox } from '../../shared/confirm-box/confirm-box';
 import { EmptyState } from '../../shared/empty-state/empty-state';
+import {MatSidenavModule} from '@angular/material/sidenav';
+
 
 @Component({
   selector: 'app-admin-school',
   standalone: true,
-  imports: [CommonModule, DatePipe, FormsModule, LaneDivider, ConfirmBox,EmptyState],
+  imports: [CommonModule, DatePipe, FormsModule, NavBar, LaneDivider, ConfirmBox,EmptyState,MatSidenavModule],
   templateUrl: './admin-school.html',
   styleUrl: './admin-school.css',
 })
