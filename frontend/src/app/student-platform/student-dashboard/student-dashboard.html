@@ -33,6 +33,8 @@
             <div class="status-note">
               @if (registration.status === 'pending') {
                 <p>Your application is being reviewed by <strong>{{ registration.school_name }}</strong>. You'll be notified once it's processed.</p>
+              } @else if (registration.status === 'completed') {
+                <p class="success">🏆 You completed your training at <strong>{{ registration.school_name }}</strong>. Want another license category? <a routerLink="/browse">Register again</a>.</p>
               } @else if (registration.status === 'approved') {
                 <p class="success">✓ You're now enrolled at <strong>{{ registration.school_name }}</strong>. Welcome aboard!</p>
                 @if (registration.instructor_first_name) {
@@ -47,6 +49,18 @@
           <app-empty-state title="No Active Registration" message="Browse driving schools to get started " />
         }
       </div>
+
+      @if (history().length > 1) {
+        <div class="status-card">
+          <div class="status-card-header"><h2>My Registrations</h2></div>
+          @for (h of history(); track h.id) {
+            <div class="status-note">
+              <p><strong>{{ h.school_name }}</strong> · Category {{ h.licenseCategory || '—' }} · {{ h.registered_at | date:'mediumDate' }}
+              <span class="status-pill" [class]="h.status === 'approved' ? 'enrolled' : h.status">{{ h.status === 'approved' ? 'enrolled' : h.status }}</span></p>
+            </div>
+          }
+        </div>
+      }
 
       <button type="button" class="milestone toggle" [class.done]="registration()?.medical_done" (click)="toggleMedical()">
                 <span class="ms-box" [class.checked]="registration()?.medical_done">{{ registration()?.medical_done ? '✓' : '' }}</span>

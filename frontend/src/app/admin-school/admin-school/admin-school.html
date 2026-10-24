@@ -115,7 +115,7 @@
             <div class="an-ring" [style.--p]="completionRate()">
               <span class="an-ring-num">{{ completionRate() }}<small>%</small></span>
             </div>
-            <p class="an-rate-note">{{ finishedCount() }} of {{ approvedCount() }} enrolled students finished</p>
+            <p class="an-rate-note">{{ finishedCount() }} of {{ approvedCount() + finishedCount() }} enrolled students finished</p>
           </div>
 
           <div class="an-card an-funnel">
@@ -144,7 +144,7 @@
 
     <div class="sa-stats">
       <div class="stat-box"><span class="stat-num">{{ pendingCount() }}</span><span class="stat-label">Pending</span></div>
-      <div class="stat-box"><span class="stat-num">{{ approvedCount() }}</span><span class="stat-label">Approved</span></div>
+      <div class="stat-box"><span class="stat-num">{{ approvedCount() }}</span><span class="stat-label">Enrolled</span></div>
       <div class="stat-box rejected"><span class="stat-num">{{ rejectedCount() }}</span><span class="stat-label">Rejected</span></div>
       <div class="stat-box finished"><span class="stat-num">{{ finishedCount() }}</span><span class="stat-label">Completed</span></div>
       <!-- <div class="stat-box"><span class="stat-num">{{ finishedCount()}}</span><span class="stat-label">Finished</span></div> -->
@@ -260,7 +260,7 @@
                   </div>
                 }
 
-                @if (finished(reg)) {
+                @if (readyToComplete(reg)) {
                   <div class="finished-banner">
                     <span class="finished-icon">🏆</span>
                     <div>
@@ -269,6 +269,7 @@
                         All {{ reg.required_theory_hours }} theory and {{ reg.required_hours }} practical hours done — ready for the driving test.
                       </span>
                     </div>
+                    <button class="accept-btn" (click)="completeTraining(reg)">Mark as Completed</button>
                   </div>
                 } @else if (reg.instructor_id) {
                   <p class="phase-note done">✓ Practical phase — instructor <strong>{{ reg.instructor_first_name }} {{ reg.instructor_last_name }}</strong></p>
@@ -289,9 +290,15 @@
                   <p class="phase-note">Completing theory classes…</p>
                 }
               </div>
-            }@else if(reg.status === 'finished'){
+            }@else if (reg.status === 'completed') {
               <div class="approve-block">
-                <span>{{reg.first_name}} - {{reg.last_name}}</span>
+                <div class="finished-banner">
+                  <span class="finished-icon">🏆</span>
+                  <div>
+                    <p class="finished-title">Training completed</p>
+                    <span class="finished-sub">Category {{ reg.licenseCategory }} finished. The student can register for another category.</span>
+                  </div>
+                </div>
               </div>
             }
           </div>
