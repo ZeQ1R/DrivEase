@@ -11,7 +11,7 @@ import {MatSidenavModule} from '@angular/material/sidenav';
 @Component({
   selector: 'app-admin-school',
   standalone: true,
-  imports: [CommonModule, DatePipe, FormsModule, NavBar, LaneDivider, ConfirmBox,EmptyState,MatSidenavModule],
+  imports: [CommonModule, DatePipe, FormsModule, ConfirmBox,EmptyState,MatSidenavModule],
   templateUrl: './admin-school.html',
   styleUrl: './admin-school.css',
 })

@@ -1,0 +1,55 @@
+:host { display: block; }
+
+.page-title { margin: 0 0 24px; font-size: 26px; font-weight: 700; color: #1c1f26; }
+
+/* ---------- Stat cards ---------- */
+.stats { display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px; margin-bottom: 32px; }
+.stat { display: flex; justify-content: space-between; align-items: flex-start; background: #fff; border: 1px solid #e6e8ec; border-radius: 10px; padding: 20px; }
+.stat-text { display: flex; flex-direction: column; gap: 8px; }
+.stat-label { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: #8a90a0; }
+.stat-num { font-size: 30px; font-weight: 700; color: #1c1f26; line-height: 1; }
+.stat-icon { width: 40px; height: 40px; border-radius: 8px; display: grid; place-items: center; }
+.stat-icon svg { width: 20px; height: 20px; }
+.stat-icon.blue   { background: #e8eef7; color: #234e8c; }
+.stat-icon.yellow { background: #fdf1cf; color: #b8860b; }
+.stat-icon.green  { background: #dcf5e8; color: #1f9d6a; }
+.stat-icon.gray   { background: #ececec; color: #4a5060; }
+.stat-icon.red    { background: #fbe4e1; color: #d14b3d; }
+
+/* ---------- Panels ---------- */
+.panels { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.panel { background: #fff; border: 1px solid #e6e8ec; border-radius: 10px; padding: 24px; min-height: 300px; }
+.panel h2 { margin: 0 0 24px; font-size: 16px; font-weight: 600; color: #1c1f26; }
+
+/* ---------- Donut ---------- */
+.donut-wrap { display: flex; flex-direction: column; align-items: center; gap: 24px; }
+.donut { width: 180px; height: 180px; border-radius: 50%; display: grid; place-items: center; }
+.donut-hole { width: 112px; height: 112px; border-radius: 50%; background: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.donut-hole strong { font-size: 26px; color: #1c1f26; line-height: 1; }
+.donut-hole span { font-size: 11px; color: #8a90a0; text-transform: uppercase; letter-spacing: .08em; margin-top: 4px; }
+
+.legend { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 20px; font-size: 13px; color: #4a5060; }
+.legend li { display: flex; align-items: center; gap: 6px; }
+.legend b { color: #1c1f26; }
+.dot { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
+.dot.pending   { background: #ffc93c; }
+.dot.approved  { background: #234e8c; }
+.dot.completed { background: #1f9d6a; }
+.dot.rejected  { background: #d14b3d; }
+
+/* ---------- Recent list ---------- */
+.recent { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.recent-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; border: 1px solid #eef0f3; border-radius: 8px; background: #fcfcfd; }
+.recent-name { font-size: 14px; font-weight: 600; color: #1c1f26; }
+
+.pill { font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 4px; text-transform: capitalize; }
+.pill.pending   { background: #fdf1cf; color: #a67c00; }
+.pill.approved  { background: #e3ebf7; color: #234e8c; }
+.pill.completed { background: #dcf5e8; color: #1f9d6a; }
+.pill.rejected  { background: #fbe4e1; color: #d14b3d; }
+
+.empty { color: #8a90a0; font-size: 14px; }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1200px) { .stats { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 900px)  { .stats { grid-template-columns: repeat(2, 1fr); } .panels { grid-template-columns: 1fr; } }

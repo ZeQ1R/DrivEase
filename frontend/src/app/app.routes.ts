@@ -16,6 +16,7 @@ import { ResetPassword } from './auth/reset-password/reset-password';
 import { AdminSchoolLayout } from './admin-school/admin-school-layout/admin-school-layout/admin-school-layout';
 import { PagePlaceholder } from './admin-school/pages/placeholder/page-placeholder';
 import { NotFound } from './shared/not-found/not-found';
+import { Overview } from './admin-school/pages/overview/overview';
 
 export const routes: Routes = [
 	{
@@ -71,7 +72,7 @@ export const routes: Routes = [
 		title: 'DrivEase - School Admin',
 		children: [
 			{ path: '', redirectTo: 'applications', pathMatch: 'full' },
-			{ path: 'overview', component: PagePlaceholder, data: { title: 'Overview' } },
+			{ path: 'overview', component: Overview, data: { title: 'Overview' } },
 			{ path: 'applications', component: AdminSchool },
 			{ path: 'students', component: PagePlaceholder, data: { title: 'Students' } },
 			{ path: 'schedules', component: PagePlaceholder, data: { title: 'Schedules' } },
