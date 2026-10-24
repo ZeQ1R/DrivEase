@@ -1,1 +1,89 @@
-<p>overview works!</p>
+<h1 class="page-title">School overview</h1>
+
+<section class="stats">
+  <div class="stat">
+    <div class="stat-text">
+      <span class="stat-label">Students</span>
+      <span class="stat-num">{{ registrations().length }}</span>
+    </div>
+    <span class="stat-icon blue">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14.5a6.5 6.5 0 0 1 3.5 5.5"/></svg>
+    </span>
+  </div>
+
+  <div class="stat">
+    <div class="stat-text">
+      <span class="stat-label">Pending</span>
+      <span class="stat-num">{{ pendingCount() }}</span>
+    </div>
+    <span class="stat-icon yellow">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+    </span>
+  </div>
+
+  <div class="stat">
+    <div class="stat-text">
+      <span class="stat-label">Active</span>
+      <span class="stat-num">{{ approvedCount() }}</span>
+    </div>
+    <span class="stat-icon green">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10 12 5 2 10l10 5z"/><path d="M6 12v5c3 2 9 2 12 0v-5"/></svg>
+    </span>
+  </div>
+
+  <div class="stat">
+    <div class="stat-text">
+      <span class="stat-label">Completed</span>
+      <span class="stat-num">{{ finishedCount() }}</span>
+    </div>
+    <span class="stat-icon gray">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 4.5-5"/></svg>
+    </span>
+  </div>
+
+  <div class="stat">
+    <div class="stat-text">
+      <span class="stat-label">Rejected</span>
+      <span class="stat-num">{{ rejectedCount() }}</span>
+    </div>
+    <span class="stat-icon red">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m15 9-6 6M9 9l6 6"/></svg>
+    </span>
+  </div>
+</section>
+
+<section class="panels">
+  <div class="panel">
+    <h2>Applications by status</h2>
+    <div class="donut-wrap">
+      <div class="donut" [style.background]="donutStyle()">
+        <div class="donut-hole">
+          <strong>{{ registrations().length }}</strong>
+          <span>total</span>
+        </div>
+      </div>
+      <ul class="legend">
+        <li><i class="dot pending"></i>Pending <b>{{ pendingCount() }}</b></li>
+        <li><i class="dot approved"></i>Enrolled <b>{{ approvedCount() }}</b></li>
+        <li><i class="dot completed"></i>Completed <b>{{ finishedCount() }}</b></li>
+        <li><i class="dot rejected"></i>Rejected <b>{{ rejectedCount() }}</b></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>Recent applications</h2>
+    @if (registrations().length > 0) {
+      <ul class="recent">
+        @for (r of registrations().slice(0, 5); track r.id) {
+          <li class="recent-row">
+            <span class="recent-name">{{ r.first_name }} {{ r.last_name }}</span>
+            <span class="pill" [class]="r.status">{{ r.status === 'approved' ? 'enrolled' : r.status }}</span>
+          </li>
+        }
+      </ul>
+    } @else {
+      <p class="empty">No applications yet.</p>
+    }
+  </div>
+</section>
