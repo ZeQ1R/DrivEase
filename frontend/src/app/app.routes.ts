@@ -17,6 +17,7 @@ import { AdminSchoolLayout } from './admin-school/admin-school-layout/admin-scho
 import { PagePlaceholder } from './admin-school/pages/placeholder/page-placeholder';
 import { NotFound } from './shared/not-found/not-found';
 import { Overview } from './admin-school/pages/overview/overview';
+import { Applications } from './admin-school/pages/applications/applications';
 
 export const routes: Routes = [
 	{
@@ -73,7 +74,7 @@ export const routes: Routes = [
 		children: [
 			{ path: '', redirectTo: 'applications', pathMatch: 'full' },
 			{ path: 'overview', component: Overview, data: { title: 'Overview' } },
-			{ path: 'applications', component: AdminSchool },
+			{ path: 'applications', component: Applications, data: {title: 'Applications'} },
 			{ path: 'students', component: PagePlaceholder, data: { title: 'Students' } },
 			{ path: 'schedules', component: PagePlaceholder, data: { title: 'Schedules' } },
 			{ path: 'messages', component: PagePlaceholder, data: { title: 'Messages' } },
