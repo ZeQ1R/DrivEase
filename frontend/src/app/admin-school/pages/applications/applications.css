@@ -1,0 +1,41 @@
+:host { display: block; }
+
+.page-title { margin: 0 0 4px; font-size: 26px; font-weight: 700; color: #1c1f26; }
+.school-name { margin: 0 0 24px; color: #6b7a99; font-size: 14px; }
+.message { background: #e8eef7; color: #234e8c; padding: 10px 14px; border-radius: 8px; font-size: 14px; margin: 0 0 16px; }
+
+.app-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+.app-card { background: #fff; border: 1px solid #e6e8ec; border-radius: 10px; padding: 18px 20px; }
+.app-row { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
+
+.app-info { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.app-name { font-size: 15px; font-weight: 600; color: #1c1f26; }
+.app-meta { font-size: 13px; color: #6b7a99; }
+
+.app-right { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+.pill { font-size: 12px; font-weight: 600; padding: 5px 12px; border-radius: 6px; text-transform: capitalize; white-space: nowrap; margin-right: 4px; }
+.pill.pending   { background: #fdf1cf; color: #a67c00; }
+.pill.approved  { background: #e3ebf7; color: #234e8c; }
+.pill.completed { background: #dcf5e8; color: #1f9d6a; }
+.pill.rejected  { background: #fbe4e1; color: #d14b3d; }
+
+.btn { font-family: inherit; font-size: 13px; font-weight: 600; padding: 7px 14px; border-radius: 6px; border: 1px solid transparent; cursor: pointer; transition: background .15s, border-color .15s; }
+.btn.accept { background: #234e8c; color: #fff; }
+.btn.accept:hover { background: #1b3d70; }
+.btn.reject { background: #fff; color: #d14b3d; border-color: #f0c4be; }
+.btn.reject:hover { background: #fbe4e1; }
+.btn.ghost { background: #fff; color: #4a5060; border-color: #e6e8ec; }
+.btn.ghost:hover { background: #f1f2f5; }
+.btn.danger { background: #fff; color: #8a90a0; border-color: #e6e8ec; }
+.btn.danger:hover { color: #d14b3d; border-color: #f0c4be; background: #fbe4e1; }
+
+.edit-form { margin-top: 16px; padding-top: 16px; border-top: 1px solid #eef0f3; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px 16px; }
+.field { display: flex; flex-direction: column; gap: 4px; }
+.field label { font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: #8a90a0; }
+.field input { padding: 9px 11px; border: 1px solid #e6e8ec; border-radius: 6px; font-size: 14px; font-family: inherit; }
+.field input:focus { outline: none; border-color: #234e8c; }
+.edit-actions { grid-column: 1 / -1; display: flex; justify-content: flex-end; gap: 8px; }
+
+.empty { background: #fff; border: 1px dashed #d5dae2; border-radius: 10px; padding: 48px 20px; text-align: center; color: #8a90a0; }
+.empty p { margin: 0; font-size: 14px; }

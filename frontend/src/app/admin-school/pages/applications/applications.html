@@ -1,0 +1,63 @@
+<h1 class="page-title">Applications</h1>
+<p class="school-name">{{ schoolName() }}</p>
+
+@if (message()) { <p class="message">{{ message() }}</p> }
+
+@if (registrations().length > 0) {
+  <ul class="app-list">
+    @for (r of registrations(); track r.id) {
+      <li class="app-card">
+
+        <div class="app-row">
+          <div class="app-info">
+            <strong class="app-name">{{ r.first_name }} {{ r.last_name }}</strong>
+            <span class="app-meta">Class {{ r.licenseCategory || '—' }} · {{ r.email }}</span>
+          </div>
+
+          <div class="app-right">
+            <span class="pill" [class]="r.status">
+              {{ r.status === 'approved' ? 'enrolled' : r.status }}
+            </span>
+
+            @if (r.status === 'pending') {
+              <button class="btn reject" (click)="setStatus(r, 'rejected')">Reject</button>
+              <button class="btn accept" (click)="setStatus(r, 'approved')">Accept</button>
+            }
+            <button class="btn ghost" (click)="startEdit(r)">Edit</button>
+            <button class="btn danger" (click)="askDelete(r)">Delete</button>
+          </div>
+        </div>
+
+        @if (editingId() === r.id) {
+          <form class="edit-form" (ngSubmit)="saveEdit(r.id)">
+            <div class="field"><label>First name</label><input [(ngModel)]="editForm.firstName" name="firstName" /></div>
+            <div class="field"><label>Last name</label><input [(ngModel)]="editForm.lastName" name="lastName" /></div>
+            <div class="field"><label>Email</label><input [(ngModel)]="editForm.email" name="email" /></div>
+            <div class="field"><label>Phone</label><input [(ngModel)]="editForm.phone" name="phone" /></div>
+            <div class="field"><label>Address</label><input [(ngModel)]="editForm.address" name="address" /></div>
+            <div class="field"><label>Postal code</label><input [(ngModel)]="editForm.postalCode" name="postalCode" /></div>
+            <div class="field"><label>EMBG</label><input [(ngModel)]="editForm.embg" name="embg" /></div>
+            <div class="field"><label>Category</label><input [(ngModel)]="editForm.licenseCategory" name="licenseCategory" /></div>
+            <div class="edit-actions">
+              <!-- <button type="button" class="btn ghost" (click)="cancelEdit()">Cancel</button> -->
+              <button type="submit" class="btn accept">Save</button>
+            </div>
+          </form>
+        }
+
+      </li>
+    }
+  </ul>
+} @else {
+  <div class="empty"><p>No applications yet.</p></div>
+}
+
+@if (confirmTarget(); as t) {
+  <app-confirm-box
+    [message]="'Delete the application of ' + t.first_name + ' ' + t.last_name + '?'"
+    confirmText="Delete"
+    cancelText="Cancel"
+    (yes)="confirmDelete()"
+    (no)="cancelDelete()">
+  </app-confirm-box>
+}
