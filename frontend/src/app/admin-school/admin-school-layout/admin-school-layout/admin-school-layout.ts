@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { AuthService } from '../../../auth/auth.service';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { NotificationService } from '../../../shared/notifications/notification.service';
@@ -17,6 +17,7 @@ export class AdminSchoolLayout implements OnInit{
 
   user = this.auth.getCurrentUser()
   unread = this.notifications.unread
+  menuOpen = signal(false)
 
   navItems: NavItem[] = [
     {label: 'Overview', path:'overview', icon: 'overview'},
@@ -36,6 +37,19 @@ export class AdminSchoolLayout implements OnInit{
     return u ? `${u.firstName?.[0] ?? ''}`.toUpperCase(): '?'
   }
 
+  get currentPage() {
+  const parts = this.router.url.split('?')[0].split('/'); 
+  const seg = parts[2] || 'overview';
+  return seg.charAt(0).toUpperCase() + seg.slice(1);
+}
+
+  toggleMenu (){
+    this.menuOpen.update(v => !v)
+  }
+
+  closeMenu(){
+    this.menuOpen.set(false)
+  }
   logout(){
     this.auth.logout()
     this.router.navigate(['/login'])

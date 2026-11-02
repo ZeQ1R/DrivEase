@@ -6,7 +6,6 @@ import { BrowseSchool } from './browsing/browse-school/browse-school';
 import { BrowsingSchools } from './browsing/browsing-schools/browsing-schools';
 import { StudentDashboard } from './student-platform/student-dashboard/student-dashboard';
 import { RegisterSchool } from './auth/register-school/register-school';
-import { AdminSchool } from './admin-school/admin-school/admin-school';
 import { authGuard } from './auth/auth.guard';
 import { roleGuard } from './auth/role.guard';
 import { PlatformAdmin } from './platform/platform-admin/platform-admin';
@@ -18,6 +17,8 @@ import { PagePlaceholder } from './admin-school/pages/placeholder/page-placehold
 import { NotFound } from './shared/not-found/not-found';
 import { Overview } from './admin-school/pages/overview/overview';
 import { Applications } from './admin-school/pages/applications/applications';
+import { Students } from './admin-school/students/students';
+import { ApplicationDetail } from './admin-school/application-detail/application-detail';
 
 export const routes: Routes = [
 	{
@@ -75,7 +76,8 @@ export const routes: Routes = [
 			{ path: '', redirectTo: 'applications', pathMatch: 'full' },
 			{ path: 'overview', component: Overview, data: { title: 'Overview' } },
 			{ path: 'applications', component: Applications, data: {title: 'Applications'} },
-			{ path: 'students', component: PagePlaceholder, data: { title: 'Students' } },
+			{ path: 'students', component: Students, data: { title: 'Students' } },
+			{ path: 'applications/:id', component: ApplicationDetail, data : {title: 'Student-Detail'} },
 			{ path: 'schedules', component: PagePlaceholder, data: { title: 'Schedules' } },
 			{ path: 'messages', component: PagePlaceholder, data: { title: 'Messages' } },
 			{ path: 'reviews', component: PagePlaceholder, data: { title: 'Reviews' } },

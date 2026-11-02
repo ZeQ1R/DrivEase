@@ -1,63 +1,141 @@
-<h1 class="page-title">Applications</h1>
-<p class="school-name">{{ schoolName() }}</p>
+<header class="head">
+  <div>
+    <small class="eyebrow">{{ schoolName() | uppercase }}</small>
+    <h1>A new journey needs your review.</h1>
+    <p class="sub">Review applications and keep every enrolment decision in one place.</p>
+  </div>
+  @if (nextPending(); as next) {
+    <a class="cta" [routerLink]="['/school-admin-dashboard/applications', next.id]">Review next application <span>→</span></a>
+  }
+</header>
 
-@if (message()) { <p class="message">{{ message() }}</p> }
+<section class="stats">
+  <div class="stat highlight">
+    <span class="stat-label">Pending review</span>
+    <b>{{ pendingCount() }}</b>
+    <small>
+      @if (nextPending(); as n) { Submitted {{ n.registered_at | date:'d MMMM' }} } @else { Nothing waiting }
+    </small>
+  </div>
+  <div class="stat">
+    <span class="stat-label">Approved</span>
+    <b>{{ approvedCount() }}</b>
+    <small>Enrolled students</small>
+  </div>
+  <div class="stat">
+    <span class="stat-label">Rejected</span>
+    <b>{{ rejectedCount() }}</b>
+    <small>{{ rejectedCount() === 0 ? 'No rejected applications' : 'Not enrolled' }}</small>
+  </div>
+  <div class="stat">
+    <span class="stat-label">Total</span>
+    <b>{{ totalCount() }}</b>
+    <small>All applications</small>
+  </div>
+</section>
 
-@if (registrations().length > 0) {
-  <ul class="app-list">
-    @for (r of registrations(); track r.id) {
-      <li class="app-card">
+@if (nextPending(); as n) {
+  <div class="banner">
+    <strong>Licence verification is the next step</strong>
+    <p>{{ n.first_name }} {{ n.last_name }}'s application is ready to open. Check the submitted licence information before making an enrolment decision.</p>
+  </div>
+}
 
-        <div class="app-row">
-          <div class="app-info">
-            <strong class="app-name">{{ r.first_name }} {{ r.last_name }}</strong>
-            <span class="app-meta">Class {{ r.licenseCategory || '—' }} · {{ r.email }}</span>
-          </div>
+<section class="card">
+  <h2>Application queue</h2>
+  <p class="hint">All applications · {{ schoolName() }}</p>
 
-          <div class="app-right">
-            <span class="pill" [class]="r.status">
-              {{ r.status === 'approved' ? 'enrolled' : r.status }}
-            </span>
+  <div class="tabs">
+    <button [class.active]="activeTab() === 'pending'" (click)="setTab('pending')">Pending <span>{{ pendingCount() }}</span></button>
+    <button [class.active]="activeTab() === 'approved'" (click)="setTab('approved')">Approved <span>{{ approvedCount() }}</span></button>
+    <button [class.active]="activeTab() === 'rejected'" (click)="setTab('rejected')">Rejected <span>{{ rejectedCount() }}</span></button>
+    <button [class.active]="activeTab() === 'all'" (click)="setTab('all')">All <span>{{ totalCount() }}</span></button>
+  </div>
 
-            @if (r.status === 'pending') {
-              <button class="btn reject" (click)="setStatus(r, 'rejected')">Reject</button>
-              <button class="btn accept" (click)="setStatus(r, 'approved')">Accept</button>
-            }
-            <button class="btn ghost" (click)="startEdit(r)">Edit</button>
-            <button class="btn danger" (click)="askDelete(r)">Delete</button>
-          </div>
-        </div>
+  <div class="toolbar">
+    <div class="search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      <input type="text" placeholder="Search applicant name or email" (input)="search.set($any($event.target).value)" />
+    </div>
+    <div class="selects">
+      <select class="select" (change)="course.set($any($event.target).value)">
+        <option value="">All courses</option>
+        @for (c of courses(); track c) { <option [value]="c">Category {{ c }}</option> }
+      </select>
+      <select class="select" (change)="sort.set($any($event.target).value)">
+        <option value="newest">Newest first</option>
+        <option value="oldest">Oldest first</option>
+      </select>
+    </div>
+  </div>
 
-        @if (editingId() === r.id) {
-          <form class="edit-form" (ngSubmit)="saveEdit(r.id)">
-            <div class="field"><label>First name</label><input [(ngModel)]="editForm.firstName" name="firstName" /></div>
-            <div class="field"><label>Last name</label><input [(ngModel)]="editForm.lastName" name="lastName" /></div>
-            <div class="field"><label>Email</label><input [(ngModel)]="editForm.email" name="email" /></div>
-            <div class="field"><label>Phone</label><input [(ngModel)]="editForm.phone" name="phone" /></div>
-            <div class="field"><label>Address</label><input [(ngModel)]="editForm.address" name="address" /></div>
-            <div class="field"><label>Postal code</label><input [(ngModel)]="editForm.postalCode" name="postalCode" /></div>
-            <div class="field"><label>EMBG</label><input [(ngModel)]="editForm.embg" name="embg" /></div>
-            <div class="field"><label>Category</label><input [(ngModel)]="editForm.licenseCategory" name="licenseCategory" /></div>
-            <div class="edit-actions">
-              <!-- <button type="button" class="btn ghost" (click)="cancelEdit()">Cancel</button> -->
-              <button type="submit" class="btn accept">Save</button>
-            </div>
-          </form>
+  @if (filtered().length > 0) {
+    <table class="table">
+      <thead>
+        <tr><th>Applicant</th><th>Course &amp; submitted</th><th>Review status</th></tr>
+      </thead>
+      <tbody>
+        @for (r of filtered(); track r.id) {
+          <tr tabindex="0" (click)="open(r)" (keydown.enter)="open(r)">
+            <td data-label="Applicant">
+              <div class="person">
+                <span class="mini-avatar">{{ initials(r) }}</span>
+                <div><strong>{{ r.first_name }} {{ r.last_name }}</strong><small>{{ r.email }}</small></div>
+              </div>
+            </td>
+            <td data-label="Course">
+              <span>Category {{ r.licenseCategory || '—' }}</span>
+              <small>{{ r.registered_at | date:'d MMM y · HH:mm' }}</small>
+            </td>
+            <td data-label="Status">
+              <span class="tag" [class]="reviewStatus(r).cls">{{ reviewStatus(r).tag }}</span>
+              <small>{{ reviewStatus(r).sub }}</small>
+            </td>
+          </tr>
         }
+      </tbody>
+    </table>
 
-      </li>
+    <div class="foot">
+      <span>{{ filtered().length }} application{{ filtered().length === 1 ? '' : 's' }} shown</span>
+      <span>Showing {{ filtered().length }} of {{ totalCount() }}</span>
+    </div>
+  } @else {
+    <p class="empty">No applications match this view.</p>
+  }
+</section>
+
+<div class="bottom">
+  <section class="card">
+    <h2>A thoughtful review, every time</h2>
+    <p class="hint">Before approving a new enrolment</p>
+    <ol class="steps">
+      <li><span>1</span>Confirm the requested course and applicant information.</li>
+      <li><span>2</span>Review submitted documents and licence eligibility.</li>
+      <li><span>3</span>Approve the application, or record a rejection.</li>
+    </ol>
+  </section>
+
+  <section class="card">
+    <h2>Latest application activity</h2>
+    @if (latest(); as l) {
+      <div class="act">
+        <span class="act-icon">📄</span>
+        <div class="act-text">
+          <strong>Application received</strong>
+          <small>{{ l.first_name }} {{ l.last_name }} · Category {{ l.licenseCategory || '—' }}</small>
+        </div>
+        <small>{{ l.registered_at | date:'d MMM' }}</small>
+      </div>
+      <hr />
+      <p class="muted">
+        {{ l.status === 'pending'
+          ? 'No decision has been recorded. ' + l.first_name + ' remains a pending applicant, not an active enrolment.'
+          : l.first_name + "'s application has been " + (l.status === 'rejected' ? 'rejected.' : 'approved.') }}
+      </p>
+      <a class="btn" [routerLink]="['/school-admin-dashboard/students', l.id]">Open student record</a>
+    } @else {
+      <p class="muted">No applications have been received yet.</p>
     }
-  </ul>
-} @else {
-  <div class="empty"><p>No applications yet.</p></div>
-}
-
-@if (confirmTarget(); as t) {
-  <app-confirm-box
-    [message]="'Delete the application of ' + t.first_name + ' ' + t.last_name + '?'"
-    confirmText="Delete"
-    cancelText="Cancel"
-    (yes)="confirmDelete()"
-    (no)="cancelDelete()">
-  </app-confirm-box>
-}
+  </section>
+</div>

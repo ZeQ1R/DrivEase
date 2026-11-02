@@ -1,0 +1,268 @@
+@if (loading()) {
+  <p class="muted">Loading…</p>
+} @else if (student(); as s) {
+
+  @if (state() === 'pending' && !showRecord()) {
+
+    <!-- ============ REVIEW SCREEN ============ -->
+    <header class="head">
+      <div>
+        <small class="eyebrow">{{ schoolName() | uppercase }}</small>
+        <h1>Review {{ s.first_name }}'s application</h1>
+        <p class="sub">Category {{ s.licenseCategory || '—' }} · Submitted {{ s.registered_at | date:'d MMMM y' }} at {{ s.registered_at | date:'HH:mm' }}</p>
+      </div>
+      <a class="btn ghost" routerLink="/school-admin-dashboard/applications">Back to queue ←</a>
+    </header>
+
+    <div class="banner pending">
+      <strong>Pending review · Licence verification required</strong>
+      <p>No decision has been made. Review the information and document status below before approving an active enrolment.</p>
+    </div>
+
+    @if (message()) { <div class="banner rejected"><p>{{ message() }}</p></div> }
+
+    <div class="rv-grid">
+
+      <div class="col">
+        <section class="card">
+          <h2>Applicant information</h2>
+          <div class="rv-person">
+            <div class="who">
+              <span class="avatar small">{{ initials(s) }}</span>
+              <div><strong>{{ s.first_name }} {{ s.last_name }}</strong><small>{{ s.email }}</small></div>
+            </div>
+            <span class="tag pending">Pending review</span>
+          </div>
+          <hr />
+          <dl class="two">
+            <div><dt>Course requested</dt><dd>Category {{ s.licenseCategory || '—' }}</dd></div>
+            <div><dt>School</dt><dd>{{ schoolName() }}</dd></div>
+            <div><dt>Submitted</dt><dd>{{ s.registered_at | date:'d MMM y · HH:mm' }}</dd></div>
+            <div><dt>Date of birth</dt><dd>{{ s.date_of_birth | date:'d MMM y' }} @if (age(s) !== null) { <span class="muted">({{ age(s) }} years)</span> }</dd></div>
+            <div><dt>Phone</dt><dd>{{ s.phone || '—' }}</dd></div>
+            <div><dt>EMBG</dt><dd>{{ s.embg || '—' }}</dd></div>
+            <div><dt>Address</dt><dd>{{ s.address || '—' }}@if (s.postal_code) {, {{ s.postal_code }}}</dd></div>
+            <div><dt>Medical / First aid</dt><dd>{{ s.medical_done ? '✓ Done' : '✗ Not yet' }} / {{ s.first_aid_done ? '✓ Done' : '✗ Not yet' }}</dd></div>
+          </dl>
+          <p class="muted">No active enrolment has been created yet.</p>
+        </section>
+
+        <section class="card">
+          <h2>Documents &amp; verification</h2>
+          <p class="muted">Submitted files are awaiting review; their contents are not verified.</p>
+          <div class="doc-row">
+            <span class="act-icon">📄</span>
+            <div class="act-text">
+              <strong>ID document</strong>
+              <small>{{ s.id_document_url ? 'Submitted · Awaiting review' : 'Not uploaded' }}</small>
+            </div>
+            @if (s.id_document_url) {
+              <button type="button" class="btn ghost" (click)="openDocument(s)">Open document ↗</button>
+            }
+          </div>
+
+          <h3 class="spaced">Review checklist</h3>
+          <label class="check"><input type="checkbox" [checked]="checks()[0]" (change)="toggleCheck(0)" /> Applicant details match the submitted document</label>
+          <label class="check"><input type="checkbox" [checked]="checks()[1]" (change)="toggleCheck(1)" /> Licence category is suitable for Category {{ s.licenseCategory || '—' }}</label>
+          <label class="check"><input type="checkbox" [checked]="checks()[2]" (change)="toggleCheck(2)" /> Document is readable and valid for review</label>
+          <p class="muted">{{ allChecked() ? 'All checks complete.' : 'All checks are still open.' }}</p>
+        </section>
+
+        <section class="card">
+          <h2>Application timeline</h2>
+          <ul class="activity">
+            <li>
+              <span class="act-icon">📄</span>
+              <div class="act-text"><strong>Application submitted</strong><small>{{ s.first_name }} {{ s.last_name }} · Licence verification pending</small></div>
+              <small>{{ s.registered_at | date:'d MMM, HH:mm' }}</small>
+            </li>
+          </ul>
+        </section>
+      </div>
+
+      <div class="col">
+        <section class="card">
+          <h2>Your review</h2>
+          <span class="tag pending">Decision not recorded</span>
+          <p class="muted spaced">Complete the document checks, then choose the next step.</p>
+          <hr />
+          <div class="decision">
+            <button type="button" class="btn yellow" [disabled]="!allChecked() || busy()" (click)="decide('approved')">Approve application ✓</button>
+            <button type="button" class="btn ghost danger" [disabled]="busy()" (click)="confirmReject.set(true)">Reject application</button>
+          </div>
+          <p class="muted spaced">Approval creates an active enrolment and notifies {{ s.first_name }}. Rejecting also notifies the student.</p>
+        </section>
+
+        <section class="card">
+          <h2>Learning already started</h2>
+          <p class="muted">{{ s.theory_completed_hours }} theory hours completed so far. Progress stays with the student record while the application is pending.</p>
+          <button type="button" class="btn ghost spaced" (click)="showRecord.set(true)">View student record</button>
+        </section>
+      </div>
+    </div>
+
+    @if (confirmReject()) {
+      <app-confirm-box
+        [message]="'Reject the application of ' + s.first_name + ' ' + s.last_name + '?'"
+        confirmText="Reject"
+        cancelText="Cancel"
+        (yes)="decide('rejected')"
+        (no)="confirmReject.set(false)">
+      </app-confirm-box>
+    }
+
+  } @else {
+
+    <!-- ============ STUDENT RECORD ============ -->
+    <header class="head">
+      <div>
+        <small class="eyebrow">{{ schoolName() | uppercase }}</small>
+        <h1>{{ s.first_name }} {{ s.last_name }}</h1>
+        <p class="sub">Student record · Applied {{ s.registered_at | date:'d MMMM y' }}</p>
+      </div>
+      <div class="head-actions">
+        <a class="btn ghost" [href]="'mailto:' + s.email">Contact student ✉</a>
+        @if (s.status === 'pending') {
+          <button type="button" class="btn yellow" (click)="showRecord.set(false)">Review application →</button>
+        }
+      </div>
+    </header>
+
+    <div class="banner" [class]="'banner ' + banner().cls">
+      <strong>{{ banner().title }}</strong>
+      <p>{{ banner().text }}</p>
+    </div>
+
+    <div class="grid">
+
+      <div class="col">
+        <section class="card">
+          <h2>Student profile</h2>
+          <div class="who">
+            <span class="avatar">{{ initials(s) }}</span>
+            <div>
+              <strong>{{ s.first_name }} {{ s.last_name }}</strong>
+              <span class="tag" [class]="state()">{{ statusLabel() }}</span>
+            </div>
+          </div>
+          <dl>
+            <dt>Email address</dt><dd>{{ s.email }}</dd>
+            <dt>Course requested</dt><dd>Category {{ s.licenseCategory || '—' }}</dd>
+            <dt>School</dt><dd>{{ schoolName() }}</dd>
+          </dl>
+          <hr />
+          <dl>
+            <dt>Joined</dt><dd>{{ s.registered_at | date:'d MMMM y' }}</dd>
+            <dt>Enrolment</dt><dd>{{ state() === 'active' || state() === 'completed' ? statusLabel() : 'Not yet active' }}</dd>
+          </dl>
+        </section>
+
+        <section class="card">
+          <h2>Instructor relationship</h2>
+          @if (s.instructor_id) {
+            <div class="who">
+              <span class="avatar small">{{ (s.instructor_first_name?.[0] ?? '') + (s.instructor_last_name?.[0] ?? '') }}</span>
+              <div>
+                <strong>{{ s.instructor_first_name }} {{ s.instructor_last_name }}</strong>
+                <small>Practical instructor</small>
+              </div>
+            </div>
+            <span class="tag active">Assigned</span>
+          } @else {
+            <p class="muted">No instructor assigned yet. One can be assigned after the theory classes are complete.</p>
+            <span class="tag pending">Awaiting assignment</span>
+          }
+          <a class="btn ghost block" routerLink="/school-admin-dashboard/schedules">Manage instructor</a>
+        </section>
+      </div>
+
+      <div class="col">
+        <section class="card">
+          <div class="tabs">
+            <button [class.active]="tab() === 'overview'" (click)="tab.set('overview')">Learning overview</button>
+            <button [class.active]="tab() === 'application'" (click)="tab.set('application')">Application</button>
+          </div>
+
+          @if (tab() === 'overview') {
+            <div class="metrics">
+              <div>
+                <small class="label">THEORY PROGRESS</small>
+                <b>{{ theoryPercent() | number:'1.0-0' }}%</b>
+                <div class="bar"><div class="fill" [style.width.%]="theoryPercent()"></div></div>
+                <small>{{ s.theory_completed_hours }} / {{ s.required_theory_hours }} hours</small>
+              </div>
+              <div>
+                <small class="label">PRACTICAL PROGRESS</small>
+                <b>{{ practicalPercent() | number:'1.0-0' }}%</b>
+                <div class="bar"><div class="fill green" [style.width.%]="practicalPercent()"></div></div>
+                <small>{{ s.practical_completed_hours }} / {{ s.required_hours }} hours</small>
+              </div>
+            </div>
+            <hr />
+            <h3>
+              @switch (state()) {
+                @case ('pending') { Keep the first steps clear }
+                @case ('active') { Training in progress }
+                @case ('completed') { Ready for the driving test }
+                @default { No learning activity }
+              }
+            </h3>
+            <p class="muted">
+              @switch (state()) {
+                @case ('pending') { Progress is saved to this account. Practical scheduling and the full course plan follow the enrolment review. }
+                @case ('active') { {{ theoryDone(s) ? 'Theory is complete, so practical lessons come next.' : 'Theory classes are still being completed.' }} }
+                @case ('completed') { All required theory and practical hours are finished. }
+                @default { This application was not approved. }
+              }
+            </p>
+          }
+
+          @if (tab() === 'application') {
+            <dl class="two">
+              <div><dt>Phone</dt><dd>{{ s.phone || '—' }}</dd></div>
+              <div><dt>Date of birth</dt><dd>{{ s.date_of_birth | date:'d MMMM y' }}</dd></div>
+              <div><dt>EMBG</dt><dd>{{ s.embg || '—' }}</dd></div>
+              <div><dt>Address</dt><dd>{{ s.address || '—' }}, {{ s.postal_code }}</dd></div>
+              <div><dt>Category</dt><dd>{{ s.licenseCategory || '—' }}</dd></div>
+              <div><dt>Medical / First aid</dt><dd>{{ s.medical_done ? '✓' : '✗' }} / {{ s.first_aid_done ? '✓' : '✗' }}</dd></div>
+            </dl>
+            @if (s.id_document_url) {
+              <button class="btn ghost" (click)="openDocument(s)">View ID document ↗</button>
+            } @else {
+              <p class="muted">No ID document uploaded.</p>
+            }
+            @if (message()) { <p class="muted">{{ message() }}</p> }
+          }
+        </section>
+
+        <section class="card">
+          <h2>Learning activity</h2>
+          <ul class="activity">
+            <li>
+              <span class="act-icon">📄</span>
+              <div class="act-text">
+                <strong>Application submitted</strong>
+                <small>Category {{ s.licenseCategory || '—' }}</small>
+              </div>
+              <small>{{ s.registered_at | date:'d MMM, HH:mm' }}</small>
+            </li>
+            @if (s.status !== 'pending') {
+              <li>
+                <span class="act-icon">{{ s.status === 'rejected' ? '✖' : '✔' }}</span>
+                <div class="act-text">
+                  <strong>{{ s.status === 'rejected' ? 'Application rejected' : 'Application accepted' }}</strong>
+                  <small>Reviewed by your school</small>
+                </div>
+              </li>
+            }
+          </ul>
+          <p class="muted">Individual lessons will appear here once lesson bookings are connected to this page.</p>
+        </section>
+      </div>
+    </div>
+
+  }
+
+} @else {
+  <p class="muted">Student not found. <a routerLink="/school-admin-dashboard/students">Back to students</a></p>
+}
