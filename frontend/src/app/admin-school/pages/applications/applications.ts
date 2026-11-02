@@ -1,101 +1,90 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { DatePipe, UpperCasePipe } from '@angular/common';
+import { Router, RouterLink } from '@angular/router';
 import { AdminRegistration, AdminSchoolService } from '../../admin-school.service';
-import { FormsModule } from '@angular/forms';
-import { ConfirmBox } from '../../../shared/confirm-box/confirm-box';
+
+type Tab = 'pending' | 'approved' | 'rejected' | 'all';
 
 @Component({
   selector: 'app-applications',
-  imports: [FormsModule, ConfirmBox],
+  imports: [RouterLink, DatePipe, UpperCasePipe],
   templateUrl: './applications.html',
   styleUrl: './applications.css',
 })
-export class Applications implements OnInit{
+export class Applications implements OnInit {
+  private adminService = inject(AdminSchoolService);
+  private router = inject(Router);
 
-  private adminService = inject(AdminSchoolService)
+  registrations = signal<AdminRegistration[]>([]);
+  schoolName = signal('');
 
-  registrations = signal<AdminRegistration[]>([])
-  schoolName = signal('')
-  message = signal('')
-
-  editingId = signal<number | null>(null)
-  editForm = {firstName: '', lastName: '', email: '',phone: '',address: '', postalCode: '', embg: '',licenseCategory: ''}
-
-  confirmTarget = signal<AdminRegistration | null>(null)
+  activeTab = signal<Tab>('pending');
+  search = signal('');
+  course = signal('');
+  sort = signal<'newest' | 'oldest'>('newest');
 
   ngOnInit() {
     this.adminService.getRegistrations().subscribe({
       next: (res) => {
-        this.schoolName.set(res.schoolName)
-        this.registrations.set(res.registrations)
+        this.schoolName.set(res.schoolName);
+        this.registrations.set(res.registrations);
       },
-      error: (err) => console.error("Failed to load registrations", err)
-    })
+      error: (err) => console.error('Failed to load registrations', err),
+    });
   }
 
-  setStatus(reg: AdminRegistration, status: 'approved' | 'rejected'){
-    this.message.set('')
-    this.adminService.updateStatus(reg.id,status).subscribe({
-      next: () => {
-        this.registrations.update(list => 
-          list.map(r => r.id === reg.id ? {...r, status, instructor_id: status === 'rejected' ? null : r.instructor_id} : r)
-        )
-      },
-      error : (err) => this.message.set(err.error?.message || `Failed to ${status === 'approved' ? 'accept' : 'reject'}`),
-    })
+  isApproved(r: AdminRegistration) { return r.status === 'approved' || r.status === 'completed'; }
+
+  pendingCount  = computed(() => this.registrations().filter(r => r.status === 'pending').length);
+  approvedCount = computed(() => this.registrations().filter(r => this.isApproved(r)).length);
+  rejectedCount = computed(() => this.registrations().filter(r => r.status === 'rejected').length);
+  totalCount    = computed(() => this.registrations().length);
+
+  courses = computed(() =>
+    [...new Set(this.registrations().map(r => r.licenseCategory).filter(Boolean))].sort()
+  );
+
+  nextPending = computed(() =>
+    this.registrations()
+      .filter(r => r.status === 'pending')
+      .sort((a, b) => +new Date(a.registered_at) - +new Date(b.registered_at))[0] ?? null
+  );
+
+  latest = computed(() =>
+    [...this.registrations()].sort((a, b) => +new Date(b.registered_at) - +new Date(a.registered_at))[0] ?? null
+  );
+
+  filtered = computed(() => {
+    const tab = this.activeTab();
+    const q = this.search().trim().toLowerCase();
+    const course = this.course();
+    const dir = this.sort() === 'newest' ? -1 : 1;
+
+    return this.registrations()
+      .filter(r => {
+        if (tab === 'pending' && r.status !== 'pending') return false;
+        if (tab === 'approved' && !this.isApproved(r)) return false;
+        if (tab === 'rejected' && r.status !== 'rejected') return false;
+        if (course && r.licenseCategory !== course) return false;
+        if (q && !`${r.first_name} ${r.last_name} ${r.email}`.toLowerCase().includes(q)) return false;
+        return true;
+      })
+      .sort((a, b) => dir * (+new Date(a.registered_at) - +new Date(b.registered_at)));
+  });
+
+  setTab(t: Tab) { this.activeTab.set(t); }
+
+  open(r: AdminRegistration) {
+    this.router.navigate(['/school-admin-dashboard/applications', r.id]);
   }
 
-  startEdit(reg: AdminRegistration){
-    this.editingId.set(reg.id)
-    this.editForm = {
-      firstName: reg.first_name, lastName: reg.last_name, email: reg.email,
-      phone: reg.phone || '', address: reg.address || '', postalCode: reg.postal_code || '',
-      embg: reg.embg || '', licenseCategory: reg.licenseCategory || '',
-    }
+  initials(r: AdminRegistration) {
+    return `${r.first_name?.[0] ?? ''}${r.last_name?.[0] ?? ''}`.toUpperCase();
   }
 
-  cancelEdit(reg: AdminRegistration){
-    this.editingId.set(null)
-  }
-
-  saveEdit(id: number){
-    const e = this.editForm
-    if(!e.firstName || !e.lastName || !e.email){
-      this.message.set('First name, last name and email are required')
-      return
-    }
-
-    this.adminService.updateRegistration(id, e).subscribe({
-      next: () => {
-        this.registrations.update(list => list.map(r => r.id === id ? {
-          ...r,
-          first_name: e.firstName, last_name: e.lastName, email: e.email, phone: e.phone,
-          address: e.address, postal_code: e.postalCode, embg:e.embg,licenseCategory: e.licenseCategory
-        }: r))
-        this.editingId.set(null)
-        this.message.set('Application updated.')
-      },
-      error: (err) => this.message.set(err.error?.message || 'Failed to update application.')
-    })
-  }
-
-  askDelete(reg:AdminRegistration){
-    this.confirmTarget.set(reg)
-  }
-
-  confirmDelete(){
-    const reg = this.confirmTarget()
-    this.confirmTarget.set(null)
-    if(!reg) return
-    this.adminService.deleteRegistration(reg.id).subscribe({
-      next: () => {
-        this.registrations.update(list => list.filter(r => r.id !== reg.id))
-        this.message.set('Application deleted')
-      },
-      error: (err) => this.message.set(err.error?.message || 'Failed to delete application')
-    })
-  }
-
-  cancelDelete() {
-    this.confirmTarget.set(null)
+  reviewStatus(r: AdminRegistration) {
+    if (r.status === 'pending') return { tag: 'Pending review', cls: 'pending', sub: 'Licence verification' };
+    if (r.status === 'rejected') return { tag: 'Rejected', cls: 'rejected', sub: 'Not enrolled' };
+    return { tag: 'Approved', cls: 'approved', sub: 'Enrolled' };
   }
 }

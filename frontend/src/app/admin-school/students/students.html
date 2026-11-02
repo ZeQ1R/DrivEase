@@ -1,0 +1,131 @@
+<header class="head">
+  <div>
+    <small class="eyebrow">YOUR DRIVING SCHOOL</small>
+    <h1>Every driver starts here.</h1>
+    <p class="sub">Find student records, follow learning progress and manage the next step.</p>
+  </div>
+</header>
+
+<section class="stats">
+  <div class="stat">
+    <span class="stat-label">Total students</span>
+    <b>{{ registrations().length }}</b>
+    <small>All applications and enrolments</small>
+  </div>
+  <div class="stat highlight">
+    <span class="stat-label">Pending applications</span>
+    <b>{{ pendingCount() }}</b>
+    <small>Waiting for your review</small>
+  </div>
+  <div class="stat">
+    <span class="stat-label">Active enrolments</span>
+    <b>{{ activeCount() }}</b>
+    <small>Currently in training</small>
+  </div>
+  <div class="stat">
+    <span class="stat-label">Theory hours completed</span>
+    <b>{{ theoryHours() }}</b>
+    <small>Across all students</small>
+  </div>
+</section>
+
+<section class="card">
+  <h2>Students</h2>
+  <p class="hint">Student accounts include applicants who are not yet enrolled.</p>
+
+  <div class="tabs">
+    <button [class.active]="activeTab() === 'all'" (click)="setTab('all')">All students <span>{{ registrations().length }}</span></button>
+    <button [class.active]="activeTab() === 'pending'" (click)="setTab('pending')">Pending <span>{{ pendingCount() }}</span></button>
+    <button [class.active]="activeTab() === 'active'" (click)="setTab('active')">Active <span>{{ activeCount() }}</span></button>
+    <button [class.active]="activeTab() === 'completed'" (click)="setTab('completed')">Completed <span>{{ completedCount() }}</span></button>
+  </div>
+
+  <div class="toolbar">
+    <div class="search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      <input type="text" placeholder="Search name or email" (input)="search.set($any($event.target).value)" />
+    </div>
+    <select class="select" (change)="instructorFilter.set($any($event.target).value)">
+      <option value="">All instructors</option>
+      @for (i of instructors(); track i.id) {
+        <option [value]="i.id">{{ i.name }}</option>
+      }
+    </select>
+  </div>
+
+  @if (filtered().length > 0) {
+    <table class="table">
+      <thead>
+        <tr><th>Student</th><th>Enrolment</th><th>Learning progress</th><th>Instructor</th><th>Action</th></tr>
+      </thead>
+      <tbody>
+        @for (r of filtered(); track r.id) {
+          <tr>
+            <td data-label="Student">
+              <div class="person">
+                <span class="mini-avatar">{{ initials(r) }}</span>
+                <div><strong>{{ r.first_name }} {{ r.last_name }}</strong><small>{{ r.email }}</small></div>
+              </div>
+            </td>
+
+            <td data-label="Enrolment">
+              <span class="tag" [class]="enrolment(r).cls">{{ enrolment(r).tag }}</span>
+              <small>{{ enrolment(r).sub }}</small>
+            </td>
+
+            <td data-label="Progress">
+              @if (progress(r); as p) {
+                <span class="prog-label">{{ p.label }} {{ p.percent | number:'1.0-0' }}%</span>
+                <div class="bar"><div class="fill" [style.width.%]="p.percent"></div></div>
+                <small>{{ p.text }}</small>
+              } @else {
+                <small>—</small>
+              }
+            </td>
+
+            <td data-label="Instructor">
+              @if (r.instructor_id) {
+                <strong class="instr">{{ r.instructor_first_name }} {{ r.instructor_last_name }}</strong>
+              } @else {
+                <small>Not assigned</small>
+              }
+            </td>
+
+            <td data-label="Action">
+              <a class="view-btn" [routerLink]="['/school-admin-dashboard/applications', r.id]">View student →</a>
+            </td>
+          </tr>
+
+          @if (expandedId() === r.id) {
+            <tr class="details-row">
+              <td colspan="5">
+                <div class="details">
+                  <div><small>Phone</small><span>{{ r.phone || '—' }}</span></div>
+                  <div><small>Date of birth</small><span>{{ r.date_of_birth | date:'mediumDate' }}</span></div>
+                  <div><small>EMBG</small><span>{{ r.embg || '—' }}</span></div>
+                  <div><small>Address</small><span>{{ r.address || '—' }}, {{ r.postal_code }}</span></div>
+                  <div><small>Category</small><span>{{ r.licenseCategory || '—' }}</span></div>
+                  <div><small>Applied</small><span>{{ r.registered_at | date:'mediumDate' }}</span></div>
+                </div>
+              </td>
+            </tr>
+          }
+        }
+      </tbody>
+    </table>
+
+    <p class="foot">Showing {{ filtered().length }} of {{ registrations().length }} students</p>
+  } @else {
+    <p class="empty">No students match your filters.</p>
+  }
+</section>
+
+@if (pendingCount() > 0) {
+  <section class="notice">
+    <div>
+      <strong>{{ pendingCount() }} application{{ pendingCount() === 1 ? ' is' : 's are' }} waiting for a first review</strong>
+      <p>Approve only after the licence verification is complete.</p>
+    </div>
+    <a class="review-btn" routerLink="../applications">Review applications</a>
+  </section>
+}
