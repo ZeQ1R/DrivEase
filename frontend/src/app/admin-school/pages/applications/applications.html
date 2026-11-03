@@ -133,7 +133,7 @@
           ? 'No decision has been recorded. ' + l.first_name + ' remains a pending applicant, not an active enrolment.'
           : l.first_name + "'s application has been " + (l.status === 'rejected' ? 'rejected.' : 'approved.') }}
       </p>
-      <a class="btn" [routerLink]="['/school-admin-dashboard/students', l.id]">Open student record</a>
+      <a class="btn" [routerLink]="['/school-admin-dashboard/applications', l.id]">Open student record</a>
     } @else {
       <p class="muted">No applications have been received yet.</p>
     }
