@@ -1,0 +1,102 @@
+<header class="head">
+  <div>
+    <small class="eyebrow">{{ schoolName() | uppercase }}</small>
+    <h1>Stay close to every student.</h1>
+    <p class="sub">
+      @if (totalUnread() > 0) { {{ totalUnread() }} unread message{{ totalUnread() === 1 ? '' : 's' }} waiting for a reply. }
+      @else { You're all caught up. }
+    </p>
+  </div>
+</header>
+
+<section class="inbox" [class.thread-open]="selectedId() !== null">
+
+  <!-- LEFT: conversation list -->
+  <aside class="list">
+    <div class="list-top">
+      <input class="search" type="search" placeholder="Search students" [value]="search()"
+             (input)="search.set($any($event.target).value)" />
+      <div class="tabs">
+        <button type="button" [class.on]="!unreadOnly()" (click)="unreadOnly.set(false)">All</button>
+        <button type="button" [class.on]="unreadOnly()" (click)="unreadOnly.set(true)">
+          Unread @if (totalUnread() > 0) { <span class="count">{{ totalUnread() }}</span> }
+        </button>
+      </div>
+    </div>
+
+    <div class="rows">
+      @for (c of filtered(); track c.student_id) {
+        <button type="button" class="row" [class.active]="c.student_id === selectedId()" (click)="open(c)">
+          <span class="avatar">{{ initials(c) }}</span>
+          <span class="meta">
+            <span class="line">
+              <strong>{{ c.first_name }} {{ c.last_name }}</strong>
+              @if (c.last_at) { <small>{{ c.last_at | date:'d MMM' }}</small> }
+            </span>
+            <span class="line">
+              <span class="preview" [class.bold]="c.unread > 0">
+                @if (c.last_body) { {{ c.last_sender === 'school' ? 'You: ' : '' }}{{ c.last_body }} }
+                @else { No messages yet }
+              </span>
+              @if (c.unread > 0) { <span class="badge">{{ c.unread }}</span> }
+            </span>
+          </span>
+        </button>
+      } @empty {
+        <p class="empty">{{ unreadOnly() ? 'No unread conversations.' : 'No students found.' }}</p>
+      }
+    </div>
+  </aside>
+
+  <!-- RIGHT: thread -->
+  <div class="thread">
+    @if (selected(); as c) {
+      <div class="thread-head">
+        <button type="button" class="back" (click)="back()" aria-label="Back to conversations">‹</button>
+        <span class="avatar">{{ initials(c) }}</span>
+        <div class="who">
+          <strong>{{ c.first_name }} {{ c.last_name }}</strong>
+          <small>{{ c.email }}</small>
+        </div>
+      </div>
+
+      <div class="scroller" #scroller>
+        @if (loadingThread()) {
+          <p class="empty">Loading…</p>
+        } @else if (messages().length === 0) {
+          <div class="blank">
+            <strong>Start the conversation</strong>
+            <p>Say hello, confirm a lesson or share a reminder. {{ c.first_name }} will be notified.</p>
+          </div>
+        }
+
+        @for (g of grouped(); track g.day) {
+          <div class="day"><span>{{ dayLabel(g.day) }}</span></div>
+          @for (m of g.items; track m.id) {
+            <div class="bubble-row" [class.mine]="m.sender_role === 'school'">
+              <div class="bubble">
+                <p>{{ m.body }}</p>
+                <small>{{ m.created_at | date:'HH:mm' }}</small>
+              </div>
+            </div>
+          }
+        }
+      </div>
+
+      @if (error()) { <div class="error">{{ error() }}</div> }
+
+      <form class="composer" (ngSubmit)="send()">
+        <textarea name="draft" rows="1" placeholder="Write a message…" maxlength="2000"
+                  [(ngModel)]="draft" (keydown)="onKey($event)"></textarea>
+        <button type="submit" class="send" [disabled]="sending() || !draft.trim()">Send</button>
+      </form>
+    } @else {
+      <div class="placeholder">
+        <div class="ico">✉</div>
+        <strong>Select a conversation</strong>
+        <p>Choose a student on the left to read and reply. New applicants appear here as soon as they register.</p>
+        <a routerLink="/school-admin-dashboard/students" class="link">Browse students →</a>
+      </div>
+    }
+  </div>
+</section>

@@ -19,6 +19,8 @@ import { Overview } from './admin-school/pages/overview/overview';
 import { Applications } from './admin-school/pages/applications/applications';
 import { Students } from './admin-school/students/students';
 import { ApplicationDetail } from './admin-school/application-detail/application-detail';
+import { Messages } from './admin-school/pages/messages/messages';
+import { Reviews } from './admin-school/pages/reviews/reviews';
 
 export const routes: Routes = [
 	{
@@ -79,8 +81,8 @@ export const routes: Routes = [
 			{ path: 'students', component: Students, data: { title: 'Students' } },
 			{ path: 'applications/:id', component: ApplicationDetail, data : {title: 'Student-Detail'} },
 			{ path: 'schedules', component: PagePlaceholder, data: { title: 'Schedules' } },
-			{ path: 'messages', component: PagePlaceholder, data: { title: 'Messages' } },
-			{ path: 'reviews', component: PagePlaceholder, data: { title: 'Reviews' } },
+			{ path: 'messages', component: Messages, data: { title: 'Messages' } },
+			{ path: 'reviews', component: Reviews, data: { title: 'Reviews' } },
 		]
 	},
 	{

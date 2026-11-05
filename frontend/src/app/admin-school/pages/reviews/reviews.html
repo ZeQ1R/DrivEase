@@ -1,0 +1,118 @@
+<header class="head">
+  <div>
+    <small class="eyebrow">{{ schoolName() | uppercase }}</small>
+    <h1>What students are saying.</h1>
+    <p class="sub">
+      @if (needsReply() > 0) { {{ needsReply() }} review{{ needsReply() === 1 ? '' : 's' }} still waiting for your reply. }
+      @else if (total() > 0) { Every review has a reply. Nicely done. }
+      @else { Reviews appear here once enrolled students rate your school. }
+    </p>
+  </div>
+</header>
+
+@if (error()) { <div class="banner">{{ error() }}</div> }
+
+<!-- summary -->
+<section class="summary">
+  <div class="card score">
+    <div class="big">{{ average() | number:'1.1-1' }}</div>
+    <div class="stars big-stars" aria-hidden="true">
+      @for (n of stars; track n) { <span [class.on]="n <= Math_round(average())">★</span> }
+    </div>
+    <small>Based on {{ total() }} review{{ total() === 1 ? '' : 's' }}</small>
+  </div>
+
+  <div class="card dist">
+    <h2>Rating breakdown</h2>
+    @for (d of distribution(); track d.stars) {
+      <div class="bar-row">
+        <span class="lbl">{{ d.stars }} ★</span>
+        <div class="track"><div class="fill" [style.width.%]="d.percent"></div></div>
+        <span class="num">{{ d.count }}</span>
+      </div>
+    }
+  </div>
+
+  <div class="mini-stats">
+    <div class="card mini"><small>Positive (4–5★)</small><strong>{{ positiveShare() }}%</strong></div>
+    <div class="card mini"><small>Awaiting reply</small><strong>{{ needsReply() }}</strong></div>
+    <div class="card mini"><small>Replied</small><strong>{{ repliedCount() }}</strong></div>
+  </div>
+</section>
+
+<!-- filters -->
+<div class="toolbar">
+  <div class="tabs">
+    <button type="button" [class.on]="tab() === 'all'" (click)="tab.set('all')">All <span>{{ total() }}</span></button>
+    <button type="button" [class.on]="tab() === 'needs'" (click)="tab.set('needs')">Needs reply <span>{{ needsReply() }}</span></button>
+    <button type="button" [class.on]="tab() === 'replied'" (click)="tab.set('replied')">Replied <span>{{ repliedCount() }}</span></button>
+  </div>
+  <div class="controls">
+    <input class="search" type="search" placeholder="Search reviews" (input)="search.set($any($event.target).value)" />
+    <select class="select" (change)="ratingFilter.set($any($event.target).value)">
+      <option value="">All ratings</option>
+      @for (n of [5, 4, 3, 2, 1]; track n) { <option [value]="n">{{ n }} stars</option> }
+    </select>
+    <select class="select" (change)="sort.set($any($event.target).value)">
+      <option value="newest">Newest first</option>
+      <option value="highest">Highest rated</option>
+      <option value="lowest">Lowest rated</option>
+    </select>
+  </div>
+</div>
+
+<!-- list -->
+@if (loading()) {
+  <p class="empty">Loading…</p>
+} @else {
+  <div class="list">
+    @for (r of filtered(); track r.id) {
+      <article class="card review" [class.low]="r.rating <= 2">
+        <div class="top">
+          <span class="avatar">{{ initials(r) }}</span>
+          <div class="who">
+            <strong>{{ r.first_name }} {{ r.last_name }}</strong>
+            <small>{{ r.created_at | date:'d MMMM y' }}</small>
+          </div>
+          <div class="stars" [attr.aria-label]="r.rating + ' out of 5'">
+            @for (n of stars; track n) { <span [class.on]="n <= r.rating">★</span> }
+          </div>
+        </div>
+
+        <p class="comment" [class.muted]="!r.comment">{{ r.comment || 'No written comment, rating only.' }}</p>
+
+        @if (replyingId() === r.id) {
+          <div class="editor">
+            <textarea rows="3" maxlength="1000" placeholder="Write a public reply…" [(ngModel)]="draft" name="draft{{ r.id }}"></textarea>
+            <div class="editor-actions">
+              <small>{{ draft.length }}/1000 · Visible to everyone on your school page</small>
+              <div>
+                <button type="button" class="btn ghost" (click)="cancelReply()">Cancel</button>
+                <button type="button" class="btn yellow" [disabled]="saving() || !draft.trim()" (click)="saveReply(r)">Post reply</button>
+              </div>
+            </div>
+          </div>
+        } @else if (r.reply) {
+          <div class="reply">
+            <div class="reply-head">
+              <strong>Reply from {{ schoolName() }}</strong>
+              <small>{{ r.replied_at | date:'d MMM y' }}</small>
+            </div>
+            <p>{{ r.reply }}</p>
+            <div class="reply-actions">
+              <button type="button" class="link" (click)="startReply(r)">Edit</button>
+              <button type="button" class="link danger" (click)="removeReply(r)">Remove</button>
+            </div>
+          </div>
+        } @else {
+          <button type="button" class="btn dark" (click)="startReply(r)">Reply</button>
+        }
+      </article>
+    } @empty {
+      <div class="card empty-card">
+        <strong>{{ total() === 0 ? 'No reviews yet' : 'No reviews match your filters' }}</strong>
+        <p>{{ total() === 0 ? 'Students can review your school once their application is approved.' : 'Try another tab, rating or search term.' }}</p>
+      </div>
+    }
+  </div>
+}

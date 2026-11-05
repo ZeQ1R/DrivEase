@@ -31,6 +31,35 @@ export interface AdminRegistration {
   first_aid_done: boolean;
 }
 
+export interface Conversation {
+  student_id: number;
+  first_name: string;
+  last_name: string;
+  email: string;
+  last_body: string | null;
+  last_sender: 'school' | 'student' | null;
+  last_at: string | null;
+  unread: number;
+}
+
+export interface ChatMessage{
+  id: number;
+  sender_role: 'school' | 'student';
+  body: string;
+  created_at: string;
+}
+
+export interface AdminReview {
+  id: number;
+  rating: number;
+  comment: string | null;
+  created_at: string;
+  reply: string | null;
+  replied_at: string | null;
+  first_name: string;
+  last_name: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class AdminSchoolService {
   private http = inject(HttpClient);
@@ -48,6 +77,39 @@ export class AdminSchoolService {
 
   getInstructors() {
     return this.http.get<{ instructors: Instructor[] }>(`${API_URL}/admin/instructors`);
+  }
+
+  getConversations(){
+    return this.http.get<{conversations: Conversation[]}>
+    (
+      `${API_URL}/admin/conversations`
+    )
+  }
+
+  getThread(studentId: number){
+    return this.http.get<{messages: ChatMessage[]}>
+    (
+      `${API_URL}/admin/conversations/${studentId}/messages`
+    )
+  }
+
+  getReviews(){
+    return this.http.get<{reviews: AdminReview[]}>
+    (`${API_URL}/admin/reviews`)
+  }
+
+  replyToReview(id: number, reply:string){
+    return this.http.patch<{reply: string | null; replied_at: string | null}>
+    (
+      `${API_URL}/admin/reviews/${id}/reply`, {reply}
+    )
+  }
+
+  sendMessage(studentId: number, body:string){
+    return this.http.post<{message: ChatMessage}>
+    (
+      `${API_URL}/admin/conversations/${studentId}/messages`, {body}
+    )
   }
 
   updateStatus(id: number, status: 'approved' | 'rejected' | 'completed') {
