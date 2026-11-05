@@ -1,6 +1,8 @@
 import { Router } from "express";
-import { authenticate } from "../middleware/auth";
+import { authenticate } from "../middleware/auth.js";
 import { notify } from "../lib/notify.js";
+import pool from "../config/database.js";
+
 
 const router = Router()
 
