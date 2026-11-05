@@ -12,6 +12,7 @@ import instructorsRoutes from "./routes/instructors.routes.js";
 import reviewsRoutes from "./routes/reviews.routes.js";
 import notificationsRoutes from "./routes/notifications.routes.js";
 import documentsRoutes from "./routes/documents.routes.js";
+import messagesRoutes from "./routes/messages.routes.js"
 
 const app = express();
 app.disable("etag");
@@ -36,7 +37,7 @@ app.use(instructorsRoutes);
 app.use(reviewsRoutes);
 app.use(notificationsRoutes);
 app.use(documentsRoutes);
-
+app.use(messagesRoutes)
 app.use((req, res) => {
   res.status(404).json({ message: "Not found." });
 });

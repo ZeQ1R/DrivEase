@@ -2,6 +2,7 @@ import { Router } from "express";
 import jwt from "jsonwebtoken";
 import pool from "../config/database.js";
 import { authenticate } from "../middleware/auth.js";
+import { notify } from "../lib/notify.js";
 
 const router = Router();
 
@@ -13,11 +14,10 @@ function optionalUser(req) {
   return null;
 }
 
-// PUBLIC: reviews for a school + average/count, plus the caller's own review and eligibility when logged in
 router.get("/schools/:id/reviews", async (req, res) => {
   try {
     const reviews = await pool.query(
-      `SELECT r.id, r.rating, r.comment, r.created_at, u.first_name, u.last_name
+      `SELECT r.id, r.rating, r.comment, r.created_at, r.reply, r.replied_at, u.first_name, u.last_name
        FROM reviews r
        JOIN users u ON u.id = r.student_id
        WHERE r.school_id = $1
@@ -58,7 +58,6 @@ router.get("/schools/:id/reviews", async (req, res) => {
   }
 });
 
-// STUDENT: create or update their review for a school they're enrolled at; recomputes the school's rating
 router.post("/schools/:id/reviews", authenticate, async (req, res) => {
   const client = await pool.connect();
   try {
@@ -85,7 +84,6 @@ router.post("/schools/:id/reviews", authenticate, async (req, res) => {
        RETURNING id, rating, comment, created_at`,
       [req.params.id, req.user.id, rating, comment || null]
     );
-    // the school's displayed rating is now the real average of its reviews
     await client.query(
       `UPDATE driving_schools
        SET rating = (SELECT ROUND(AVG(rating), 1) FROM reviews WHERE school_id = $1)
@@ -100,6 +98,50 @@ router.post("/schools/:id/reviews", authenticate, async (req, res) => {
     res.status(500).json({ message: "Failed to submit review.", error: e.message });
   } finally {
     client.release();
+  }
+});
+
+router.get("/admin/reviews", authenticate, async (req, res) => {
+  try {
+    const school = await pool.query(`SELECT id FROM driving_schools WHERE owner_user_id = $1`, [req.user.id]);
+    if (school.rows.length === 0) return res.status(403).json({ message: "You don't manage a school." });
+
+    const result = await pool.query(
+      `SELECT r.id, r.rating, r.comment, r.created_at, r.reply, r.replied_at,
+              u.first_name, u.last_name
+       FROM reviews r
+       JOIN users u ON u.id = r.student_id
+       WHERE r.school_id = $1
+       ORDER BY r.created_at DESC`,
+      [school.rows[0].id]
+    );
+    res.status(200).json({ reviews: result.rows });
+  } catch (e) {
+    res.status(500).json({ message: "Failed.", error: e.message });
+  }
+});
+
+router.patch("/admin/reviews/:id/reply", authenticate, async (req, res) => {
+  try {
+    const school = await pool.query(`SELECT id, name FROM driving_schools WHERE owner_user_id = $1`, [req.user.id]);
+    if (school.rows.length === 0) return res.status(403).json({ message: "You don't manage a school." });
+
+    const text = typeof req.body?.reply === "string" ? req.body.reply.trim() : "";
+    if (text.length > 1000) return res.status(400).json({ message: "Reply is too long (max 1000 characters)." });
+
+    const result = await pool.query(
+      `UPDATE reviews
+       SET reply = $1, replied_at = CASE WHEN $1::text IS NULL THEN NULL ELSE NOW() END
+       WHERE id = $2 AND school_id = $3
+       RETURNING id, reply, replied_at, student_id`,
+      [text || null, req.params.id, school.rows[0].id]
+    );
+    if (result.rows.length === 0) return res.status(404).json({ message: "Review not found." });
+
+    if (text) notify(result.rows[0].student_id, `${school.rows[0].name} replied to your review.`, "info", "/student-platform-dashboard");
+    res.status(200).json({ reply: result.rows[0].reply, replied_at: result.rows[0].replied_at });
+  } catch (e) {
+    res.status(500).json({ message: "Failed.", error: e.message });
   }
 });
 
