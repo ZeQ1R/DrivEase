@@ -1,0 +1,72 @@
+/* the white card that holds the form */
+.form-card {
+  width: 100%; max-width: 440px; box-sizing: border-box;
+  background: #fff; border: 1px solid #e7ebf3; border-radius: 20px;
+  padding: clamp(24px, 4vw, 40px);
+  box-shadow: 0 12px 32px rgba(22, 35, 63, .06);
+}
+
+.icon-box { width: 40px; height: 40px; border-radius: 12px; background: #e8eef9; display: grid; place-items: center; margin-bottom: 20px; }
+.kicker { display: block; font-size: 11px; letter-spacing: .12em; font-weight: 700; color: #6b7a99; margin-bottom: 10px; text-transform: uppercase; }
+h1 { margin: 0 0 10px; font-family: inherit; font-size: clamp(24px, 3vw, 30px); font-weight: 700; letter-spacing: -.02em; line-height: 1.2; color: #16233f; text-transform: none; }
+.lead { margin: 0 0 26px; font-size: 14px; line-height: 1.6; color: #6b7a99; }
+
+/* fields (labels reset: your global styles make labels uppercase/monospace) */
+.field { margin-bottom: 18px; }
+.field label { display: block; font-family: inherit; font-size: 13px; font-weight: 600; letter-spacing: 0; text-transform: none; margin-bottom: 8px; color: #16233f; }
+.field input[type='text'], .field input[type='email'], .field input[type='password'] {
+  width: 100%; box-sizing: border-box; height: 46px; padding: 0 14px; font: inherit; font-size: 14px; color: #16233f;
+  background: #fff; border: 1px solid #dde3ef; border-radius: 10px; transition: border-color .15s, box-shadow .15s; }
+.field input::placeholder { color: #a3aec6; }
+.field input:hover { border-color: #c5cee1; }
+.field input:focus { outline: none; border-color: #f9c846; box-shadow: 0 0 0 3px rgba(249, 200, 70, .3); }
+.field.bad input { border-color: #d14b3d; }
+.field.bad input:focus { box-shadow: 0 0 0 3px rgba(209, 75, 61, .18); }
+
+.pw { position: relative; }
+.pw input { padding-right: 46px !important; }
+.eye { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); width: 36px; height: 36px; border: none; background: none; cursor: pointer; display: grid; place-items: center; border-radius: 8px; }
+.eye:hover { background: #f1f4fa; }
+
+.hint { margin: 8px 0 0; font-size: 12px; line-height: 1.5; color: #8a97b3; }
+.hint.bad { color: #d14b3d; }
+.error { margin: 8px 0 0; font-size: 12.5px; color: #d14b3d; }
+.error a { color: #d14b3d; font-weight: 600; }
+.banner { background: #fbe4e1; color: #b8382b; border-radius: 10px; padding: 12px 14px; font-size: 13px; margin-bottom: 18px; }
+.notice { background: #fff6d6; color: #6b5200; border-radius: 10px; padding: 12px 14px; font-size: 13px; margin-bottom: 18px; }
+
+.row-between { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin: 4px 0 22px; font-size: 13px; }
+.check { display: flex; align-items: flex-start; gap: 10px; font-family: inherit; font-size: 13px; line-height: 1.5; letter-spacing: 0; text-transform: none; color: #4a5a7a; cursor: pointer; }
+.check input { margin: 2px 0 0; accent-color: #172a4d; width: 16px; height: 16px; flex-shrink: 0; cursor: pointer; }
+.check a { font-weight: 600; color: #16233f; text-decoration: underline; cursor: pointer; }
+.row-between a { font-weight: 600; color: #16233f; text-decoration: underline; font-size: 13px; }
+
+.submit { width: 100%; height: 48px; border: none; border-radius: 10px; background: #f9c846; color: #16233f; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: filter .15s, transform .05s; }
+.submit:hover:not(:disabled) { filter: brightness(.96); }
+.submit:active:not(:disabled) { transform: translateY(1px); }
+.submit:focus-visible { outline: 3px solid rgba(23, 42, 77, .35); outline-offset: 2px; }
+.submit:disabled { opacity: .6; cursor: not-allowed; }
+
+.switch { text-align: center; font-size: 13px; color: #6b7a99; margin: 22px 0; }
+.switch a { font-weight: 700; color: #16233f; text-decoration: underline; }
+
+.info-card { background: #f1f5fb; border-radius: 12px; padding: 16px 18px; }
+.info-card strong { display: block; font-size: 13px; color: #16233f; margin-bottom: 4px; }
+.info-card p { margin: 0; font-size: 12.5px; line-height: 1.55; color: #6b7a99; }
+.info-card a { font-size: 12.5px; font-weight: 600; color: #16233f; text-decoration: underline; }
+
+/* phones: 16px inputs stop iOS from zooming on focus */
+@media (max-width: 600px) {
+  .form-card { border-radius: 16px; box-shadow: none; }
+  .field input[type='text'], .field input[type='email'], .field input[type='password'] { font-size: 16px; }
+}
+.success { background: #dcf5e8; color: #1a7a52; border-radius: 10px; padding: 12px 14px; font-size: 13px; line-height: 1.5; margin-bottom: 18px; }
+.back-link { display: block; text-align: center; margin-top: 20px; font-size: 13px; font-weight: 600; color: #16233f; text-decoration: underline; }
+a.submit { text-decoration: none; }
+
+/* live password checklist */
+.rules { list-style: none; margin: 10px 0 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 6px 12px; }
+.rules li { font-size: 12px; color: #8a97b3; display: flex; align-items: center; gap: 6px; transition: color .15s; }
+.rules li::before { content: '○'; font-size: 11px; }
+.rules li.ok { color: #1f9d6a; }
+.rules li.ok::before { content: '✓'; font-weight: 700; }

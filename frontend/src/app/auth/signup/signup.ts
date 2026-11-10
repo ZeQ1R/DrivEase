@@ -1,147 +1,70 @@
 import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
-import {
-  AbstractControl,
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { debounceTime } from 'rxjs';
 import { AuthService } from '../auth.service';
-import { AuthPanel } from '../../shared/auth-panel/auth-panel';
+import { AuthShell } from '../../shared/auth-shell/auth-shell';
 import { ToastService } from '../../shared/toast/toast.service';
+import { computed } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { isStrongPassword, passwordRules } from '../password-rules';
 
-let initialValue = '';
-
-const savedForm = window.localStorage.getItem('saved-signup-form');
-
-if (savedForm) {
-  const loadedForm = JSON.parse(savedForm);
-  initialValue = loadedForm.email;
+function fullName(control: AbstractControl): ValidationErrors | null {
+  const parts = String(control.value ?? '').trim().split(/\s+/).filter(Boolean);
+  return parts.length >= 2 ? null : { fullName: true };
 }
 
-function equalValues(controlName1: string, controlName2: string) {
-  return (control: AbstractControl) => {
-    const val1 = control.get(controlName1)?.value;
-    const val2 = control.get(controlName2)?.value;
-
-    if (val1 === val2) {
-      return null;
-    }
-
-    return { passwordNotEqual: true };
-  };
+function strongPassword(control: AbstractControl): ValidationErrors | null {
+  return isStrongPassword(String(control.value ?? '')) ? null : { weakPassword: true };
 }
 
 @Component({
   selector: 'app-signup',
-  imports: [RouterLink, ReactiveFormsModule, AuthPanel],
+  imports: [RouterLink, ReactiveFormsModule, AuthShell],
   templateUrl: './signup.html',
-  styleUrl: './signup.css',
+  styleUrls: ['../../shared/auth-shell/auth-form.css', './signup.css'],
 })
 export class Signup implements OnInit {
   private destroyRef = inject(DestroyRef);
-  private authService = inject(AuthService)
+  private authService = inject(AuthService);
   private toast = inject(ToastService);
   private router = inject(Router);
 
   signupError = '';
-  submitting = signal(false)
-  showPassword = signal(false)
-  checkingEmail = signal(false)
-  emailTaken = signal(false)
+  submitting = signal(false);
+  showPassword = signal(false);
+  checkingEmail = signal(false);
+  emailTaken = signal(false);
 
   togglePassword() { this.showPassword.update(v => !v); }
 
   form = new FormGroup({
-    email: new FormControl(initialValue, {
-      validators: [Validators.email, Validators.required],
-    }),
-    passwords: new FormGroup(
-      {
-        password: new FormControl('', {
-          validators: [Validators.required, Validators.minLength(6)],
-        }),
-        confirmPassword: new FormControl('', {
-          validators: [Validators.required, Validators.minLength(6)],
-        }),
-      },
-      {
-        validators: [equalValues('password', 'confirmPassword')],
-      }
-    ),
-    firstName: new FormControl('', {
-      validators: [Validators.required],
-    }),
-    lastName: new FormControl('', {
-      validators: [Validators.required],
-    }),
-    phone: new FormControl('', {
-      validators: [Validators.required],
-    }),
-    address: new FormGroup({
-      city: new FormControl('', {
-        validators: [Validators.required],
-      }),
-      postalCode: new FormControl('', {
-        validators: [Validators.required],
-      }),
-    }),
+    fullName: new FormControl('', { validators: [Validators.required, fullName] }),
+    email: new FormControl('', { validators: [Validators.required, Validators.email] }),
+    password: new FormControl('', { validators: [Validators.required, strongPassword] }),
+    terms: new FormControl(false, { validators: [Validators.requiredTrue] }),
   });
 
-  get emailIsInvalid() {
-    return (
-      this.form.controls.email.touched &&
-      this.form.controls.email.dirty &&
-      this.form.controls.email.invalid
-    );
-  }
+    private passwordValue = toSignal(this.form.controls.password.valueChanges, { initialValue: '' });
+  rules = computed(() => passwordRules(this.passwordValue() ?? ''));
 
-  get passwordIsInvalid() {
-    return (
-      this.form.controls.passwords.controls.password.touched &&
-      this.form.controls.passwords.controls.password.dirty &&
-      this.form.controls.passwords.controls.password.invalid
-    );
-  }
-
-  get passwordsNotEqual() {
-    return (
-      this.form.controls.passwords.hasError('passwordNotEqual') &&
-      this.form.controls.passwords.touched
-    );
-  }
+  get nameIsInvalid() { const c = this.form.controls.fullName; return c.touched && c.invalid; }
+  get emailIsInvalid() { const c = this.form.controls.email; return c.touched && c.invalid; }
+  get passwordIsInvalid() { const c = this.form.controls.password; return c.touched && c.invalid; }
+  get termsIsInvalid() { const c = this.form.controls.terms; return c.touched && c.invalid; }
 
   ngOnInit() {
-    const subscription = this.form.valueChanges.pipe(debounceTime(500)).subscribe({
-      next: (value) => {
-        window.localStorage.setItem(
-          'saved-signup-form',
-          JSON.stringify({ email: value.email })
-        );
-      },
-    });
+    const sub = this.form.controls.email.valueChanges.pipe(debounceTime(500)).subscribe((email) => {
+      this.emailTaken.set(false);
+      if (!email || this.form.controls.email.invalid) return;
 
-    this.destroyRef.onDestroy(() => subscription.unsubscribe());
-
-    const emailCheckSub = this.form.controls.email.valueChanges
-      .pipe(debounceTime(500))
-      .subscribe((email) => {
-        this.emailTaken.set(false);
-        if (!email || this.form.controls.email.invalid) return;
-
-        this.checkingEmail.set(true);
-        this.authService.checkEmailExists(email).subscribe({
-          next: (res) => {
-            this.checkingEmail.set(false);
-            this.emailTaken.set(res.exists);
-          },
-          error: () => this.checkingEmail.set(false),
-        });
+      this.checkingEmail.set(true);
+      this.authService.checkEmailExists(email).subscribe({
+        next: (res) => { this.checkingEmail.set(false); this.emailTaken.set(res.exists); },
+        error: () => this.checkingEmail.set(false),
       });
-
-    this.destroyRef.onDestroy(() => emailCheckSub.unsubscribe());
+    });
+    this.destroyRef.onDestroy(() => sub.unsubscribe());
   }
 
   onSignUp() {
@@ -150,32 +73,28 @@ export class Signup implements OnInit {
       return;
     }
 
+    const [firstName, ...rest] = this.form.value.fullName!.trim().split(/\s+/);
+    const lastName = rest.join(' ');
+
     this.signupError = '';
-    this.submitting.set(true)
+    this.submitting.set(true);
 
     this.authService.signup({
-        firstName: this.form.value.firstName!,
-        lastName: this.form.value.lastName!,
-        email: this.form.value.email!,
-        password: this.form.value.passwords!.password!,
-        phone: this.form.value.phone!,
-      })
-      .subscribe({
-        next: (res) => {
-          this.authService.storeSession(res)
-          this.toast.success('Account created! Check your email to confirm before signing in.', 7000)
-          this.router.navigate(['/login'], {queryParams: {checkEmail: true}});
-        },
-        error: (err) => {
-          this.submitting.set(false)
-          this.signupError =
-            err.error?.message || 'Signup failed. Please try again.';
-        },
-      });
-  }
-
-  onReset() {
-    this.form.reset();
-    this.signupError = '';
+      firstName,
+      lastName,
+      email: this.form.value.email!,
+      password: this.form.value.password!,
+      phone: '',
+    }).subscribe({
+      next: (res) => {
+        this.authService.storeSession(res);
+        this.toast.success('Account created! Check your email to confirm before signing in.', 7000);
+        this.router.navigate(['/login'], { queryParams: { checkEmail: true } });
+      },
+      error: (err) => {
+        this.submitting.set(false);
+        this.signupError = err.error?.message || 'Signup failed. Please try again.';
+      },
+    });
   }
 }

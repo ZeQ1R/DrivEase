@@ -1,67 +1,64 @@
-  <section class="auth-screen">
-  <app-auth-panel
-    [headline]="['Welcome','Back.']"
-    sub="Sign in to access your dashboard, track your registration, and manage your driving school enrollment."
-    [bullets]="['Track your application','Manage your profile','Continue your lessons']"
-    switchText="Don't have an account?"
-    switchLabel="Sign up →"
-    switchRoute="/signup">
-  </app-auth-panel>
+<app-auth-shell
+  eyebrow="EVERY TURN, TOGETHER"
+  [headline]="['A little more confidence.', 'Every time you drive.']"
+  sub="From the first lesson to the next milestone, keep your driving journey moving with DrivEase.">
 
-  <main class="auth-form-side">
-    <div class="auth-form-wrapper fade-up">
-      <div class="auth-form-header">
-        <p class="auth-form-title">Sign In</p>
-        <p class="auth-form-subtitle">Enter your credentials to continue</p>
+  <div class="form-card fade-up">
+    <span class="icon-box">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#172a4d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="8" cy="15" r="4" /><path d="m10.8 12.2 8.2-8.2M16 7l3 3M14 9l2 2" />
+      </svg>
+    </span>
+    <h1>Welcome back.</h1>
+    <p class="lead">Log in to your DrivEase account and pick up where you left off.</p>
+
+    @if (sessionNotice()) { <p class="notice">{{ sessionNotice() }}</p> }
+    @if (loginError) { <p class="banner" role="alert">{{ loginError }}</p> }
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+      <div class="field" [class.bad]="emailIsInvalid">
+        <label for="email">Email address</label>
+        <input id="email" type="email" formControlName="email" placeholder="Enter your email address" autocomplete="email" />
+        @if (emailIsInvalid) { <p class="error">Please enter a valid email address.</p> }
       </div>
 
-      @if (sessionNotice()) {
-        <p class="session-notice">{{ sessionNotice() }}</p>
-      }
-
-      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="auth-form">
-        <div class="field">
-          <label>Email Address</label>
-          <input type="email" formControlName="email" placeholder="you@example.com" />
+      <div class="field" [class.bad]="passwordIsInvalid">
+        <label for="password">Password</label>
+        <div class="pw">
+          <input id="password" [type]="showPassword() ? 'text' : 'password'" formControlName="password"
+                 placeholder="Enter your password" autocomplete="current-password" />
+          <button type="button" class="eye" (click)="togglePassword()"
+                  [attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6b7a99" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z" /><circle cx="12" cy="12" r="3" />
+              @if (showPassword()) { <path d="M3 3l18 18" /> }
+            </svg>
+          </button>
         </div>
+        @if (passwordIsInvalid) { <p class="error">Enter your password (at least 6 characters).</p> }
+      </div>
 
-        @if (emailIsInvalid) {
-          <p class="field-error"><span class="dot"></span>Please enter a valid email address.</p>
+      <div class="row-between">
+        <label class="check"><input type="checkbox" formControlName="remember" /> Remember me</label>
+        <a routerLink="/forgot-password">Forgot password?</a>
+      </div>
+
+      <button type="submit" class="submit button-interactive" [disabled]="loading()">
+        @if (loading()) {
+          <span class="btn-spinner"></span> Logging in…
+        } @else {
+          Log in <span aria-hidden="true">→</span>
         }
+      </button>
+    </form>
 
-        <div class="field">
-          <label>Password</label>
-          <div class="password-wrap">
-            <input [type]="showPassword() ? 'text' : 'password'" formControlName="password" placeholder="••••••••" />
-            <button type="button" class="password-toggle" (click)="togglePassword()"
-              [attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'">
-              {{ showPassword() ? '🙈' : '👁️' }}
-            </button>
-          </div>
-        </div>
+    <p class="switch">New to DrivEase? <a routerLink="/signup">Create an account</a></p>
 
-        @if (loginError) {
-          <p class="field-error"><span class="dot"></span>{{ loginError }}</p>
-          <p class="auth-hint">
-            New here? <a routerLink="/signup">Create an account</a>
-            — or <a routerLink="/forgot-password">reset your password</a> if you forgot it.
-          </p>
-        }
-
-        <a routerLink="/forgot-password" class="auth-forgot">Forgot password?</a>
-
-        <button type="submit" class="auth-submit button-interactive" [disabled]="loading()">
-          @if (loading()) {
-            <span class="btn-spinner"></span> Signing in…
-          } @else {
-            Sign In
-          }
-        </button>
-      </form>
-
-      <p class="auth-switch-mobile">
-        Don't have an account? <a routerLink="/signup">Sign up</a>
-      </p>
+    <div class="info-card">
+      <div>
+        <strong>One familiar place to log in.</strong>
+        <p>Students, instructors and school administrators: use the email address linked to your account.</p>
+      </div>
     </div>
-  </main>
-</section>
+  </div>
+</app-auth-shell>

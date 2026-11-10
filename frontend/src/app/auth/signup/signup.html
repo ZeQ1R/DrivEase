@@ -1,76 +1,70 @@
-  <section class="auth-screen">
-  <app-auth-panel
-    [headline]="['Start Your','Journey.']"
-    sub="Create your account to browse and register at certified driving schools near you."
-    [bullets]="['Free to sign up','One registration at a time','Track your application live']"
-    switchText="Already have an account?"
-    switchLabel="Sign in →"
-    switchRoute="/login">
-  </app-auth-panel>
+<app-auth-shell
+  eyebrow="A GOOD PLACE TO BEGIN"
+  [headline]="['Your next chapter.', 'Your own direction.']"
+  sub="Find your driving school, plan your lessons and see your confidence grow. One step at a time.">
 
-  <main class="auth-form-side">
-    <div class="auth-form-wrapper fade-up">
-      <div class="auth-form-header">
-        <p class="auth-form-title">Create Account</p>
-        <p class="auth-form-subtitle">Get started in under a minute</p>
+  <div class="form-card fade-up">
+    <span class="kicker">YOUR LEARNER ACCOUNT</span>
+    <h1>Let's get you started.</h1>
+    <p class="lead">Create your account to save schools, apply and keep your learning on track.</p>
+
+    @if (signupError) { <p class="banner" role="alert">{{ signupError }}</p> }
+
+    <form [formGroup]="form" (ngSubmit)="onSignUp()" novalidate>
+      <div class="field" [class.bad]="nameIsInvalid">
+        <label for="fullName">Full name</label>
+        <input id="fullName" type="text" formControlName="fullName" placeholder="Enter your full name" autocomplete="name" />
+        @if (nameIsInvalid) { <p class="error">Please enter your first and last name.</p> }
       </div>
 
-      <form [formGroup]="form" (ngSubmit)="onSignUp()" class="auth-form">
-        <div class="field-row">
-          <div class="field"><label>First Name</label><input type="text" formControlName="firstName" placeholder="First name" /></div>
-          <div class="field"><label>Last Name</label><input type="text" formControlName="lastName" placeholder="Last name" /></div>
-        </div>
-
-        <div class="field">
-          <label>Email Address</label>
-          <input type="email" formControlName="email" placeholder="you@example.com" />
-          @if (checkingEmail()) { <span class="email-status">Checking…</span> }
-        </div>
-        @if (emailIsInvalid) { <p class="field-error"><span class="dot"></span>Please enter a valid email address.</p> }
+      <div class="field" [class.bad]="emailIsInvalid || emailTaken()">
+        <label for="email">Email address</label>
+        <input id="email" type="email" formControlName="email" placeholder="Enter your email address" autocomplete="email" />
+        @if (checkingEmail()) { <p class="hint">Checking…</p> }
+        @if (emailIsInvalid) { <p class="error">Please enter a valid email address.</p> }
         @if (emailTaken()) {
-          <p class="field-error"><span class="dot"></span>This email is already registered. <a routerLink="/login">Log in instead →</a></p>
+          <p class="error">This email is already registered. <a routerLink="/login">Log in instead</a></p>
         }
+      </div>
 
-        <div class="field-row" formGroupName="passwords">
-          <div class="field"><label>Password</label>
-            <div class="password-wrap">
-              <input [type]="showPassword() ? 'text' : 'password'" formControlName="password" placeholder="Create password" />
-              <button type="button" class="password-toggle" (click)="togglePassword()"
-                [attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'">
-                {{ showPassword() ? '🙈' : '👁️' }}
-              </button>
-            </div>
-          </div>
-          <div class="field"><label>Confirm Password</label>
-            <div class="password-wrap">
-              <input [type]="showPassword() ? 'text' : 'password'" formControlName="confirmPassword" placeholder="Repeat password" />
-            </div>
-          </div>
+      <div class="field" [class.bad]="passwordIsInvalid">
+        <label for="password">Password</label>
+        <div class="pw">
+          <input id="password" [type]="showPassword() ? 'text' : 'password'" formControlName="password"
+                 placeholder="Create a password" autocomplete="new-password" />
+          <button type="button" class="eye" (click)="togglePassword()"
+                  [attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6b7a99" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z" /><circle cx="12" cy="12" r="3" />
+              @if (showPassword()) { <path d="M3 3l18 18" /> }
+            </svg>
+          </button>
         </div>
-        @if (passwordIsInvalid) { <p class="field-error"><span class="dot"></span>Password must contain at least 6 characters.</p> }
+        <ul class="rules" aria-live="polite">
+          @for (r of rules(); track r.label) { <li [class.ok]="r.ok">{{ r.label }}</li> }
+        </ul>
+      </div>
 
-        @if (passwordsNotEqual) { <p class="field-error"><span class="dot"></span>Passwords do not match.</p> }
+      <label class="check terms">
+        <input type="checkbox" formControlName="terms" />
+        <span>I agree to the <a>Terms of service</a> and acknowledge the <a>Privacy policy</a>.</span>
+      </label>
+      @if (termsIsInvalid) { <p class="error">Please accept the terms to continue.</p> }
 
-        <div class="field"><label>Phone Number</label><input type="tel" formControlName="phone" placeholder="+389 70 000 000" /></div>
+      <button type="submit" class="submit button-interactive" [disabled]="submitting()">
+        @if (submitting()) {
+          <span class="btn-spinner"></span> Creating account…
+        } @else {
+          Create account <span aria-hidden="true">→</span>
+        }
+      </button>
+    </form>
 
-        <div class="field-row" formGroupName="address">
-          <div class="field"><label>City</label><input type="text" formControlName="city" placeholder="Tetovo" /></div>
-          <div class="field"><label>Postal Code</label><input type="text" formControlName="postalCode" placeholder="1200" maxlength="4" /></div>
-        </div>
+    <p class="switch">Already have an account? <a routerLink="/login">Log in</a></p>
 
-        @if (signupError) { <p class="field-error"><span class="dot"></span>{{ signupError }}</p> }
-
-        <button type="submit" class="auth-submit button-interactive" [disabled]="submitting()">
-          @if (submitting()) {
-            <span class="btn-spinner"></span> Creating account…
-          } @else {
-            Create Account
-          }
-        </button>
-        <p class="auth-terms">By creating an account you agree to our Terms of Service and Privacy Policy.</p>
-      </form>
-
-      <p class="auth-switch-mobile">Already have an account? <a routerLink="/login">Login</a></p>
+    <div class="info-card">
+      <strong>Not ready to sign up?</strong>
+      <a routerLink="/browse">Browse driving schools →</a>
     </div>
-  </main>
-</section>
+  </div>
+</app-auth-shell>
