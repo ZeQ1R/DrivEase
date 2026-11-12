@@ -53,7 +53,7 @@
                 <button type="button" class="btn dark" [disabled]="busy()" (click)="markAttended(l)">Mark attended</button>
               }
               @if (l.registration_id) {
-                <a class="btn ghost" [routerLink]="['/school-admin-dashboard/students', l.registration_id]">View student</a>
+                <a class="btn ghost" [routerLink]="['/school-admin-dashboard/applications', l.registration_id]">View student</a>
               }
             </div>
           </div>

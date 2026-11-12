@@ -1,4 +1,3 @@
-/* the white card that holds the form */
 .form-card {
   width: 100%; max-width: 440px; box-sizing: border-box;
   background: #fff; border: 1px solid #e7ebf3; border-radius: 20px;
@@ -11,7 +10,6 @@
 h1 { margin: 0 0 10px; font-family: inherit; font-size: clamp(24px, 3vw, 30px); font-weight: 700; letter-spacing: -.02em; line-height: 1.2; color: #16233f; text-transform: none; }
 .lead { margin: 0 0 26px; font-size: 14px; line-height: 1.6; color: #6b7a99; }
 
-/* fields (labels reset: your global styles make labels uppercase/monospace) */
 .field { margin-bottom: 18px; }
 .field label { display: block; font-family: inherit; font-size: 13px; font-weight: 600; letter-spacing: 0; text-transform: none; margin-bottom: 8px; color: #16233f; }
 .field input[type='text'], .field input[type='email'], .field input[type='password'] {
@@ -55,7 +53,6 @@ h1 { margin: 0 0 10px; font-family: inherit; font-size: clamp(24px, 3vw, 30px); 
 .info-card p { margin: 0; font-size: 12.5px; line-height: 1.55; color: #6b7a99; }
 .info-card a { font-size: 12.5px; font-weight: 600; color: #16233f; text-decoration: underline; }
 
-/* phones: 16px inputs stop iOS from zooming on focus */
 @media (max-width: 600px) {
   .form-card { border-radius: 16px; box-shadow: none; }
   .field input[type='text'], .field input[type='email'], .field input[type='password'] { font-size: 16px; }

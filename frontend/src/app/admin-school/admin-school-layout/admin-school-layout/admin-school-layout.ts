@@ -23,6 +23,7 @@ export class AdminSchoolLayout implements OnInit{
     {label: 'Overview', path:'overview', icon: 'overview'},
     {label: 'Applications', path:'applications', icon: 'applications'},
     {label: 'Students', path:'students', icon: 'students'},
+    {label: 'Instructors', path:'instructors', icon: 'instructors'},
     {label: 'Schedules', path:'schedules', icon: 'schedules'},
     {label: 'Messages', path:'messages', icon: 'messages'},
     {label: 'Reviews', path:'reviews', icon: 'reviews'},

@@ -1,0 +1,13 @@
+:host { display: block; width: 100%; max-width: 1400px; margin: 0 auto; }
+
+.head { margin-bottom: 24px; }
+.eyebrow { font-size: 11px; letter-spacing: .1em; color: #6b7a99; font-weight: 600; }
+.head h1 { margin: 4px 0 6px; font-size: 30px; font-weight: 700; color: #16233f; }
+.sub { margin: 0; color: #6b7a99; font-size: 13px; }
+
+.table { width: 100%; border-collapse: collapse; }
+.table th { text-align: left; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: #8a97b3; font-weight: 600; padding: 0 12px 12px 0; border-bottom: 1px solid #e7ebf3; }
+.table td { padding: 18px 12px 18px 0; font-size: 13px; color: #16233f; vertical-align: middle; border-bottom: 1px solid #f0f2f7; }
+.table td small { display: block; color: #6b7a99; font-size: 12px; margin-top: 3px; }
+.person { display: flex; align-items: center; gap: 12px; }
+.person strong { display: block; }

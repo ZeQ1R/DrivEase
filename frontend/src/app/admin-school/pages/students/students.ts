@@ -1,5 +1,5 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
-import { AdminRegistration, AdminSchoolService } from '../admin-school.service';
+import { AdminRegistration, AdminSchoolService } from '../../admin-school.service';
 import { RouterLink } from '@angular/router';
 import { DatePipe, DecimalPipe } from '@angular/common';
 

@@ -17,12 +17,13 @@ import { PagePlaceholder } from './admin-school/pages/placeholder/page-placehold
 import { NotFound } from './shared/not-found/not-found';
 import { Overview } from './admin-school/pages/overview/overview';
 import { Applications } from './admin-school/pages/applications/applications';
-import { Students } from './admin-school/students/students';
+import { Students } from './admin-school/pages/students/students';
 import { ApplicationDetail } from './admin-school/application-detail/application-detail';
 import { Messages } from './admin-school/pages/messages/messages';
 import { Reviews } from './admin-school/pages/reviews/reviews';
 import { Schedules } from './admin-school/pages/schedules/schedules';
 import { LessonDetail } from './admin-school/pages/lesson-detail/lesson-detail';
+import { Instructors } from './admin-school/pages/instructors/instructors';
 
 export const routes: Routes = [
 	{
@@ -81,6 +82,7 @@ export const routes: Routes = [
 			{ path: 'overview', component: Overview, data: { title: 'Overview' } },
 			{ path: 'applications', component: Applications, data: {title: 'Applications'} },
 			{ path: 'students', component: Students, data: { title: 'Students' } },
+			{ path: 'instructors', component: Instructors, data: { title: 'Instructors'	}},
 			{ path: 'applications/:id', component: ApplicationDetail, data : {title: 'Student-Detail'} },
 			{ path: 'schedules', component: Schedules, data: { title: 'Schedules' } },
 			{ path: 'schedules/:id', component: LessonDetail, data: {title: 'Lesson Detail'}},

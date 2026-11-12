@@ -1,0 +1,20 @@
+<header class="head">
+  <div>
+    <small class="eyebrow">YOUR INSTRUCTOR SCHOOL</small>
+    <h1>Every instructor starts here.</h1>
+  </div>
+</header>
+
+<section class="stats">
+    @for (i of instructors(); track i.id){
+        <tr>
+            <td data-label="Instructor">
+              <div class="person">
+                <div><strong>{{ i.first_name }} {{ i.last_name }}</strong><small>{{ i.email }}</small></div>
+              </div>
+            </td>
+        </tr>
+}
+</section>
+
+

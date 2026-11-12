@@ -1,68 +1,274 @@
+<div class="page">
 
-<app-nav-bar></app-nav-bar>
+  <!-- ============ HEADER ============ -->
+  <header class="top" [class.scrolled]="scrolled()">
+    <div class="wrap top-in">
+      <a class="logo" routerLink="/" aria-label="DrivEase home">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#172a4d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21 11 3h2l6 18" /><path d="M12 8v3M12 14v3" /></svg>
+        <span>driv<b>EASE</b></span>
+      </a>
 
-<div class="landing-page">
-  <section class="hero">
-    <div class="hero-content">
-      <p class="hero-eyebrow">The Smarter Way to Get Licensed</p>
-      <h1>Your<br/>License.<br/>Your Road.</h1>
-      <app-lane-divider class="hero-divider"></app-lane-divider>
-      <p class="hero-sub">Compare certified driving schools in your city, choose your package, and get on the road — all in one place.</p>
-      <div class="hero-actions">
-        <a routerLink="/browse" class="hero-cta-primary button-interactive">Browse Driving Schools →</a>
-        <a routerLink="/signup" class="hero-cta-secondary button-interactive">Create Account</a>
+      <button type="button" class="burger" (click)="toggleMenu()" [attr.aria-expanded]="menuOpen()" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+
+      <nav class="menu" [class.open]="menuOpen()">
+        <a routerLink="/browse" (click)="closeMenu()">Browse schools</a>
+        <a href="#how" (click)="go('how', $event)">How it works</a>
+        <a href="#for-schools" (click)="go('for-schools', $event)">For driving schools</a>
+        <span class="grow"></span>
+        @if (user) {
+          <a [routerLink]="dashboardLink" (click)="closeMenu()">Dashboard</a>
+          <button type="button" class="link-btn" (click)="logout()">Sign out</button>
+        } @else {
+          <a routerLink="/login" (click)="closeMenu()">Login</a>
+          <a routerLink="/signup" class="btn yellow sm" (click)="closeMenu()">Sign up</a>
+        }
+      </nav>
+    </div>
+  </header>
+
+  <!-- ============ HERO ============ -->
+  <section class="hero wrap">
+    <div class="hero-copy">
+      <span class="eyebrow">Confidence starts here</span>
+      <h1>Big freedom.<br />Small steps.<br />Start driving.</h1>
+      <p class="lead">Find a good driving school, plan your lessons and see your confidence grow. Everything you need to begin, in one calm place.</p>
+      <div class="actions">
+        <a routerLink="/browse" class="btn yellow">Find a driving school <span aria-hidden="true">→</span></a>
+        <a href="#how" class="btn ghost" (click)="go('how', $event)">How it works <span aria-hidden="true">›</span></a>
+      </div>
+      <p class="fine">Free to join. Compare schools before you apply.</p>
+    </div>
+
+    <div class="hero-photo photo-1">
+      <span class="lplate" aria-hidden="true">L</span>
+      <div class="float-card">
+        <strong>A good first lesson builds confidence.</strong>
+        <small>Start with a school that fits you.</small>
       </div>
     </div>
-    <app-lane-divider></app-lane-divider>
   </section>
 
-  <section class="stats-band">
-    <div class="stat"><span class="stat-num">{{stats().schools}}</span><span class="stat-label">Driving Schools</span></div>
-    <div class="stat"><span class="stat-num">{{stats().students}}</span><span class="stat-label">Users on DrivEase</span></div>
-    <div class="stat"><span class="stat-num">{{stats().lessons}}</span><span class="stat-label">Lessons booked</span></div>
-    <div class="stat"><span class="stat-num">{{stats().reviews}}</span><span class="stat-label">Reviews written</span></div>
+  <!-- ============ SEARCH ============ -->
+  <form class="search wrap" (ngSubmit)="onSearch()">
+    <div class="search-card">
+      <div class="search-title">
+        <strong>Find your starting point</strong>
+        <small>Search the schools near you.</small>
+      </div>
+      <div class="sfield">
+        <label for="city">Your location</label>
+        <input id="city" name="city" list="city-list" [(ngModel)]="city" placeholder="City or town" autocomplete="off" />
+        <datalist id="city-list">
+          @for (c of cities(); track c) { <option [value]="c"></option> }
+        </datalist>
+      </div>
+      <div class="sfield">
+        <label for="trans">Transmission</label>
+        <select id="trans" name="transmission" [(ngModel)]="transmission">
+          <option value="">Manual or automatic</option>
+          <option value="Manual">Manual</option>
+          <option value="Automatic">Automatic</option>
+        </select>
+      </div>
+      <button type="submit" class="btn yellow">Find schools</button>
+    </div>
 
-  </section>
+    <ul class="trust">
+      <li><b>{{ stats().schools }}</b> driving schools</li>
+      <li><b>{{ stats().lessons }}</b> lessons booked</li>
+      <li><b>{{ stats().reviews }}</b> student reviews</li>
+    </ul>
+  </form>
 
-  <section class="how-it-works">
-    <p class="section-eyebrow">How It Works</p>
-    <h2 class="section-title">Three Steps to the Road</h2>
-    <div class="steps-grid stagger">
-      <div class="step"><span class="step-num">01</span><h3>Browse Schools</h3><p>Filter by city, price, and license category. Read reviews and compare packages before committing.</p></div>
-      <div class="step"><span class="step-num">02</span><h3>Register Online</h3><p>Pick your school and submit your registration in under 3 minutes. No paperwork, no phone calls.</p></div>
-      <div class="step"><span class="step-num">03</span><h3>Get Licensed</h3><p>Your school confirms enrollment. Attend lessons, pass your exam, and drive with confidence.</p></div>
+  <!-- ============ HOW IT WORKS ============ -->
+  <section id="how" class="section wrap">
+    <div class="sec-head">
+      <div>
+        <span class="eyebrow dark">How it works</span>
+        <h2>A clear route. Not a complicated one.</h2>
+      </div>
+      <p class="sec-note">You don't need to know where to start. We lay out the steps and you take them at your own pace.</p>
+    </div>
+
+    <div class="steps">
+      <article class="step">
+        <span class="ico">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#172a4d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg>
+        </span>
+        <h3>Find your people</h3>
+        <p>Compare schools by city, price and reviews, and pick the one that feels right.</p>
+      </article>
+      <article class="step">
+        <span class="ico">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#172a4d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 11l3 3 8-8" /><path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9" /></svg>
+        </span>
+        <h3>Make your first move</h3>
+        <p>Apply online and upload your documents. No queues, no paperwork at a counter.</p>
+      </article>
+      <article class="step">
+        <span class="ico">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#172a4d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l6-6 4 4 8-8" /><path d="M14 7h7v7" /></svg>
+        </span>
+        <h3>Build your confidence</h3>
+        <p>Book lessons, follow your progress and know exactly what comes next.</p>
+      </article>
     </div>
   </section>
 
-  <app-lane-divider></app-lane-divider>
-
-
-
-  @if (featuredSchools().length > 0) {
-    <section class="featured">
-      <div class="featured-header">
-        <div><p class="section-eyebrow">Top Rated</p><h2 class="section-title">Featured Schools</h2></div>
-        <a routerLink="/browse" class="view-all-link">View all →</a>
+  <!-- ============ FEATURED SCHOOLS ============ -->
+  <section class="section wrap">
+    <div class="sec-head">
+      <div>
+        <span class="eyebrow dark">Top rated</span>
+        <h2>Good driving starts with a great school.</h2>
       </div>
-      <div class="featured-grid">
-        @for (school of featuredSchools(); track school.id) { <app-school-card [school]="school"></app-school-card> }
-      </div>
-    </section>
-  }
-
-  <section class="cta-strip">
-    <app-lane-divider></app-lane-divider>
-    <div class="cta-content">
-      <div><h2>Ready to Start Driving?</h2><p>Join thousands of new drivers who found their school on DrivEase.</p></div>
-      <a routerLink="/signup" class="cta-button">Create Your Free Account</a>
+      <a routerLink="/browse" class="btn outline">Browse all schools</a>
     </div>
-    <app-lane-divider></app-lane-divider>
+
+    @if (featuredSchools().length > 0) {
+      <div class="cards">
+        @for (s of featuredSchools(); track s.id) {
+          <article class="school">
+            <div class="school-top">
+              <span class="logo-tile">{{ schoolInitial(s) }}</span>
+              <span class="rating">★ {{ s.rating }}</span>
+            </div>
+            <h3>{{ s.name }}</h3>
+            <p class="where">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11Z" /><circle cx="12" cy="10" r="2.5" /></svg>
+              {{ s.city }}
+            </p>
+            <div class="school-foot">
+              <span class="price">\${{ s.price }}</span>
+              <a [routerLink]="['/browse', s.id]" class="btn dark sm">View details</a>
+            </div>
+          </article>
+        }
+      </div>
+    } @else {
+      <p class="empty">Schools will appear here as soon as they join DrivEase.</p>
+    }
   </section>
 
-  <footer class="landing-footer">
-  <div class="footer-inner">
-    <span class="footer-brand">Driv<span>Ease</span></span>
-    <p class="footer-copy">© 2026 DrivEase. All rights reserved.</p>
-  </div>
-</footer>
+  <!-- ============ PROGRESS (navy) ============ -->
+  <section class="navy">
+    <div class="wrap navy-in">
+      <div class="navy-copy">
+        <span class="eyebrow">See how far you've come</span>
+        <h2>Know what's next.</h2>
+        <p>Your dashboard keeps every step in view: your application, your lessons and the hours still ahead.</p>
+        <ul class="ticks">
+          <li>Make every lesson count</li>
+          <li>Never wonder where you stand</li>
+        </ul>
+        <a routerLink="/signup" class="btn yellow">Start my learning journey <span aria-hidden="true">→</span></a>
+      </div>
+
+      <div class="next-card">
+        <div class="next-head"><span>Your next mile</span><i class="pill">On track</i></div>
+        <h3>A little practice. A clearer road.</h3>
+        <div class="meter"><div class="meter-row"><span>Theory</span><b>14 / 21 h</b></div><div class="bar"><i style="width: 66%"></i></div></div>
+        <div class="meter"><div class="meter-row"><span>Practical driving</span><b>6 / 30 h</b></div><div class="bar"><i style="width: 20%"></i></div></div>
+        <a routerLink="/signup" class="btn dark block">Continue learning</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FAMILIAR FACE ============ -->
+  <section class="section wrap face">
+    <div class="face-photo photo-2">
+      <div class="float-card small">
+        <strong>Your instructor, your pace.</strong>
+        <small>One person who knows your progress.</small>
+      </div>
+    </div>
+    <div class="face-copy">
+      <span class="eyebrow dark">A familiar face</span>
+      <h2>A familiar face. A plan that makes sense.</h2>
+      <p>Learn with the same instructor, see your lessons laid out and always know what the next one is for.</p>
+      <ul class="checks">
+        <li><span class="tick">✓</span><div><strong>Know where you stand</strong><small>Hours completed and hours remaining, always up to date.</small></div></li>
+        <li><span class="tick">✓</span><div><strong>Keep your school in the loop</strong><small>Message your school directly from your dashboard.</small></div></li>
+        <li><span class="tick">✓</span><div><strong>Choose how you want to learn</strong><small>Book theory classes and practical lessons that suit you.</small></div></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ FOR SCHOOLS ============ -->
+  <section id="for-schools" class="section wrap">
+    <div class="schools-panel">
+      <div class="sp-head">
+        <div>
+          <span class="eyebrow dark">For driving schools</span>
+          <h2>More teaching time. Less time keeping track.</h2>
+          <p>Applications, schedules, instructors and messages in one dashboard, built for the way schools really work.</p>
+        </div>
+        <a routerLink="/login" class="btn dark">School login</a>
+      </div>
+      <div class="sp-cards">
+        <article><h3>Applications in one place</h3><p>Review documents, approve or reject and keep a clear history.</p></article>
+        <article><h3>A calendar that fills itself</h3><p>Publish lessons once. Students book the slots that suit them.</p></article>
+        <article><h3>Stay close to learners</h3><p>Reply to messages and reviews without leaving the dashboard.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FAQ ============ -->
+  <section class="section wrap faq">
+    <div class="faq-intro">
+      <span class="eyebrow dark">A little clarity</span>
+      <h2>Questions before you get going?</h2>
+      <p>Straight answers to what learners ask most.</p>
+    </div>
+    <div class="faq-list">
+      <details>
+        <summary>How do I choose a driving school?</summary>
+        <p>Open the schools list, filter by city and price, and compare ratings, features and reviews from real students.</p>
+      </details>
+      <details>
+        <summary>Can I look around before creating an account?</summary>
+        <p>Yes. Browsing schools is open to everyone. You only need an account when you are ready to apply.</p>
+      </details>
+      <details>
+        <summary>Does DrivEase provide the lessons?</summary>
+        <p>No. Lessons are taught by the driving school you choose. DrivEase helps you find it, apply and keep track of your progress.</p>
+      </details>
+      <details>
+        <summary>Can I track my progress online?</summary>
+        <p>Yes. Your dashboard shows your application status, your booked lessons and the hours you have completed.</p>
+      </details>
+      <details>
+        <summary>I run a driving school. Where do I start?</summary>
+        <p>Use the school login to open your dashboard. If your school isn't on DrivEase yet, contact us and we will help you get set up.</p>
+      </details>
+    </div>
+  </section>
+
+  <!-- ============ CTA ============ -->
+  <section class="wrap cta-wrap">
+    <div class="cta">
+      <svg class="cta-curve" viewBox="0 0 120 80" fill="none" stroke="#172a4d" stroke-width="7" stroke-linecap="round" aria-hidden="true"><path d="M4 74c40 0 28-34 56-34s16-34 56-34" /><path d="M4 56c34 0 24-28 48-28" opacity=".5" /></svg>
+      <div class="cta-text">
+        <h2>Your first mile is waiting.</h2>
+        <p>Create a free account and take the first small step today.</p>
+      </div>
+      <a routerLink="/signup" class="btn dark">Start my learning journey <span aria-hidden="true">→</span></a>
+    </div>
+  </section>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="foot">
+    <div class="wrap foot-in">
+      <div class="foot-brand">
+        <span class="logo-light">driv<b>EASE</b></span>
+        <p>A clearer path from learning to driving.</p>
+      </div>
+      <div class="foot-col"><h4>For learners</h4><a routerLink="/browse">Browse schools</a><a routerLink="/signup">Create account</a><a routerLink="/login">Log in</a></div>
+      <div class="foot-col"><h4>For schools</h4><a routerLink="/login">School login</a><a href="#for-schools" (click)="go('for-schools', $event)">What you get</a></div>
+      <div class="foot-col"><h4>Support</h4><a href="#how" (click)="go('how', $event)">How it works</a><span>Help centre</span><span>Terms</span><span>Privacy</span></div>
+    </div>
+    <div class="wrap foot-bottom">© {{ year }} DrivEase. All rights reserved.</div>
+  </footer>
 </div>
