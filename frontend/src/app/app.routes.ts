@@ -21,6 +21,8 @@ import { Students } from './admin-school/students/students';
 import { ApplicationDetail } from './admin-school/application-detail/application-detail';
 import { Messages } from './admin-school/pages/messages/messages';
 import { Reviews } from './admin-school/pages/reviews/reviews';
+import { Schedules } from './admin-school/pages/schedules/schedules';
+import { LessonDetail } from './admin-school/pages/lesson-detail/lesson-detail';
 
 export const routes: Routes = [
 	{
@@ -80,7 +82,8 @@ export const routes: Routes = [
 			{ path: 'applications', component: Applications, data: {title: 'Applications'} },
 			{ path: 'students', component: Students, data: { title: 'Students' } },
 			{ path: 'applications/:id', component: ApplicationDetail, data : {title: 'Student-Detail'} },
-			{ path: 'schedules', component: PagePlaceholder, data: { title: 'Schedules' } },
+			{ path: 'schedules', component: Schedules, data: { title: 'Schedules' } },
+			{ path: 'schedules/:id', component: LessonDetail, data: {title: 'Lesson Detail'}},
 			{ path: 'messages', component: Messages, data: { title: 'Messages' } },
 			{ path: 'reviews', component: Reviews, data: { title: 'Reviews' } },
 		]

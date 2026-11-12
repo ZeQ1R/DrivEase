@@ -1,9 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { API_URL } from '../shared/api.config';
-import { Instructor } from '../instructor-platform/instructor.model';
 
-export type { Instructor } from '../instructor-platform/instructor.model';
 
 export interface AdminRegistration {
   id: number;
@@ -58,6 +56,43 @@ export interface AdminReview {
   replied_at: string | null;
   first_name: string;
   last_name: string;
+}
+
+export interface Instructor {
+  id: number;
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone: string | null;
+}
+
+export interface Lesson {
+  id: number;
+  slot_date: string;            // 'YYYY-MM-DD'
+  slot_time: string;            // 'HH:mm'
+  slot_type: 'theory' | 'practical';
+  duration_hours: number | string;
+  note: string | null;
+  instructor_id: number | null;
+  instructor_first_name: string | null;
+  instructor_last_name: string | null;
+  booking_id: number | null;
+  attended: boolean | null;
+  student_id: number | null;
+  student_first_name: string | null;
+  student_last_name: string | null;
+  student_email: string | null;
+  registration_id: number | null;
+}
+
+export interface NewSlot {
+  slotDate: string;
+  slotTime: string;
+  slotType: 'theory' | 'practical';
+  instructorId: number | null;
+  durationHours: number;
+  note: string;
+  repeatWeeks: number;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -126,11 +161,33 @@ export class AdminSchoolService {
     );
   }
 
+
   createTheorySlot(slotDate: string, slotTime: string, note: string, durationHours: number) {
-    return this.http.post<{ slot: any }>(
-      `${API_URL}/admin/slots`,
-      { slotDate, slotTime, note, durationHours }
-    );
+    return this.http.post<{ created: number }>(`${API_URL}/admin/slots`, {
+      slotDate,
+      slotTime,
+      slotType: 'theory',
+      instructorId: null,
+      note,
+      durationHours,
+      repeatWeeks: 1,
+    });
+  }
+
+    getLessons() {
+    return this.http.get<{ lessons: Lesson[] }>(`${API_URL}/admin/lessons`);
+  }
+
+  markLessonAttended(bookingId: number) {
+    return this.http.patch<{ message: string }>(`${API_URL}/admin/bookings/${bookingId}/attended`, {});
+  }
+
+  createLessonSlots(payload: NewSlot) {
+    return this.http.post<{ created: number }>(`${API_URL}/admin/slots`, payload);
+  }
+
+  deleteSlot(id: number) {
+    return this.http.delete<{ message: string }>(`${API_URL}/admin/slots/${id}`);
   }
 
   createInstructor(firstName: string, lastName: string, email: string, phone: string) {

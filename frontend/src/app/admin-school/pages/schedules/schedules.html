@@ -1,0 +1,207 @@
+<header class="head">
+  <div>
+    <small class="eyebrow">{{ schoolName() | uppercase }}</small>
+    <h1>Make room for progress.</h1>
+    <p class="sub">{{ completedCount() }} lesson{{ completedCount() === 1 ? '' : 's' }} completed this week · {{ upcomingCount() }} upcoming.</p>
+  </div>
+  <button type="button" class="cta" (click)="openForm()">Schedule lesson <span>+</span></button>
+</header>
+
+<div class="filters">
+  <div class="selects">
+    <select class="select" (change)="instructorFilter.set($any($event.target).value)">
+      <option value="">All instructors</option>
+      @for (i of instructors(); track i.id) { <option [value]="i.id">{{ i.first_name }} {{ i.last_name }}</option> }
+    </select>
+    <select class="select" (change)="typeFilter.set($any($event.target).value)">
+      <option value="">All lesson types</option>
+      <option value="theory">Theory</option>
+      <option value="practical">Practical</option>
+    </select>
+    <select class="select" (change)="statusFilter.set($any($event.target).value)">
+      <option value="">All statuses</option>
+      <option value="upcoming">Upcoming</option>
+      <option value="completed">Completed</option>
+      <option value="awaiting">Awaiting attendance</option>
+      <option value="open">Open slots</option>
+    </select>
+  </div>
+  <div class="legend"><span class="lg theory">Theory</span><span class="lg practical">Practical</span></div>
+</div>
+
+<section class="card">
+  <div class="cal-toolbar">
+    <div class="nav">
+      <button type="button" class="sq" (click)="shiftWeek(-1)" aria-label="Previous week">‹</button>
+      <strong class="week-label">{{ weekLabel() }}</strong>
+      <button type="button" class="sq" (click)="shiftWeek(1)" aria-label="Next week">›</button>
+    </div>
+    <div class="views">
+      <button type="button" class="pill-btn" (click)="goToday()">Today</button>
+      <button type="button" class="pill-btn" [class.on]="view() === 'week'" (click)="view.set('week')">Week</button>
+      <button type="button" class="pill-btn" [class.on]="view() === 'list'" (click)="view.set('list')">List</button>
+    </div>
+  </div>
+
+  @if (view() === 'week') {
+    <div class="cal-scroll">
+      <div class="cal">
+        <div class="cal-head">
+          <div class="gmt">Local</div>
+          @for (d of days(); track d.key) {
+            <div class="day-head" [class.today]="d.isToday">
+              <span>{{ d.date | date:'EEE' }}</span>
+              <b>{{ d.date | date:'dd' }}</b>
+            </div>
+          }
+        </div>
+
+        <div class="cal-body">
+          <div class="time-col">
+            @for (h of hours(); track h) { <div class="hour-row"><span>{{ h < 10 ? '0' + h : h }}:00</span></div> }
+          </div>
+          @for (d of days(); track d.key) {
+            <div class="day-col" [class.today]="d.isToday" [class.past]="d.isPast" [style.height.px]="bodyHeight()"
+                 (click)="onDayClick($event, d.key)">
+              @for (l of lessonsOn(d.key); track l.id) {
+                <a [class]="'lesson ' + l.slot_type + ' ' + status(l)"
+                   [style.top]="blockStyle(l).top" [style.height]="blockStyle(l).height"
+                   [routerLink]="['/school-admin-dashboard/schedules', l.id]">
+                  <small>{{ l.slot_time }} · {{ l.slot_type === 'theory' ? 'Theory' : 'Practical' }}</small>
+                  <strong>{{ title(l) }}</strong>
+                  <em>
+                    @if (status(l) === 'completed') { ✓ Completed }
+                    @if (studentName(l); as n) { · {{ n }} } @else { Open slot }
+                  </em>
+                </a>
+              }
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  } @else {
+    @if (weekLessons().length > 0) {
+      <table class="table">
+        <thead><tr><th>When</th><th>Lesson</th><th>Student</th><th>Instructor</th><th>Status</th></tr></thead>
+        <tbody>
+          @for (l of weekLessons(); track l.id) {
+            <tr [routerLink]="['/school-admin-dashboard/schedules', l.id]">
+              <td data-label="When">{{ l.slot_date | date:'EEE d MMM' }} · {{ l.slot_time }}</td>
+              <td data-label="Lesson"><strong>{{ title(l) }}</strong><small>{{ l.slot_type === 'theory' ? 'Theory' : 'Practical' }} · {{ l.duration_hours }}h</small></td>
+              <td data-label="Student">{{ studentName(l) || '—' }}</td>
+              <td data-label="Instructor">{{ instructorName(l) }}</td>
+              <td data-label="Status"><span class="tag" [class]="status(l)">{{ statusLabel[status(l)] }}</span></td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    } @else {
+      <p class="muted">No lessons this week.</p>
+    }
+  }
+
+  <div class="cal-foot">
+    <span>{{ completedCount() }} completed · {{ upcomingCount() }} upcoming</span>
+    <span>Click an empty slot to schedule a lesson</span>
+  </div>
+</section>
+
+<div class="bottom">
+  <section class="card">
+    <h2>Completed today</h2>
+    @for (l of completedToday(); track l.id) {
+      <div class="today-row">
+        <div>
+          <strong>{{ title(l) }}</strong>
+          <small>{{ studentName(l) }} · {{ l.slot_time }}</small>
+          <span class="tag completed">{{ l.slot_type === 'theory' ? 'Theory' : 'Practical' }} · Completed</span>
+        </div>
+        <a class="btn dark" [routerLink]="['/school-admin-dashboard/schedules', l.id]">View lesson</a>
+      </div>
+    } @empty {
+      <p class="muted">No lessons have been completed today.</p>
+    }
+  </section>
+
+  <section class="card">
+    <h2>{{ nextLessons().length ? 'Upcoming lessons' : 'No upcoming lessons' }}</h2>
+    @for (l of nextLessons(); track l.id) {
+      <div class="today-row">
+        <div>
+          <strong>{{ title(l) }}</strong>
+          <small>{{ l.slot_date | date:'EEE d MMM' }} · {{ l.slot_time }} · {{ studentName(l) }}</small>
+        </div>
+        <a class="btn ghost" [routerLink]="['/school-admin-dashboard/schedules', l.id]">View</a>
+      </div>
+    } @empty {
+      <p class="muted">Nothing is booked yet. Schedule a lesson so students can book it.</p>
+      <button type="button" class="btn ghost" (click)="openForm()">Schedule lesson +</button>
+    }
+  </section>
+</div>
+
+@if (showForm()) {
+  <div class="overlay" (click)="closeForm()">
+    <form class="modal" (click)="$event.stopPropagation()" (ngSubmit)="addLesson()">
+      <h2>Schedule a lesson</h2>
+
+      <div class="seg" role="tablist">
+        <button type="button" [class.on]="newType() === 'theory'" (click)="newType.set('theory')">Theory class</button>
+        <button type="button" [class.on]="newType() === 'practical'" (click)="newType.set('practical')">Practical lesson</button>
+      </div>
+      <p class="muted">
+        @if (newType() === 'theory') { Any student in the theory phase can book it. }
+        @else { Only students assigned to the chosen instructor can book it. }
+      </p>
+
+      @if (newType() === 'practical') {
+        <div class="f">
+          <label>Instructor</label>
+          <select [(ngModel)]="newInstructor" name="instructor">
+            <option [ngValue]="null">Choose an instructor</option>
+            @for (i of instructors(); track i.id) { <option [ngValue]="i.id">{{ i.first_name }} {{ i.last_name }}</option> }
+          </select>
+        </div>
+      }
+
+      <div class="two">
+        <div class="f"><label>Date</label><input type="date" [(ngModel)]="newDate" name="date" [min]="todayKey" /></div>
+        <div class="f"><label>Start time</label><input type="time" [(ngModel)]="newTime" name="time" /></div>
+      </div>
+
+      <div class="two">
+        <div class="f"><label>Duration</label>
+          <select [(ngModel)]="newDuration" name="duration">
+            <option [ngValue]="1">1 hour</option>
+            <option [ngValue]="1.5">1.5 hours</option>
+            <option [ngValue]="2">2 hours</option>
+            <option [ngValue]="3">3 hours</option>
+          </select>
+        </div>
+        <div class="f"><label>Repeat</label>
+          <select [(ngModel)]="newRepeat" name="repeat">
+            <option [ngValue]="1">Does not repeat</option>
+            <option [ngValue]="2">Weekly, 2 weeks</option>
+            <option [ngValue]="4">Weekly, 4 weeks</option>
+            <option [ngValue]="8">Weekly, 8 weeks</option>
+            <option [ngValue]="12">Weekly, 12 weeks</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="f"><label>Title / note (optional)</label>
+        <input type="text" [(ngModel)]="newNote" name="note" maxlength="120" placeholder="e.g. Introduction to road safety" />
+      </div>
+
+      @if (formMessage()) { <p class="err">{{ formMessage() }}</p> }
+
+      <div class="modal-actions">
+        <button type="button" class="btn ghost" (click)="closeForm()">Cancel</button>
+        <button type="submit" class="btn yellow" [disabled]="saving()">
+          @if (saving()) { Scheduling… } @else { Schedule{{ newRepeat > 1 ? ' ' + newRepeat + ' lessons' : '' }} }
+        </button>
+      </div>
+    </form>
+  </div>
+}

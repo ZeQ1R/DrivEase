@@ -1,0 +1,101 @@
+@if (loading()) {
+  <p class="muted">Loading…</p>
+} @else if (lesson(); as l) {
+
+  <header class="head">
+    <div>
+      <small class="eyebrow">{{ schoolName() | uppercase }}</small>
+      <h1>{{ title(l) }}</h1>
+      <p class="sub">{{ dateObj(l) | date:'EEEE, d MMMM y' }} · {{ l.slot_time }} · {{ l.slot_type === 'theory' ? 'Theory' : 'Practical' }} lesson</p>
+      <div class="chips">
+        <span class="tag" [class]="l.slot_type">{{ l.slot_type === 'theory' ? 'Theory' : 'Practical' }}</span>
+        <span class="tag" [class]="status()">{{ statusLabel[status()] }}</span>
+      </div>
+    </div>
+    <a class="btn ghost" routerLink="/school-admin-dashboard/schedules">Back to schedule ←</a>
+  </header>
+
+  @if (message()) { <div class="banner bad">{{ message() }}</div> }
+
+  <div class="grid">
+    <div class="col">
+      <section class="card">
+        <h2>Session overview</h2>
+        <dl class="three">
+          <div><dt>Date</dt><dd>{{ dateObj(l) | date:'d MMMM y' }}</dd></div>
+          <div><dt>Start time</dt><dd>{{ l.slot_time }}</dd></div>
+          <div><dt>Delivery</dt><dd>{{ l.slot_type === 'theory' ? 'Theory classroom' : 'On the road' }}</dd></div>
+          <div><dt>Duration</dt><dd>{{ l.duration_hours }} hours</dd></div>
+        </dl>
+        <hr />
+        <h3>About this lesson</h3>
+        <p class="muted">{{ l.note || 'No description was added for this lesson.' }}</p>
+        <p class="note">
+          {{ status() === 'completed' ? 'This session is recorded as completed.' : status() === 'open' ? 'No student has booked this slot yet.' : 'This session has not been completed yet.' }}
+        </p>
+      </section>
+
+      <section class="card">
+        <h2>Student &amp; attendance</h2>
+        @if (l.student_id) {
+          <div class="student-row">
+            <div class="who">
+              <span class="avatar">{{ initials(l.student_first_name, l.student_last_name) }}</span>
+              <div><strong>{{ l.student_first_name }} {{ l.student_last_name }}</strong><small>{{ l.student_email }}</small></div>
+            </div>
+
+            <span class="tag" [class]="status() === 'completed' ? 'completed' : 'upcoming'">
+              {{ status() === 'completed' ? 'Attended' : status() === 'awaiting' ? 'Awaiting attendance' : 'Booked' }}
+            </span>
+
+            <div class="row-actions">
+              @if (l.slot_type === 'practical' && !l.attended) {
+                <button type="button" class="btn dark" [disabled]="busy()" (click)="markAttended(l)">Mark attended</button>
+              }
+              @if (l.registration_id) {
+                <a class="btn ghost" [routerLink]="['/school-admin-dashboard/students', l.registration_id]">View student</a>
+              }
+            </div>
+          </div>
+        } @else {
+          <p class="muted">Nobody has booked this lesson yet.</p>
+        }
+      </section>
+    </div>
+
+    <div class="col">
+      <section class="card">
+        <h2>Instructor</h2>
+        @if (l.instructor_id) {
+          <div class="who">
+            <span class="avatar">{{ initials(l.instructor_first_name, l.instructor_last_name) }}</span>
+            <div><strong>{{ l.instructor_first_name }} {{ l.instructor_last_name }}</strong><small>Practical instructor</small></div>
+          </div>
+        } @else {
+          <p class="muted">This is a school-run theory class, so no individual instructor is assigned.</p>
+        }
+        <dl><dt>Teaching focus</dt><dd>{{ l.slot_type === 'theory' ? 'Theory' : 'Practical driving' }}</dd></dl>
+        <a class="btn ghost block" routerLink="/school-admin-dashboard/applications">Manage instructors</a>
+      </section>
+
+      @if (status() === 'open') {
+        <div class="banner">
+          <strong>Slot still open</strong>
+          <p>Students in the matching phase can book this lesson from their dashboard.</p>
+          <div class="del">
+            @if (!confirmDelete()) {
+              <button type="button" class="btn ghost" (click)="confirmDelete.set(true)">Delete this slot</button>
+            } @else {
+              <span class="muted">Delete this open slot?</span>
+              <button type="button" class="btn dark" [disabled]="busy()" (click)="removeSlot(l)">Yes, delete</button>
+              <button type="button" class="btn ghost" (click)="confirmDelete.set(false)">Keep it</button>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+
+} @else {
+  <p class="muted">Lesson not found. <a routerLink="/school-admin-dashboard/schedules">Back to schedule</a></p>
+}

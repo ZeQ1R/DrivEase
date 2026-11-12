@@ -6,27 +6,93 @@ import { notify } from "../lib/notify.js";
 
 const router = Router();
 
+function addDays(dateStr, days) {
+  const [y, m, d] = dateStr.split("-").map(Number);
+  return new Date(Date.UTC(y, m - 1, d + days)).toISOString().slice(0, 10);
+}
+
 
 router.post("/admin/slots", authenticate, async (req, res) => {
+  const client = await pool.connect();
   try {
-    const { slotDate, slotTime, note, durationHours } = req.body;
-    if (!slotDate || !slotTime) return res.status(400).json({ message: "Date and time required." });
+    const { slotDate, slotTime, note } = req.body;
+    const slotType = req.body.slotType === "practical" ? "practical" : "theory";
+    const repeatWeeks = Math.min(Math.max(parseInt(req.body.repeatWeeks, 10) || 1, 1), 12);
+    const duration = Number(req.body.durationHours) || 1.5;
+
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(slotDate || "") || !/^\d{2}:\d{2}$/.test(slotTime || "")) {
+      return res.status(400).json({ message: "Date and time required." });
+    }
+    if (duration < 0.5 || duration > 4) return res.status(400).json({ message: "Duration must be between 0.5 and 4 hours." });
     if (slotDate < new Date().toISOString().split("T")[0]) {
-      return res.status(400).json({ message: "You can't create a class in the past." });
+      return res.status(400).json({ message: "You can't create a lesson in the past." });
     }
 
-    const schoolRes = await pool.query(
-      `SELECT id FROM driving_schools WHERE owner_user_id = $1`, [req.user.id]
-    );
-    if (schoolRes.rows.length === 0) return res.status(403).json({ message: "You don't manage a school." });
+    const school = await client.query(`SELECT id FROM driving_schools WHERE owner_user_id = $1`, [req.user.id]);
+    if (school.rows.length === 0) return res.status(403).json({ message: "You don't manage a school." });
+    const schoolId = school.rows[0].id;
+
+    let instructorId = null;
+    if (slotType === "practical") {
+      const ins = await client.query(
+        `SELECT id FROM users WHERE id = $1 AND role = 'instructor' AND school_id = $2`,
+        [req.body.instructorId, schoolId]
+      );
+      if (ins.rows.length === 0) return res.status(400).json({ message: "Choose an instructor from your school." });
+      instructorId = ins.rows[0].id;
+    }
+
+    await client.query("BEGIN");
+    let created = 0;
+    for (let i = 0; i < repeatWeeks; i++) {
+      const date = addDays(slotDate, 7 * i);
+
+      // no overlap: theory classes share one room, practical lessons share one instructor
+      const clash = await client.query(
+        `SELECT 1 FROM lesson_slots
+         WHERE school_id = $1 AND slot_date = $2
+           AND (($5::text = 'theory' AND slot_type = 'theory')
+             OR ($5::text = 'practical' AND instructor_id = $6))
+           AND slot_time < ($3::time + ($4::numeric * interval '1 hour'))
+           AND (slot_time + (duration_hours * interval '1 hour')) > $3::time
+         LIMIT 1`,
+        [schoolId, date, slotTime, duration, slotType, instructorId]
+      );
+      if (clash.rows.length > 0) {
+        await client.query("ROLLBACK");
+        return res.status(409).json({ message: `That time overlaps another lesson on ${date}. Nothing was created.` });
+      }
+
+      await client.query(
+        `INSERT INTO lesson_slots (school_id, instructor_id, slot_date, slot_time, note, slot_type, duration_hours)
+         VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+        [schoolId, instructorId, date, slotTime, (note || "").trim() || null, slotType, duration]
+      );
+      created++;
+    }
+    await client.query("COMMIT");
+    res.status(201).json({ created });
+  } catch (e) {
+    console.error("create slot failed:", e.message);
+    await client.query("ROLLBACK").catch(() => {});
+    res.status(500).json({ message: "Failed to create lesson.", error: e.message });
+  } finally { client.release(); }
+});
+
+router.delete("/admin/slots/:id", authenticate, async (req, res) => {
+  try {
+    const school = await pool.query(`SELECT id FROM driving_schools WHERE owner_user_id = $1`, [req.user.id]);
+    if (school.rows.length === 0) return res.status(403).json({ message: "You don't manage a school." });
 
     const result = await pool.query(
-      `INSERT INTO lesson_slots (school_id, slot_date, slot_time, note, slot_type, duration_hours)
-       VALUES ($1, $2, $3, $4, 'theory', $5) RETURNING *`,
-      [schoolRes.rows[0].id, slotDate, slotTime, note || null, durationHours || 1.5]
+      `DELETE FROM lesson_slots WHERE id = $1 AND school_id = $2 AND is_booked = false RETURNING id`,
+      [req.params.id, school.rows[0].id]
     );
-    res.status(201).json({ slot: result.rows[0] });
-  } catch (e) { res.status(500).json({ message: "Failed to create slot.", error: e.message }); }
+    if (result.rows.length === 0) {
+      return res.status(409).json({ message: "This lesson can't be deleted. It is booked or doesn't exist." });
+    }
+    res.status(200).json({ message: "Lesson deleted." });
+  } catch (e) { res.status(500).json({ message: "Failed to delete lesson.", error: e.message }); }
 });
 
 
@@ -108,7 +174,6 @@ router.post("/slots/:id/book", authenticate, async (req, res) => {
     );
     await client.query("COMMIT");
 
-    // let the instructor know a practical lesson was booked
     if (s.slot_type === "practical" && s.instructor_id) {
       const who = await pool.query(`SELECT first_name, last_name FROM users WHERE id = $1`, [req.user.id]);
       const name = who.rows[0] ? `${who.rows[0].first_name} ${who.rows[0].last_name}` : "A student";

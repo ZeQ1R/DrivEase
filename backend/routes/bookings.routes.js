@@ -111,4 +111,35 @@ router.patch("/admin/bookings/:id/attended", authenticate, async (req, res) => {
   } catch (e) { res.status(500).json({ message: "Failed.", error: e.message }); }
 });
 
+router.get("/admin/lessons", authenticate, async (req, res) => {
+  try {
+    const school = await pool.query(`SELECT id FROM driving_schools WHERE owner_user_id = $1`, [req.user.id]);
+    if (school.rows.length === 0) return res.status(403).json({ message: "You don't manage a school." });
+
+    const result = await pool.query(
+      `SELECT s.id,
+              to_char(s.slot_date, 'YYYY-MM-DD') AS slot_date,
+              to_char(s.slot_time, 'HH24:MI')    AS slot_time,
+              s.slot_type, s.duration_hours, s.note, s.instructor_id,
+              i.first_name AS instructor_first_name, i.last_name AS instructor_last_name,
+              b.id AS booking_id, b.attended, b.student_id,
+              u.first_name AS student_first_name, u.last_name AS student_last_name, u.email AS student_email,
+              r.id AS registration_id
+       FROM lesson_slots s
+       LEFT JOIN users i ON i.id = s.instructor_id
+       LEFT JOIN lesson_bookings b ON b.slot_id = s.id
+       LEFT JOIN users u ON u.id = b.student_id
+       LEFT JOIN LATERAL (
+         SELECT id FROM registrations
+         WHERE student_id = b.student_id AND school_id = s.school_id
+         ORDER BY registered_at DESC LIMIT 1
+       ) r ON true
+       WHERE s.school_id = $1
+       ORDER BY s.slot_date, s.slot_time`,
+      [school.rows[0].id]
+    );
+    res.status(200).json({ lessons: result.rows });
+  } catch (e) { res.status(500).json({ message: "Failed.", error: e.message }); }
+});
+
 export default router;
